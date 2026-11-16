@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pomalo</title>
-<meta name="description" content="Pomalo: learn Serbian and English little by little, with Vrapko the sparrow.">
+<meta name="description" content="Pomalo: a free, playful way for children and beginners to learn Serbian and English little by little, with Vrapko the sparrow.">
 <style>:root{color-scheme:light dark}[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -30,6 +30,28 @@
   #pomalo-gate fieldset.variant input{width:auto;min-height:0;flex:none}
   #pomalo-gate fieldset.variant p{margin:0}
   #pomalo-design .pair[aria-label="Serbian variant"],#pomalo-design .pair[aria-label="Serbian script"],#pomalo-design header .direction{display:none}
+  #pomalo-gate{font-family:Nunito,system-ui,sans-serif}
+  #pomalo-gate h2{font-family:Nunito,system-ui,sans-serif;font-weight:900;letter-spacing:-.3px;font-size:26px;color:light-dark(#0c3c9e,#a9c1ff)}
+  #pomalo-gate .welcome{border-width:2px;border-radius:28px}
+  #pomalo-gate .welcome-head{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center;margin-bottom:12px}
+  #pomalo-gate .welcome-bird{width:110px;height:110px;overflow:visible}
+  #pomalo-gate .welcome-bird .closed{display:none}
+  #pomalo-gate .welcome-bird .head{transform-box:fill-box;transform-origin:50% 90%;animation:gatebob 3s ease-in-out infinite}
+  @keyframes gatebob{50%{transform:rotate(5deg)}}
+  #pomalo-gate form{max-width:560px;gap:16px}
+  #pomalo-gate fieldset.variant{display:grid;grid-template-columns:1fr 1fr;gap:10px;border:0;padding:0}
+  #pomalo-gate fieldset.variant legend{font-size:18px;font-weight:800;padding:0 0 8px}
+  #pomalo-gate fieldset.variant label{position:relative;display:block;padding:14px 14px 12px;border:2px solid var(--g-line);border-radius:18px;background:light-dark(#fff,#16224a);cursor:pointer;font-size:17px;line-height:1.35;min-height:64px}
+  #pomalo-gate fieldset.variant label .muted{display:block;font-size:13px;margin-top:2px}
+  #pomalo-gate fieldset.variant input{position:absolute;opacity:0;width:1px;height:1px}
+  #pomalo-gate fieldset.variant label:has(input:checked){border-color:light-dark(#0c3c9e,#a9c1ff);background:light-dark(#e3e9fb,#1f2c5e);box-shadow:0 0 0 3px light-dark(rgba(12,60,158,.18),rgba(169,193,255,.25))}
+  #pomalo-gate fieldset.variant label:has(input:checked)::after{content:"✓";position:absolute;top:8px;right:12px;font-weight:900;color:light-dark(#0c3c9e,#a9c1ff)}
+  #pomalo-gate fieldset.variant label:has(input:focus-visible){outline:3px solid var(--g-accent);outline-offset:2px}
+  #pomalo-gate .name-field{font-size:18px;font-weight:800}
+  #pomalo-gate .name-field input{font-size:20px;min-height:52px;border-radius:14px;border-width:2px}
+  #pomalo-gate button.main{font-size:20px;font-weight:900;min-height:54px;padding:10px 28px;border-radius:16px;box-shadow:0 4px 0 light-dark(#8a0b20,#b83a40)}
+  #pomalo-gate .you button{min-height:32px;padding:4px 10px;font-size:13px;border-radius:999px}
+  @media(max-width:520px){#pomalo-gate fieldset.variant{grid-template-columns:1fr}#pomalo-gate .welcome-head{grid-template-columns:80px 1fr}#pomalo-gate .welcome-bird{width:80px;height:80px}#pomalo-gate h2{font-size:22px}}
   #pomalo-gate .err{color:var(--g-warn)}
   #pomalo-gate .admin summary{cursor:pointer;font:500 21px Georgia,serif;list-style-position:inside}
   #pomalo-gate .stats{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
@@ -48,31 +70,60 @@
 
   <section class="card" data-gate="status" aria-live="polite"><p data-status>Checking your access…</p></section>
 
-  <section class="card" data-gate="register" hidden>
-    <h2>Welcome to Pomalo · Dobro došli</h2>
-    <p>Register once to start learning. Your choices below stay with your account.<br><span class="muted">Registruj se jednom. Izbori ispod ostaju vezani za tvoj nalog.</span></p>
+  <section class="card welcome" data-gate="register" hidden>
+    <div class="welcome-head">
+      <svg class="welcome-bird" viewBox="0 0 120 120" aria-hidden="true">
+  <g class="bird">
+    <path class="tail" d="M84 84 L112 98 L106 104 L80 94 Z" fill="#6b4529"/>
+    <g class="feet" stroke="#e39a2d" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M50 100 v10 M46 110 h8"/><path d="M68 100 v10 M64 110 h8"/>
+    </g>
+    <ellipse cx="60" cy="76" rx="34" ry="29" fill="#b98656"/>
+    <ellipse cx="60" cy="84" rx="22" ry="18" fill="#f1e6d3"/>
+    <g class="wing wing-l"><path d="M30 66 C18 74 20 94 36 98 C40 88 40 76 36 66 Z" fill="#7d5333"/><path d="M27 80 h9 M28 88 h9" stroke="#f1e6d3" stroke-width="2.5" stroke-linecap="round"/></g>
+    <g class="wing wing-r"><path d="M90 66 C102 74 100 94 84 98 C80 88 80 76 84 66 Z" fill="#7d5333"/><path d="M84 80 h9 M83 88 h9" stroke="#f1e6d3" stroke-width="2.5" stroke-linecap="round"/></g>
+    <g class="head">
+      <circle cx="60" cy="42" r="25" fill="#b98656"/>
+      <path d="M36 38 C38 18 82 18 84 38 C74 30 46 30 36 38 Z" fill="#8a5a33"/>
+      <ellipse cx="45" cy="50" rx="9" ry="7" fill="#ece5d8"/>
+      <ellipse cx="75" cy="50" rx="9" ry="7" fill="#ece5d8"/>
+      <circle cx="44" cy="54" r="3.6" fill="#f2a3a3" opacity=".8"/>
+      <circle cx="76" cy="54" r="3.6" fill="#f2a3a3" opacity=".8"/>
+      <g class="eyes"><circle cx="51" cy="41" r="4.6" fill="#1d1712"/><circle cx="69" cy="41" r="4.6" fill="#1d1712"/><circle cx="52.6" cy="39.4" r="1.5" fill="#fff"/><circle cx="70.6" cy="39.4" r="1.5" fill="#fff"/></g>
+      <path class="closed" d="M46 42 q5 -5 10 0 M64 42 q5 -5 10 0" stroke="#1d1712" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse class="mouth" cx="60" cy="57" rx="5" ry="4" fill="#7a2a1a"/>
+      <path d="M54 49 L66 49 L60 58 Z" fill="#f2b233"/>
+      <path d="M55 58 Q60 64 65 58 L63 66 Q60 68 57 66 Z" fill="#2c2420"/>
+    </g>
+  </g>
+</svg>
+      <div>
+        <h2>Hi! I’m Vrapko. · Zdravo! Ja sam Vrapko.</h2>
+        <p data-intro>Tell me a little about you, and we’ll start learning together.<br><span class="muted">Reci mi nešto o sebi i počinjemo da učimo zajedno.</span></p>
+      </div>
+    </div>
     <form data-register novalidate>
       <fieldset class="variant">
         <legend>What do you want to learn? · Šta želiš da učiš?</legend>
-        <label for="reg-sr"><input type="radio" id="reg-sr" name="course" value="sr"> <span><strong>Serbian</strong> <span class="muted">· I speak English (English → Serbian)</span></span></label>
-        <label for="reg-en"><input type="radio" id="reg-en" name="course" value="en"> <span><strong>Engleski</strong> <span class="muted">· Govorim srpski (srpski → engleski)</span></span></label>
+        <label for="reg-sr"><input type="radio" id="reg-sr" name="course" value="sr"> <span><strong>Serbian</strong> <span class="muted">I speak English (English → Serbian)</span></span></label>
+        <label for="reg-en"><input type="radio" id="reg-en" name="course" value="en"> <span><strong>Engleski</strong> <span class="muted">Govorim srpski (srpski → engleski)</span></span></label>
       </fieldset>
-      <label for="reg-name">Your name · Ime<input id="reg-name" name="name" autocomplete="name" maxlength="80" required></label>
+      <label for="reg-name" class="name-field">What’s your name? · Kako se zoveš?<input id="reg-name" name="name" autocomplete="given-name" maxlength="40" required></label>
       <fieldset class="variant">
         <legend>Serbian variant · Varijanta</legend>
-        <label for="reg-ek"><input type="radio" id="reg-ek" name="dialect" value="ek"> <span><strong>Ekavski</strong> <span class="muted">· mleko, lepo, reka (Serbia)</span></span></label>
-        <label for="reg-ij"><input type="radio" id="reg-ij" name="dialect" value="ij"> <span><strong>Ijekavski</strong> <span class="muted">· mlijeko, lijepo, rijeka (Bosnia, Montenegro, parts of Serbia)</span></span></label>
+        <label for="reg-ek"><input type="radio" id="reg-ek" name="dialect" value="ek"> <span><strong>Ekavski</strong> <span class="muted">mleko, lepo, reka (Serbia)</span></span></label>
+        <label for="reg-ij"><input type="radio" id="reg-ij" name="dialect" value="ij"> <span><strong>Ijekavski</strong> <span class="muted">mlijeko, lijepo, rijeka (Bosnia, Montenegro, parts of Serbia)</span></span></label>
       </fieldset>
       <fieldset class="variant">
         <legend>Script · Pismo</legend>
-        <label for="reg-la"><input type="radio" id="reg-la" name="script" value="la"> <span><strong>Latinica</strong> <span class="muted">· Dobro jutro</span></span></label>
-        <label for="reg-cy"><input type="radio" id="reg-cy" name="script" value="cy"> <span><strong>Ćirilica</strong> <span class="muted">· Добро јутро</span></span></label>
+        <label for="reg-la"><input type="radio" id="reg-la" name="script" value="la"> <span><strong>Latinica</strong> <span class="muted">Dobro jutro</span></span></label>
+        <label for="reg-cy"><input type="radio" id="reg-cy" name="script" value="cy"> <span><strong>Ćirilica</strong> <span class="muted">Добро јутро</span></span></label>
       </fieldset>
-      <p class="muted">These choices can’t be changed later. Ask the course owner if you’re not sure. · Izbori se ne mogu menjati kasnije.</p>
-      <label for="reg-why">Why are you learning Serbian? <span class="muted">(optional · nije obavezno)</span><input id="reg-why" name="why" maxlength="200" placeholder="Family, travel, work…"></label>
-      <p class="muted">The course owner can see your name, when you use Pomalo, and which lessons you finish.</p>
+      <p class="muted" data-fixed-note>These choices can’t be changed later. Ask the course owner if you’re not sure. · Izbori se ne mogu menjati kasnije.</p>
+      <label for="reg-why" data-why>Why are you learning Serbian? <span class="muted">(optional · nije obavezno)</span><input id="reg-why" name="why" maxlength="200" placeholder="Family, travel, work…"></label>
+      <p class="muted" data-privacy>The course owner can see your name, when you use Pomalo, and which lessons you finish.</p>
       <p class="err" data-reg-error hidden></p>
-      <button class="main" type="submit">Register and start · Registruj se</button>
+      <button class="main" type="submit">Let’s start! · Počnimo!</button>
     </form>
   </section>
 
@@ -174,6 +225,26 @@
     return [{doc, collection}, {id: async () => id, isOwner: async () => false, can: async () => true}];
   }
 
+  function standaloneTexts() {
+    $('[data-intro]').innerHTML = 'Tell me a little about you, and we’ll start learning together. Everything stays on this device.<br><span class="muted">Reci mi nešto o sebi i počinjemo da učimo zajedno. Sve ostaje na ovom uređaju.</span>';
+    $('[data-fixed-note]').textContent = 'Choose carefully: these stay the same while you learn. · Izaberi pažljivo: ovo ostaje isto dok učiš.';
+    $('[data-why]').hidden = true;
+    $('[data-privacy]').textContent = 'Your name and progress are saved only in this browser. Nothing is sent anywhere. · Ime i napredak čuvaju se samo u ovom pregledaču.';
+  }
+  function newLearnerButton(you) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = 'New learner';
+    let armed = false, timer;
+    btn.addEventListener('click', () => {
+      if (!armed) { armed = true; btn.textContent = 'Tap again to start over'; timer = setTimeout(() => { armed = false; btn.textContent = 'New learner'; }, 4000); return; }
+      clearTimeout(timer);
+      try { ['pomalo-local-db', 'pomalo-local-id', 'pomalo-part-one-v2'].forEach(k => localStorage.removeItem(k)); } catch {}
+      location.reload();
+    });
+    you.append(' ', btn);
+  }
+
   async function start() {
     const timeout = setTimeout(() => status('Pomalo can’t reach its server right now. Check your connection, then reload the page.'), 12000);
     const framed = (() => { try { return window.top !== window; } catch { return true; } })();
@@ -183,6 +254,7 @@
     else [db, user] = claude?.use ? await Promise.all([claude.use('db'), claude.use('user')]) : [null, null];
     if (!db || !user) { clearTimeout(timeout); status('Sign in to claude.ai with the account this course was shared with, then reload this page.'); return; }
     uid = await user.id();
+    if (window.pomaloStandalone) standaloneTexts();
     const owner = await user.isOwner();
     if (!uid) { clearTimeout(timeout); status('Sign in to claude.ai with the account this course was shared with, then reload this page.'); return; }
 
@@ -207,8 +279,9 @@
   function begin() {
     lastSummary = '';
     const you = $('[data-gate="you"]');
-    you.textContent = 'Signed in as ' + me.name; you.hidden = false;
+    you.textContent = (window.pomaloStandalone ? 'Learner: ' : 'Signed in as ') + me.name; you.hidden = false;
     window.addEventListener('pomalo:progress', onProgress);
+    if (window.pomaloStandalone) setTimeout(() => newLearnerButton(you), 0);
     const settings = {course: me.course === 'en' ? 'en' : 'sr', dialect: me.dialect === 'ij' ? 'ij' : 'ek', script: me.script === 'cy' ? 'cy' : 'la'};
     you.textContent += ' · ' + describe(me);
     const apply = () => { document.getElementById('pomalo-design').classList.add('fixed-variant'); window.pomaloMergeProgress(me.courses, me.savedAt); window.pomaloSetDialect(settings); window.pomaloMergeMistakes(me.mistakes); };
