@@ -1,6 +1,10 @@
 # Pomalo · learning Serbian little by little
 
-Pomalo is a Serbian ⇄ English course for children and beginners, with Vrapko the sparrow as a guide.
+Pomalo means "little by little". It is a playful course in Serbian and English, guided by Vrapko the sparrow, who cheers every right answer and sings when an exercise is done. It is made for children, with big buttons, pictures and short steps they can follow on their own, and it works just as well for adult beginners.
+
+**Completely free:** no payments, no subscriptions, no in-app purchases. It runs in any web browser today, and an Android app will follow once testing is finished.
+
+**Try it:** https://milossavicgit.github.io/Learning-Serbian/
 
 ## What's inside
 
@@ -10,7 +14,6 @@ Pomalo is a Serbian ⇄ English course for children and beginners, with Vrapko t
 | `content/` | Lesson sentences as JSON (Lessons 2–6 and 11–13), for the future Supabase version |
 | `docs/course-plan.md` | Plan for Lessons 11–48, taken from the notebook covers |
 | `tools/heic-to-jpeg.html` | Converts iPhone HEIC photos to JPEG in the browser |
-| `notebooks/` | Photos of the handwritten notebook pages |
 
 ## Features
 
@@ -30,7 +33,7 @@ Pomalo is a Serbian ⇄ English course for children and beginners, with Vrapko t
 1. In this repository, open **Settings → Pages**.
 2. Under **Build and deployment**, set **Source** to **Deploy from a branch**.
 3. Choose branch **main** and folder **/ (root)**, then click **Save**.
-4. After a minute or two, the app is live at `https://milossavicgit.github.io/learning-serbian/`.
+4. After a minute or two, the app is live at `https://milossavicgit.github.io/Learning-Serbian/`.
 
 ## Where progress is saved
 
