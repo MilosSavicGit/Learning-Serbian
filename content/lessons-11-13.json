@@ -1,0 +1,3269 @@
+{
+ "lessons": [
+  {
+   "title": {
+    "sr": "This, that and every",
+    "en": "Ovaj, taj i svaki"
+   },
+   "names": {
+    "sr": [
+     "This and that",
+     "That one over there",
+     "Some",
+     "Every and all",
+     "Nobody and nothing",
+     "The whole thing",
+     "Which one?",
+     "Lesson test"
+    ],
+    "en": [
+     "Ovaj i taj",
+     "Onaj tamo",
+     "Neki",
+     "Svaki i svi",
+     "Niko i ništa",
+     "Ceo~Cio",
+     "Koji?",
+     "Test lekcije"
+    ]
+   },
+   "tasks": {
+    "sr": [
+     [
+      {
+       "prompt": "This bread is fresh.",
+       "answers": [
+        "Ovaj hleb je svež.",
+        "Ovaj hljeb je svjež."
+       ],
+       "canonical": [
+        "Ovaj hleb je svež.",
+        "Ovaj hljeb je svjež."
+       ]
+      },
+      {
+       "prompt": "This house is big.",
+       "answers": [
+        "Ova kuća je velika.",
+        "Ova kuća je ogromna."
+       ],
+       "canonical": [
+        "Ova kuća je velika.",
+        "Ova kuća je velika."
+       ]
+      },
+      {
+       "prompt": "This child is sleeping.",
+       "answers": [
+        "Ovo dete spava.",
+        "Ovo dijete spava."
+       ],
+       "canonical": [
+        "Ovo dete spava.",
+        "Ovo dijete spava."
+       ]
+      },
+      {
+       "prompt": "That man is my father.",
+       "answers": [
+        "Taj čovek je moj otac.",
+        "Taj čovjek je moj otac."
+       ],
+       "canonical": [
+        "Taj čovek je moj otac.",
+        "Taj čovjek je moj otac."
+       ]
+      },
+      {
+       "prompt": "That book is interesting.",
+       "answers": [
+        "Ta knjiga je zanimljiva."
+       ],
+       "canonical": [
+        "Ta knjiga je zanimljiva.",
+        "Ta knjiga je zanimljiva."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "That city is far away.",
+       "answers": [
+        "Onaj grad je daleko."
+       ],
+       "canonical": [
+        "Onaj grad je daleko.",
+        "Onaj grad je daleko."
+       ]
+      },
+      {
+       "prompt": "That mountain is high.",
+       "answers": [
+        "Ona planina je visoka."
+       ],
+       "canonical": [
+        "Ona planina je visoka.",
+        "Ona planina je visoka."
+       ]
+      },
+      {
+       "prompt": "That village is small.",
+       "answers": [
+        "Ono selo je malo."
+       ],
+       "canonical": [
+        "Ono selo je malo.",
+        "Ono selo je malo."
+       ]
+      },
+      {
+       "prompt": "Do you see that house?",
+       "answers": [
+        "Vidiš li onu kuću?",
+        "Da li vidiš onu kuću?"
+       ],
+       "canonical": [
+        "Vidiš li onu kuću?",
+        "Vidiš li onu kuću?"
+       ]
+      },
+      {
+       "prompt": "These apples are sweet.",
+       "answers": [
+        "Ove jabuke su slatke."
+       ],
+       "canonical": [
+        "Ove jabuke su slatke.",
+        "Ove jabuke su slatke."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Some people like coffee.",
+       "answers": [
+        "Neki ljudi vole kafu."
+       ],
+       "canonical": [
+        "Neki ljudi vole kafu.",
+        "Neki ljudi vole kafu."
+       ]
+      },
+      {
+       "prompt": "I have some books.",
+       "answers": [
+        "Imam neke knjige.",
+        "Ja imam neke knjige."
+       ],
+       "canonical": [
+        "Imam neke knjige.",
+        "Imam neke knjige."
+       ]
+      },
+      {
+       "prompt": "Someone is knocking at the door.",
+       "answers": [
+        "Neko kuca na vrata."
+       ],
+       "canonical": [
+        "Neko kuca na vrata.",
+        "Neko kuca na vrata."
+       ]
+      },
+      {
+       "prompt": "Something is on the table.",
+       "answers": [
+        "Nešto je na stolu."
+       ],
+       "canonical": [
+        "Nešto je na stolu.",
+        "Nešto je na stolu."
+       ]
+      },
+      {
+       "prompt": "Some children are playing.",
+       "answers": [
+        "Neka deca se igraju.",
+        "Neka djeca se igraju."
+       ],
+       "canonical": [
+        "Neka deca se igraju.",
+        "Neka djeca se igraju."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "I learn Serbian every day.",
+       "answers": [
+        "Svaki dan učim srpski.",
+        "Učim srpski svaki dan."
+       ],
+       "canonical": [
+        "Svaki dan učim srpski.",
+        "Svaki dan učim srpski."
+       ]
+      },
+      {
+       "prompt": "Every room has a window.",
+       "answers": [
+        "Svaka soba ima prozor."
+       ],
+       "canonical": [
+        "Svaka soba ima prozor.",
+        "Svaka soba ima prozor."
+       ]
+      },
+      {
+       "prompt": "Every child has a ball.",
+       "answers": [
+        "Svako dete ima loptu.",
+        "Svako dijete ima loptu."
+       ],
+       "canonical": [
+        "Svako dete ima loptu.",
+        "Svako dijete ima loptu."
+       ]
+      },
+      {
+       "prompt": "Everyone is here.",
+       "answers": [
+        "Svi su ovde.",
+        "Svi su ovdje."
+       ],
+       "canonical": [
+        "Svi su ovde.",
+        "Svi su ovdje."
+       ]
+      },
+      {
+       "prompt": "Everything is fine.",
+       "answers": [
+        "Sve je u redu."
+       ],
+       "canonical": [
+        "Sve je u redu.",
+        "Sve je u redu."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "I don’t have any books.",
+       "answers": [
+        "Nemam nijednu knjigu.",
+        "Ja nemam nijednu knjigu."
+       ],
+       "canonical": [
+        "Nemam nijednu knjigu.",
+        "Nemam nijednu knjigu."
+       ]
+      },
+      {
+       "prompt": "Nobody is here.",
+       "answers": [
+        "Niko nije ovde.",
+        "Niko nije ovdje."
+       ],
+       "canonical": [
+        "Niko nije ovde.",
+        "Niko nije ovdje."
+       ]
+      },
+      {
+       "prompt": "I don’t see anything.",
+       "answers": [
+        "Ništa ne vidim.",
+        "Ne vidim ništa."
+       ],
+       "canonical": [
+        "Ništa ne vidim.",
+        "Ništa ne vidim."
+       ]
+      },
+      {
+       "prompt": "No bus goes there.",
+       "answers": [
+        "Nijedan autobus ne ide tamo."
+       ],
+       "canonical": [
+        "Nijedan autobus ne ide tamo.",
+        "Nijedan autobus ne ide tamo."
+       ]
+      },
+      {
+       "prompt": "I never drink coffee.",
+       "answers": [
+        "Nikad ne pijem kafu.",
+        "Nikada ne pijem kafu."
+       ],
+       "canonical": [
+        "Nikad ne pijem kafu.",
+        "Nikad ne pijem kafu."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "I work all day.",
+       "answers": [
+        "Ceo dan radim.",
+        "Cio dan radim.",
+        "Radim ceo dan.",
+        "Radim cio dan.",
+        "Cijeli dan radim.",
+        "Radim cijeli dan."
+       ],
+       "canonical": [
+        "Ceo dan radim.",
+        "Cio dan radim."
+       ]
+      },
+      {
+       "prompt": "The whole family is here.",
+       "answers": [
+        "Cela porodica je ovde.",
+        "Cijela porodica je ovdje."
+       ],
+       "canonical": [
+        "Cela porodica je ovde.",
+        "Cijela porodica je ovdje."
+       ]
+      },
+      {
+       "prompt": "I know the whole song.",
+       "answers": [
+        "Znam celu pesmu.",
+        "Znam cijelu pjesmu.",
+        "Ja znam celu pesmu.",
+        "Ja znam cijelu pjesmu."
+       ],
+       "canonical": [
+        "Znam celu pesmu.",
+        "Znam cijelu pjesmu."
+       ]
+      },
+      {
+       "prompt": "The whole village is sleeping.",
+       "answers": [
+        "Celo selo spava.",
+        "Cijelo selo spava."
+       ],
+       "canonical": [
+        "Celo selo spava.",
+        "Cijelo selo spava."
+       ]
+      },
+      {
+       "prompt": "The whole city is beautiful.",
+       "answers": [
+        "Ceo grad je lep.",
+        "Cio grad je lijep.",
+        "Cijeli grad je lijep."
+       ],
+       "canonical": [
+        "Ceo grad je lep.",
+        "Cio grad je lijep."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Which book is yours?",
+       "answers": [
+        "Koja knjiga je tvoja?",
+        "Koja je knjiga tvoja?",
+        "Koja je tvoja knjiga?"
+       ],
+       "canonical": [
+        "Koja knjiga je tvoja?",
+        "Koja knjiga je tvoja?"
+       ]
+      },
+      {
+       "prompt": "Which bus goes to the centre?",
+       "answers": [
+        "Koji autobus ide u centar?"
+       ],
+       "canonical": [
+        "Koji autobus ide u centar?",
+        "Koji autobus ide u centar?"
+       ]
+      },
+      {
+       "prompt": "This one or that one?",
+       "answers": [
+        "Ovaj ili onaj?"
+       ],
+       "canonical": [
+        "Ovaj ili onaj?",
+        "Ovaj ili onaj?"
+       ]
+      },
+      {
+       "prompt": "I want this one, not that one.",
+       "answers": [
+        "Hoću ovu, ne onu.",
+        "Želim ovu, ne onu."
+       ],
+       "canonical": [
+        "Hoću ovu, ne onu.",
+        "Hoću ovu, ne onu."
+       ]
+      },
+      {
+       "prompt": "What is that film like?",
+       "answers": [
+        "Kakav je taj film?"
+       ],
+       "canonical": [
+        "Kakav je taj film?",
+        "Kakav je taj film?"
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "This room is small.",
+       "answers": [
+        "Ova soba je mala."
+       ],
+       "canonical": [
+        "Ova soba je mala.",
+        "Ova soba je mala."
+       ]
+      },
+      {
+       "prompt": "Some people are here.",
+       "answers": [
+        "Neki ljudi su ovde.",
+        "Neki ljudi su ovdje."
+       ],
+       "canonical": [
+        "Neki ljudi su ovde.",
+        "Neki ljudi su ovdje."
+       ]
+      },
+      {
+       "prompt": "I drink water every day.",
+       "answers": [
+        "Svaki dan pijem vodu.",
+        "Pijem vodu svaki dan."
+       ],
+       "canonical": [
+        "Svaki dan pijem vodu.",
+        "Svaki dan pijem vodu."
+       ]
+      },
+      {
+       "prompt": "Nobody knows.",
+       "answers": [
+        "Niko ne zna."
+       ],
+       "canonical": [
+        "Niko ne zna.",
+        "Niko ne zna."
+       ]
+      },
+      {
+       "prompt": "That house is big.",
+       "answers": [
+        "Ta kuća je velika."
+       ],
+       "canonical": [
+        "Ta kuća je velika.",
+        "Ta kuća je velika."
+       ]
+      }
+     ]
+    ],
+    "en": [
+     [
+      {
+       "prompt": "Ovaj hleb je svež.",
+       "ijekavianPrompt": "Ovaj hljeb je svjež.",
+       "answers": [
+        "This bread is fresh."
+       ],
+       "canonical": [
+        "This bread is fresh.",
+        "This bread is fresh."
+       ]
+      },
+      {
+       "prompt": "Ova kuća je velika.",
+       "ijekavianPrompt": "Ova kuća je velika.",
+       "answers": [
+        "This house is big.",
+        "This house is large."
+       ],
+       "canonical": [
+        "This house is big.",
+        "This house is big."
+       ]
+      },
+      {
+       "prompt": "Ovo dete spava.",
+       "ijekavianPrompt": "Ovo dijete spava.",
+       "answers": [
+        "This child is sleeping.",
+        "This child sleeps.",
+        "This kid is sleeping."
+       ],
+       "canonical": [
+        "This child is sleeping.",
+        "This child is sleeping."
+       ]
+      },
+      {
+       "prompt": "Taj čovek je moj otac.",
+       "ijekavianPrompt": "Taj čovjek je moj otac.",
+       "answers": [
+        "That man is my father.",
+        "That man is my dad."
+       ],
+       "canonical": [
+        "That man is my father.",
+        "That man is my father."
+       ]
+      },
+      {
+       "prompt": "Ta knjiga je zanimljiva.",
+       "ijekavianPrompt": "Ta knjiga je zanimljiva.",
+       "answers": [
+        "That book is interesting."
+       ],
+       "canonical": [
+        "That book is interesting.",
+        "That book is interesting."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Onaj grad je daleko.",
+       "ijekavianPrompt": "Onaj grad je daleko.",
+       "answers": [
+        "That city is far away.",
+        "That city is far.",
+        "That town is far away.",
+        "That town is far."
+       ],
+       "canonical": [
+        "That city is far away.",
+        "That city is far away."
+       ]
+      },
+      {
+       "prompt": "Ona planina je visoka.",
+       "ijekavianPrompt": "Ona planina je visoka.",
+       "answers": [
+        "That mountain is high.",
+        "That mountain is tall."
+       ],
+       "canonical": [
+        "That mountain is high.",
+        "That mountain is high."
+       ]
+      },
+      {
+       "prompt": "Ono selo je malo.",
+       "ijekavianPrompt": "Ono selo je malo.",
+       "answers": [
+        "That village is small."
+       ],
+       "canonical": [
+        "That village is small.",
+        "That village is small."
+       ]
+      },
+      {
+       "prompt": "Vidiš li onu kuću?",
+       "ijekavianPrompt": "Vidiš li onu kuću?",
+       "answers": [
+        "Do you see that house?",
+        "Can you see that house?"
+       ],
+       "canonical": [
+        "Do you see that house?",
+        "Do you see that house?"
+       ]
+      },
+      {
+       "prompt": "Ove jabuke su slatke.",
+       "ijekavianPrompt": "Ove jabuke su slatke.",
+       "answers": [
+        "These apples are sweet."
+       ],
+       "canonical": [
+        "These apples are sweet.",
+        "These apples are sweet."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Neki ljudi vole kafu.",
+       "ijekavianPrompt": "Neki ljudi vole kafu.",
+       "answers": [
+        "Some people like coffee.",
+        "Some people love coffee."
+       ],
+       "canonical": [
+        "Some people like coffee.",
+        "Some people like coffee."
+       ]
+      },
+      {
+       "prompt": "Imam neke knjige.",
+       "ijekavianPrompt": "Imam neke knjige.",
+       "answers": [
+        "I have some books.",
+        "I’ve got some books."
+       ],
+       "canonical": [
+        "I have some books.",
+        "I have some books."
+       ]
+      },
+      {
+       "prompt": "Neko kuca na vrata.",
+       "ijekavianPrompt": "Neko kuca na vrata.",
+       "answers": [
+        "Someone is knocking at the door.",
+        "Somebody is knocking at the door.",
+        "Someone is knocking on the door.",
+        "Somebody is knocking on the door."
+       ],
+       "canonical": [
+        "Someone is knocking at the door.",
+        "Someone is knocking at the door."
+       ]
+      },
+      {
+       "prompt": "Nešto je na stolu.",
+       "ijekavianPrompt": "Nešto je na stolu.",
+       "answers": [
+        "Something is on the table.",
+        "There is something on the table."
+       ],
+       "canonical": [
+        "Something is on the table.",
+        "Something is on the table."
+       ]
+      },
+      {
+       "prompt": "Neka deca se igraju.",
+       "ijekavianPrompt": "Neka djeca se igraju.",
+       "answers": [
+        "Some children are playing.",
+        "Some kids are playing."
+       ],
+       "canonical": [
+        "Some children are playing.",
+        "Some children are playing."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Svaki dan učim srpski.",
+       "ijekavianPrompt": "Svaki dan učim srpski.",
+       "answers": [
+        "I learn Serbian every day.",
+        "Every day I learn Serbian.",
+        "I study Serbian every day.",
+        "Every day I study Serbian."
+       ],
+       "canonical": [
+        "I learn Serbian every day.",
+        "I learn Serbian every day."
+       ]
+      },
+      {
+       "prompt": "Svaka soba ima prozor.",
+       "ijekavianPrompt": "Svaka soba ima prozor.",
+       "answers": [
+        "Every room has a window.",
+        "Each room has a window."
+       ],
+       "canonical": [
+        "Every room has a window.",
+        "Every room has a window."
+       ]
+      },
+      {
+       "prompt": "Svako dete ima loptu.",
+       "ijekavianPrompt": "Svako dijete ima loptu.",
+       "answers": [
+        "Every child has a ball.",
+        "Each child has a ball."
+       ],
+       "canonical": [
+        "Every child has a ball.",
+        "Every child has a ball."
+       ]
+      },
+      {
+       "prompt": "Svi su ovde.",
+       "ijekavianPrompt": "Svi su ovdje.",
+       "answers": [
+        "Everyone is here.",
+        "Everybody is here."
+       ],
+       "canonical": [
+        "Everyone is here.",
+        "Everyone is here."
+       ]
+      },
+      {
+       "prompt": "Sve je u redu.",
+       "ijekavianPrompt": "Sve je u redu.",
+       "answers": [
+        "Everything is fine.",
+        "Everything is OK.",
+        "Everything is okay.",
+        "Everything is all right.",
+        "Everything is alright."
+       ],
+       "canonical": [
+        "Everything is fine.",
+        "Everything is fine."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Nemam nijednu knjigu.",
+       "ijekavianPrompt": "Nemam nijednu knjigu.",
+       "answers": [
+        "I don’t have any books.",
+        "I do not have any books.",
+        "I have no books.",
+        "I don’t have a single book.",
+        "I do not have a single book."
+       ],
+       "canonical": [
+        "I don’t have any books.",
+        "I don’t have any books."
+       ]
+      },
+      {
+       "prompt": "Niko nije ovde.",
+       "ijekavianPrompt": "Niko nije ovdje.",
+       "answers": [
+        "Nobody is here.",
+        "No one is here."
+       ],
+       "canonical": [
+        "Nobody is here.",
+        "Nobody is here."
+       ]
+      },
+      {
+       "prompt": "Ništa ne vidim.",
+       "ijekavianPrompt": "Ništa ne vidim.",
+       "answers": [
+        "I don’t see anything.",
+        "I do not see anything.",
+        "I see nothing.",
+        "I can’t see anything."
+       ],
+       "canonical": [
+        "I don’t see anything.",
+        "I don’t see anything."
+       ]
+      },
+      {
+       "prompt": "Nijedan autobus ne ide tamo.",
+       "ijekavianPrompt": "Nijedan autobus ne ide tamo.",
+       "answers": [
+        "No bus goes there.",
+        "Not a single bus goes there."
+       ],
+       "canonical": [
+        "No bus goes there.",
+        "No bus goes there."
+       ]
+      },
+      {
+       "prompt": "Nikad ne pijem kafu.",
+       "ijekavianPrompt": "Nikad ne pijem kafu.",
+       "answers": [
+        "I never drink coffee."
+       ],
+       "canonical": [
+        "I never drink coffee.",
+        "I never drink coffee."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Ceo dan radim.",
+       "ijekavianPrompt": "Cio dan radim.",
+       "answers": [
+        "I work all day.",
+        "I work the whole day.",
+        "I am working all day.",
+        "I’m working all day."
+       ],
+       "canonical": [
+        "I work all day.",
+        "I work all day."
+       ]
+      },
+      {
+       "prompt": "Cela porodica je ovde.",
+       "ijekavianPrompt": "Cijela porodica je ovdje.",
+       "answers": [
+        "The whole family is here.",
+        "The entire family is here.",
+        "All the family is here."
+       ],
+       "canonical": [
+        "The whole family is here.",
+        "The whole family is here."
+       ]
+      },
+      {
+       "prompt": "Znam celu pesmu.",
+       "ijekavianPrompt": "Znam cijelu pjesmu.",
+       "answers": [
+        "I know the whole song.",
+        "I know the entire song."
+       ],
+       "canonical": [
+        "I know the whole song.",
+        "I know the whole song."
+       ]
+      },
+      {
+       "prompt": "Celo selo spava.",
+       "ijekavianPrompt": "Cijelo selo spava.",
+       "answers": [
+        "The whole village is sleeping.",
+        "The whole village sleeps.",
+        "The entire village is sleeping."
+       ],
+       "canonical": [
+        "The whole village is sleeping.",
+        "The whole village is sleeping."
+       ]
+      },
+      {
+       "prompt": "Ceo grad je lep.",
+       "ijekavianPrompt": "Cio grad je lijep.",
+       "answers": [
+        "The whole city is beautiful.",
+        "The whole town is beautiful.",
+        "The whole city is nice.",
+        "The whole city is pretty.",
+        "The entire city is beautiful."
+       ],
+       "canonical": [
+        "The whole city is beautiful.",
+        "The whole city is beautiful."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Koja knjiga je tvoja?",
+       "ijekavianPrompt": "Koja knjiga je tvoja?",
+       "answers": [
+        "Which book is yours?"
+       ],
+       "canonical": [
+        "Which book is yours?",
+        "Which book is yours?"
+       ]
+      },
+      {
+       "prompt": "Koji autobus ide u centar?",
+       "ijekavianPrompt": "Koji autobus ide u centar?",
+       "answers": [
+        "Which bus goes to the centre?",
+        "Which bus goes to the center?",
+        "Which bus goes to the city centre?",
+        "Which bus goes to the city center?",
+        "Which bus goes downtown?"
+       ],
+       "canonical": [
+        "Which bus goes to the centre?",
+        "Which bus goes to the centre?"
+       ]
+      },
+      {
+       "prompt": "Ovaj ili onaj?",
+       "ijekavianPrompt": "Ovaj ili onaj?",
+       "answers": [
+        "This one or that one?",
+        "This or that?"
+       ],
+       "canonical": [
+        "This one or that one?",
+        "This one or that one?"
+       ]
+      },
+      {
+       "prompt": "Hoću ovu, ne onu.",
+       "ijekavianPrompt": "Hoću ovu, ne onu.",
+       "answers": [
+        "I want this one, not that one.",
+        "I want this one and not that one."
+       ],
+       "canonical": [
+        "I want this one, not that one.",
+        "I want this one, not that one."
+       ]
+      },
+      {
+       "prompt": "Kakav je taj film?",
+       "ijekavianPrompt": "Kakav je taj film?",
+       "answers": [
+        "What is that film like?",
+        "What’s that film like?",
+        "What is that movie like?",
+        "What’s that movie like?",
+        "How is that film?",
+        "How is that movie?"
+       ],
+       "canonical": [
+        "What is that film like?",
+        "What is that film like?"
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Ova soba je mala.",
+       "ijekavianPrompt": "Ova soba je mala.",
+       "answers": [
+        "This room is small."
+       ],
+       "canonical": [
+        "This room is small.",
+        "This room is small."
+       ]
+      },
+      {
+       "prompt": "Neki ljudi su ovde.",
+       "ijekavianPrompt": "Neki ljudi su ovdje.",
+       "answers": [
+        "Some people are here.",
+        "There are some people here."
+       ],
+       "canonical": [
+        "Some people are here.",
+        "Some people are here."
+       ]
+      },
+      {
+       "prompt": "Svaki dan pijem vodu.",
+       "ijekavianPrompt": "Svaki dan pijem vodu.",
+       "answers": [
+        "I drink water every day.",
+        "Every day I drink water."
+       ],
+       "canonical": [
+        "I drink water every day.",
+        "I drink water every day."
+       ]
+      },
+      {
+       "prompt": "Niko ne zna.",
+       "ijekavianPrompt": "Niko ne zna.",
+       "answers": [
+        "Nobody knows.",
+        "No one knows."
+       ],
+       "canonical": [
+        "Nobody knows.",
+        "Nobody knows."
+       ]
+      },
+      {
+       "prompt": "Ta kuća je velika.",
+       "ijekavianPrompt": "Ta kuća je velika.",
+       "answers": [
+        "That house is big.",
+        "That house is large."
+       ],
+       "canonical": [
+        "That house is big.",
+        "That house is big."
+       ]
+      }
+     ]
+    ]
+   }
+  },
+  {
+   "title": {
+    "sr": "More verbs in the present",
+    "en": "Još glagola u sadašnjosti"
+   },
+   "names": {
+    "sr": [
+     "Verbs in -ati",
+     "Verbs in -iti",
+     "Verbs in -eti and -jeti",
+     "Verbs in -ovati",
+     "Irregular verbs",
+     "Questions",
+     "Saying no",
+     "Lesson test"
+    ],
+    "en": [
+     "Glagoli na -ati",
+     "Glagoli na -iti",
+     "Glagoli na -eti i -jeti",
+     "Glagoli na -ovati",
+     "Nepravilni glagoli",
+     "Pitanja",
+     "Odricanje",
+     "Test lekcije"
+    ]
+   },
+   "tasks": {
+    "sr": [
+     [
+      {
+       "prompt": "I am reading a book.",
+       "answers": [
+        "Čitam knjigu.",
+        "Ja čitam knjigu."
+       ],
+       "canonical": [
+        "Čitam knjigu.",
+        "Čitam knjigu."
+       ]
+      },
+      {
+       "prompt": "We are watching a film.",
+       "answers": [
+        "Gledamo film.",
+        "Mi gledamo film."
+       ],
+       "canonical": [
+        "Gledamo film.",
+        "Gledamo film."
+       ]
+      },
+      {
+       "prompt": "Do you listen to music?",
+       "answers": [
+        "Slušaš li muziku?",
+        "Da li slušaš muziku?"
+       ],
+       "canonical": [
+        "Slušaš li muziku?",
+        "Slušaš li muziku?"
+       ]
+      },
+      {
+       "prompt": "They play football.",
+       "answers": [
+        "Oni igraju fudbal.",
+        "Igraju fudbal."
+       ],
+       "canonical": [
+        "Oni igraju fudbal.",
+        "Oni igraju fudbal."
+       ]
+      },
+      {
+       "prompt": "She sings.",
+       "answers": [
+        "Ona peva.",
+        "Ona pjeva."
+       ],
+       "canonical": [
+        "Ona peva.",
+        "Ona pjeva."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "I speak Serbian.",
+       "answers": [
+        "Govorim srpski.",
+        "Ja govorim srpski."
+       ],
+       "canonical": [
+        "Govorim srpski.",
+        "Govorim srpski."
+       ]
+      },
+      {
+       "prompt": "Where do you work?",
+       "answers": [
+        "Gde radiš?",
+        "Gdje radiš?"
+       ],
+       "canonical": [
+        "Gde radiš?",
+        "Gdje radiš?"
+       ]
+      },
+      {
+       "prompt": "We study every day.",
+       "answers": [
+        "Učimo svaki dan.",
+        "Svaki dan učimo."
+       ],
+       "canonical": [
+        "Učimo svaki dan.",
+        "Učimo svaki dan."
+       ]
+      },
+      {
+       "prompt": "I think it is true.",
+       "answers": [
+        "Mislim da je tačno."
+       ],
+       "canonical": [
+        "Mislim da je tačno.",
+        "Mislim da je tačno."
+       ]
+      },
+      {
+       "prompt": "He drives a car.",
+       "answers": [
+        "On vozi auto."
+       ],
+       "canonical": [
+        "On vozi auto.",
+        "On vozi auto."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "I see the sea.",
+       "answers": [
+        "Vidim more.",
+        "Ja vidim more."
+       ],
+       "canonical": [
+        "Vidim more.",
+        "Vidim more."
+       ]
+      },
+      {
+       "prompt": "I understand you.",
+       "answers": [
+        "Razumem te.",
+        "Razumijem te."
+       ],
+       "canonical": [
+        "Razumem te.",
+        "Razumijem te."
+       ]
+      },
+      {
+       "prompt": "We live in Belgrade.",
+       "answers": [
+        "Živimo u Beogradu.",
+        "Mi živimo u Beogradu."
+       ],
+       "canonical": [
+        "Živimo u Beogradu.",
+        "Živimo u Beogradu."
+       ]
+      },
+      {
+       "prompt": "I love you.",
+       "answers": [
+        "Volim te.",
+        "Ja te volim."
+       ],
+       "canonical": [
+        "Volim te.",
+        "Volim te."
+       ]
+      },
+      {
+       "prompt": "They are sitting in a café.",
+       "answers": [
+        "Sede u kafiću.",
+        "Sjede u kafiću."
+       ],
+       "canonical": [
+        "Sede u kafiću.",
+        "Sjede u kafiću."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "I travel by train.",
+       "answers": [
+        "Putujem vozom."
+       ],
+       "canonical": [
+        "Putujem vozom.",
+        "Putujem vozom."
+       ]
+      },
+      {
+       "prompt": "We buy bread.",
+       "answers": [
+        "Kupujemo hleb.",
+        "Kupujemo hljeb."
+       ],
+       "canonical": [
+        "Kupujemo hleb.",
+        "Kupujemo hljeb."
+       ]
+      },
+      {
+       "prompt": "I believe you.",
+       "answers": [
+        "Verujem ti.",
+        "Vjerujem ti."
+       ],
+       "canonical": [
+        "Verujem ti.",
+        "Vjerujem ti."
+       ]
+      },
+      {
+       "prompt": "Where do you live?",
+       "answers": [
+        "Gde stanuješ?",
+        "Gdje stanuješ?"
+       ],
+       "canonical": [
+        "Gde stanuješ?",
+        "Gdje stanuješ?"
+       ]
+      },
+      {
+       "prompt": "They travel tomorrow.",
+       "answers": [
+        "Oni putuju sutra.",
+        "Putuju sutra."
+       ],
+       "canonical": [
+        "Oni putuju sutra.",
+        "Oni putuju sutra."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "I can come.",
+       "answers": [
+        "Mogu da dođem.",
+        "Mogu doći."
+       ],
+       "canonical": [
+        "Mogu da dođem.",
+        "Mogu da dođem."
+       ]
+      },
+      {
+       "prompt": "I am going home.",
+       "answers": [
+        "Idem kući.",
+        "Ja idem kući."
+       ],
+       "canonical": [
+        "Idem kući.",
+        "Idem kući."
+       ]
+      },
+      {
+       "prompt": "Do you want coffee?",
+       "answers": [
+        "Hoćeš li kafu?",
+        "Da li hoćeš kafu?",
+        "Želiš li kafu?"
+       ],
+       "canonical": [
+        "Hoćeš li kafu?",
+        "Hoćeš li kafu?"
+       ]
+      },
+      {
+       "prompt": "We are eating lunch.",
+       "answers": [
+        "Jedemo ručak."
+       ],
+       "canonical": [
+        "Jedemo ručak.",
+        "Jedemo ručak."
+       ]
+      },
+      {
+       "prompt": "She drinks tea.",
+       "answers": [
+        "Ona pije čaj."
+       ],
+       "canonical": [
+        "Ona pije čaj.",
+        "Ona pije čaj."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "What are you doing?",
+       "answers": [
+        "Šta radiš?"
+       ],
+       "canonical": [
+        "Šta radiš?",
+        "Šta radiš?"
+       ]
+      },
+      {
+       "prompt": "Where are you going?",
+       "answers": [
+        "Kuda ideš?",
+        "Gde ideš?",
+        "Gdje ideš?"
+       ],
+       "canonical": [
+        "Kuda ideš?",
+        "Kuda ideš?"
+       ]
+      },
+      {
+       "prompt": "Do you understand?",
+       "answers": [
+        "Da li razumeš?",
+        "Da li razumiješ?",
+        "Razumeš li?",
+        "Razumiješ li?"
+       ],
+       "canonical": [
+        "Da li razumeš?",
+        "Da li razumiješ?"
+       ]
+      },
+      {
+       "prompt": "When does the film start?",
+       "answers": [
+        "Kada počinje film?",
+        "Kad počinje film?"
+       ],
+       "canonical": [
+        "Kada počinje film?",
+        "Kada počinje film?"
+       ]
+      },
+      {
+       "prompt": "How much does this cost?",
+       "answers": [
+        "Koliko ovo košta?",
+        "Koliko košta ovo?"
+       ],
+       "canonical": [
+        "Koliko ovo košta?",
+        "Koliko ovo košta?"
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "I don’t know.",
+       "answers": [
+        "Ne znam.",
+        "Ja ne znam."
+       ],
+       "canonical": [
+        "Ne znam.",
+        "Ne znam."
+       ]
+      },
+      {
+       "prompt": "I don’t smoke.",
+       "answers": [
+        "Ne pušim."
+       ],
+       "canonical": [
+        "Ne pušim.",
+        "Ne pušim."
+       ]
+      },
+      {
+       "prompt": "I can’t sleep.",
+       "answers": [
+        "Ne mogu da spavam.",
+        "Ne mogu spavati."
+       ],
+       "canonical": [
+        "Ne mogu da spavam.",
+        "Ne mogu da spavam."
+       ]
+      },
+      {
+       "prompt": "He doesn’t work today.",
+       "answers": [
+        "On ne radi danas.",
+        "Danas ne radi."
+       ],
+       "canonical": [
+        "On ne radi danas.",
+        "On ne radi danas."
+       ]
+      },
+      {
+       "prompt": "I don’t like milk.",
+       "answers": [
+        "Ne volim mleko.",
+        "Ne volim mlijeko."
+       ],
+       "canonical": [
+        "Ne volim mleko.",
+        "Ne volim mlijeko."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "We read the newspaper.",
+       "answers": [
+        "Čitamo novine."
+       ],
+       "canonical": [
+        "Čitamo novine.",
+        "Čitamo novine."
+       ]
+      },
+      {
+       "prompt": "Where do you live?",
+       "answers": [
+        "Gde živiš?",
+        "Gdje živiš?"
+       ],
+       "canonical": [
+        "Gde živiš?",
+        "Gdje živiš?"
+       ]
+      },
+      {
+       "prompt": "We travel by bus.",
+       "answers": [
+        "Putujemo autobusom."
+       ],
+       "canonical": [
+        "Putujemo autobusom.",
+        "Putujemo autobusom."
+       ]
+      },
+      {
+       "prompt": "I don’t understand.",
+       "answers": [
+        "Ne razumem.",
+        "Ne razumijem."
+       ],
+       "canonical": [
+        "Ne razumem.",
+        "Ne razumijem."
+       ]
+      },
+      {
+       "prompt": "She goes to school.",
+       "answers": [
+        "Ona ide u školu."
+       ],
+       "canonical": [
+        "Ona ide u školu.",
+        "Ona ide u školu."
+       ]
+      }
+     ]
+    ],
+    "en": [
+     [
+      {
+       "prompt": "Čitam knjigu.",
+       "ijekavianPrompt": "Čitam knjigu.",
+       "answers": [
+        "I am reading a book.",
+        "I’m reading a book.",
+        "I read a book."
+       ],
+       "canonical": [
+        "I am reading a book.",
+        "I am reading a book."
+       ]
+      },
+      {
+       "prompt": "Gledamo film.",
+       "ijekavianPrompt": "Gledamo film.",
+       "answers": [
+        "We are watching a film.",
+        "We’re watching a film.",
+        "We are watching a movie.",
+        "We’re watching a movie.",
+        "We watch a film.",
+        "We watch a movie."
+       ],
+       "canonical": [
+        "We are watching a film.",
+        "We are watching a film."
+       ]
+      },
+      {
+       "prompt": "Slušaš li muziku?",
+       "ijekavianPrompt": "Slušaš li muziku?",
+       "answers": [
+        "Do you listen to music?",
+        "Are you listening to music?"
+       ],
+       "canonical": [
+        "Do you listen to music?",
+        "Do you listen to music?"
+       ]
+      },
+      {
+       "prompt": "Oni igraju fudbal.",
+       "ijekavianPrompt": "Oni igraju fudbal.",
+       "answers": [
+        "They play football.",
+        "They are playing football.",
+        "They’re playing football.",
+        "They play soccer.",
+        "They are playing soccer."
+       ],
+       "canonical": [
+        "They play football.",
+        "They play football."
+       ]
+      },
+      {
+       "prompt": "Ona peva.",
+       "ijekavianPrompt": "Ona pjeva.",
+       "answers": [
+        "She sings.",
+        "She is singing.",
+        "She’s singing."
+       ],
+       "canonical": [
+        "She sings.",
+        "She sings."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Govorim srpski.",
+       "ijekavianPrompt": "Govorim srpski.",
+       "answers": [
+        "I speak Serbian."
+       ],
+       "canonical": [
+        "I speak Serbian.",
+        "I speak Serbian."
+       ]
+      },
+      {
+       "prompt": "Gde radiš?",
+       "ijekavianPrompt": "Gdje radiš?",
+       "answers": [
+        "Where do you work?"
+       ],
+       "canonical": [
+        "Where do you work?",
+        "Where do you work?"
+       ]
+      },
+      {
+       "prompt": "Učimo svaki dan.",
+       "ijekavianPrompt": "Učimo svaki dan.",
+       "answers": [
+        "We study every day.",
+        "We learn every day.",
+        "Every day we study.",
+        "Every day we learn."
+       ],
+       "canonical": [
+        "We study every day.",
+        "We study every day."
+       ]
+      },
+      {
+       "prompt": "Mislim da je tačno.",
+       "ijekavianPrompt": "Mislim da je tačno.",
+       "answers": [
+        "I think it is true.",
+        "I think it’s true.",
+        "I think that it is true.",
+        "I think it is right.",
+        "I think it’s right.",
+        "I think it is correct.",
+        "I think it’s correct."
+       ],
+       "canonical": [
+        "I think it is true.",
+        "I think it is true."
+       ]
+      },
+      {
+       "prompt": "On vozi auto.",
+       "ijekavianPrompt": "On vozi auto.",
+       "answers": [
+        "He drives a car.",
+        "He is driving a car.",
+        "He’s driving a car.",
+        "He drives the car.",
+        "He is driving the car."
+       ],
+       "canonical": [
+        "He drives a car.",
+        "He drives a car."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Vidim more.",
+       "ijekavianPrompt": "Vidim more.",
+       "answers": [
+        "I see the sea.",
+        "I can see the sea."
+       ],
+       "canonical": [
+        "I see the sea.",
+        "I see the sea."
+       ]
+      },
+      {
+       "prompt": "Razumem te.",
+       "ijekavianPrompt": "Razumijem te.",
+       "answers": [
+        "I understand you."
+       ],
+       "canonical": [
+        "I understand you.",
+        "I understand you."
+       ]
+      },
+      {
+       "prompt": "Živimo u Beogradu.",
+       "ijekavianPrompt": "Živimo u Beogradu.",
+       "answers": [
+        "We live in Belgrade."
+       ],
+       "canonical": [
+        "We live in Belgrade.",
+        "We live in Belgrade."
+       ]
+      },
+      {
+       "prompt": "Volim te.",
+       "ijekavianPrompt": "Volim te.",
+       "answers": [
+        "I love you."
+       ],
+       "canonical": [
+        "I love you.",
+        "I love you."
+       ]
+      },
+      {
+       "prompt": "Sede u kafiću.",
+       "ijekavianPrompt": "Sjede u kafiću.",
+       "answers": [
+        "They are sitting in a café.",
+        "They’re sitting in a café.",
+        "They are sitting in a cafe.",
+        "They’re sitting in a cafe.",
+        "They sit in a café.",
+        "They sit in a cafe."
+       ],
+       "canonical": [
+        "They are sitting in a café.",
+        "They are sitting in a café."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Putujem vozom.",
+       "ijekavianPrompt": "Putujem vozom.",
+       "answers": [
+        "I travel by train.",
+        "I am travelling by train.",
+        "I’m travelling by train.",
+        "I am traveling by train.",
+        "I’m traveling by train."
+       ],
+       "canonical": [
+        "I travel by train.",
+        "I travel by train."
+       ]
+      },
+      {
+       "prompt": "Kupujemo hleb.",
+       "ijekavianPrompt": "Kupujemo hljeb.",
+       "answers": [
+        "We buy bread.",
+        "We are buying bread.",
+        "We’re buying bread."
+       ],
+       "canonical": [
+        "We buy bread.",
+        "We buy bread."
+       ]
+      },
+      {
+       "prompt": "Verujem ti.",
+       "ijekavianPrompt": "Vjerujem ti.",
+       "answers": [
+        "I believe you.",
+        "I trust you."
+       ],
+       "canonical": [
+        "I believe you.",
+        "I believe you."
+       ]
+      },
+      {
+       "prompt": "Gde stanuješ?",
+       "ijekavianPrompt": "Gdje stanuješ?",
+       "answers": [
+        "Where do you live?"
+       ],
+       "canonical": [
+        "Where do you live?",
+        "Where do you live?"
+       ]
+      },
+      {
+       "prompt": "Oni putuju sutra.",
+       "ijekavianPrompt": "Oni putuju sutra.",
+       "answers": [
+        "They travel tomorrow.",
+        "They are travelling tomorrow.",
+        "They’re travelling tomorrow.",
+        "They are traveling tomorrow.",
+        "They’re traveling tomorrow."
+       ],
+       "canonical": [
+        "They travel tomorrow.",
+        "They travel tomorrow."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Mogu da dođem.",
+       "ijekavianPrompt": "Mogu da dođem.",
+       "answers": [
+        "I can come."
+       ],
+       "canonical": [
+        "I can come.",
+        "I can come."
+       ]
+      },
+      {
+       "prompt": "Idem kući.",
+       "ijekavianPrompt": "Idem kući.",
+       "answers": [
+        "I am going home.",
+        "I’m going home.",
+        "I go home."
+       ],
+       "canonical": [
+        "I am going home.",
+        "I am going home."
+       ]
+      },
+      {
+       "prompt": "Hoćeš li kafu?",
+       "ijekavianPrompt": "Hoćeš li kafu?",
+       "answers": [
+        "Do you want coffee?",
+        "Do you want a coffee?",
+        "Would you like coffee?",
+        "Would you like a coffee?",
+        "Do you want some coffee?"
+       ],
+       "canonical": [
+        "Do you want coffee?",
+        "Do you want coffee?"
+       ]
+      },
+      {
+       "prompt": "Jedemo ručak.",
+       "ijekavianPrompt": "Jedemo ručak.",
+       "answers": [
+        "We are eating lunch.",
+        "We’re eating lunch.",
+        "We eat lunch.",
+        "We are having lunch.",
+        "We’re having lunch."
+       ],
+       "canonical": [
+        "We are eating lunch.",
+        "We are eating lunch."
+       ]
+      },
+      {
+       "prompt": "Ona pije čaj.",
+       "ijekavianPrompt": "Ona pije čaj.",
+       "answers": [
+        "She drinks tea.",
+        "She is drinking tea.",
+        "She’s drinking tea."
+       ],
+       "canonical": [
+        "She drinks tea.",
+        "She drinks tea."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Šta radiš?",
+       "ijekavianPrompt": "Šta radiš?",
+       "answers": [
+        "What are you doing?",
+        "What do you do?"
+       ],
+       "canonical": [
+        "What are you doing?",
+        "What are you doing?"
+       ]
+      },
+      {
+       "prompt": "Kuda ideš?",
+       "ijekavianPrompt": "Kuda ideš?",
+       "answers": [
+        "Where are you going?"
+       ],
+       "canonical": [
+        "Where are you going?",
+        "Where are you going?"
+       ]
+      },
+      {
+       "prompt": "Da li razumeš?",
+       "ijekavianPrompt": "Da li razumiješ?",
+       "answers": [
+        "Do you understand?"
+       ],
+       "canonical": [
+        "Do you understand?",
+        "Do you understand?"
+       ]
+      },
+      {
+       "prompt": "Kada počinje film?",
+       "ijekavianPrompt": "Kada počinje film?",
+       "answers": [
+        "When does the film start?",
+        "When does the movie start?",
+        "When does the film begin?",
+        "When does the movie begin?"
+       ],
+       "canonical": [
+        "When does the film start?",
+        "When does the film start?"
+       ]
+      },
+      {
+       "prompt": "Koliko ovo košta?",
+       "ijekavianPrompt": "Koliko ovo košta?",
+       "answers": [
+        "How much does this cost?",
+        "How much is this?"
+       ],
+       "canonical": [
+        "How much does this cost?",
+        "How much does this cost?"
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Ne znam.",
+       "ijekavianPrompt": "Ne znam.",
+       "answers": [
+        "I don’t know.",
+        "I do not know."
+       ],
+       "canonical": [
+        "I don’t know.",
+        "I don’t know."
+       ]
+      },
+      {
+       "prompt": "Ne pušim.",
+       "ijekavianPrompt": "Ne pušim.",
+       "answers": [
+        "I don’t smoke.",
+        "I do not smoke."
+       ],
+       "canonical": [
+        "I don’t smoke.",
+        "I don’t smoke."
+       ]
+      },
+      {
+       "prompt": "Ne mogu da spavam.",
+       "ijekavianPrompt": "Ne mogu da spavam.",
+       "answers": [
+        "I can’t sleep.",
+        "I cannot sleep.",
+        "I can not sleep."
+       ],
+       "canonical": [
+        "I can’t sleep.",
+        "I can’t sleep."
+       ]
+      },
+      {
+       "prompt": "On ne radi danas.",
+       "ijekavianPrompt": "On ne radi danas.",
+       "answers": [
+        "He doesn’t work today.",
+        "He does not work today.",
+        "He is not working today.",
+        "He isn’t working today.",
+        "He’s not working today."
+       ],
+       "canonical": [
+        "He doesn’t work today.",
+        "He doesn’t work today."
+       ]
+      },
+      {
+       "prompt": "Ne volim mleko.",
+       "ijekavianPrompt": "Ne volim mlijeko.",
+       "answers": [
+        "I don’t like milk.",
+        "I do not like milk."
+       ],
+       "canonical": [
+        "I don’t like milk.",
+        "I don’t like milk."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Čitamo novine.",
+       "ijekavianPrompt": "Čitamo novine.",
+       "answers": [
+        "We read the newspaper.",
+        "We are reading the newspaper.",
+        "We’re reading the newspaper.",
+        "We read newspapers.",
+        "We are reading newspapers."
+       ],
+       "canonical": [
+        "We read the newspaper.",
+        "We read the newspaper."
+       ]
+      },
+      {
+       "prompt": "Gde živiš?",
+       "ijekavianPrompt": "Gdje živiš?",
+       "answers": [
+        "Where do you live?"
+       ],
+       "canonical": [
+        "Where do you live?",
+        "Where do you live?"
+       ]
+      },
+      {
+       "prompt": "Putujemo autobusom.",
+       "ijekavianPrompt": "Putujemo autobusom.",
+       "answers": [
+        "We travel by bus.",
+        "We are travelling by bus.",
+        "We’re travelling by bus.",
+        "We are traveling by bus.",
+        "We’re traveling by bus."
+       ],
+       "canonical": [
+        "We travel by bus.",
+        "We travel by bus."
+       ]
+      },
+      {
+       "prompt": "Ne razumem.",
+       "ijekavianPrompt": "Ne razumijem.",
+       "answers": [
+        "I don’t understand.",
+        "I do not understand."
+       ],
+       "canonical": [
+        "I don’t understand.",
+        "I don’t understand."
+       ]
+      },
+      {
+       "prompt": "Ona ide u školu.",
+       "ijekavianPrompt": "Ona ide u školu.",
+       "answers": [
+        "She goes to school.",
+        "She is going to school.",
+        "She’s going to school."
+       ],
+       "canonical": [
+        "She goes to school.",
+        "She goes to school."
+       ]
+      }
+     ]
+    ]
+   }
+  },
+  {
+   "title": {
+    "sr": "Talking about the past",
+    "en": "Prošlo vreme~Prošlo vrijeme"
+   },
+   "names": {
+    "sr": [
+     "Was and were",
+     "Worked and watched",
+     "Saw and understood",
+     "Went and came",
+     "Ate and drank",
+     "Didn't",
+     "Did you…?",
+     "Lesson test"
+    ],
+    "en": [
+     "Bio sam",
+     "Radio sam",
+     "Video sam~Vidio sam",
+     "Išao sam",
+     "Jeo sam",
+     "Nisam",
+     "Da li si…?",
+     "Test lekcije"
+    ]
+   },
+   "tasks": {
+    "sr": [
+     [
+      {
+       "prompt": "I was at home.",
+       "answers": [
+        "Bio sam kod kuće.",
+        "Bila sam kod kuće.",
+        "Ja sam bio kod kuće.",
+        "Ja sam bila kod kuće."
+       ],
+       "canonical": [
+        "Bio sam kod kuće.",
+        "Bio sam kod kuće."
+       ]
+      },
+      {
+       "prompt": "We were in Belgrade.",
+       "answers": [
+        "Bili smo u Beogradu.",
+        "Bile smo u Beogradu.",
+        "Mi smo bili u Beogradu."
+       ],
+       "canonical": [
+        "Bili smo u Beogradu.",
+        "Bili smo u Beogradu."
+       ]
+      },
+      {
+       "prompt": "Where were you yesterday?",
+       "answers": [
+        "Gde si bio juče?",
+        "Gdje si bio juče?",
+        "Gde si bila juče?",
+        "Gdje si bila juče?"
+       ],
+       "canonical": [
+        "Gde si bio juče?",
+        "Gdje si bio juče?"
+       ]
+      },
+      {
+       "prompt": "She was tired.",
+       "answers": [
+        "Ona je bila umorna.",
+        "Bila je umorna."
+       ],
+       "canonical": [
+        "Ona je bila umorna.",
+        "Ona je bila umorna."
+       ]
+      },
+      {
+       "prompt": "The film was good.",
+       "answers": [
+        "Film je bio dobar."
+       ],
+       "canonical": [
+        "Film je bio dobar.",
+        "Film je bio dobar."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "I worked all day.",
+       "answers": [
+        "Radio sam ceo dan.",
+        "Radio sam cio dan.",
+        "Radila sam ceo dan.",
+        "Radila sam cio dan.",
+        "Radio sam cijeli dan.",
+        "Radila sam cijeli dan."
+       ],
+       "canonical": [
+        "Radio sam ceo dan.",
+        "Radio sam cio dan."
+       ]
+      },
+      {
+       "prompt": "She read a book.",
+       "answers": [
+        "Čitala je knjigu.",
+        "Ona je čitala knjigu."
+       ],
+       "canonical": [
+        "Čitala je knjigu.",
+        "Čitala je knjigu."
+       ]
+      },
+      {
+       "prompt": "We watched a film.",
+       "answers": [
+        "Gledali smo film."
+       ],
+       "canonical": [
+        "Gledali smo film.",
+        "Gledali smo film."
+       ]
+      },
+      {
+       "prompt": "What did you do?",
+       "answers": [
+        "Šta si radio?",
+        "Šta si radila?"
+       ],
+       "canonical": [
+        "Šta si radio?",
+        "Šta si radio?"
+       ]
+      },
+      {
+       "prompt": "They played football.",
+       "answers": [
+        "Igrali su fudbal.",
+        "Oni su igrali fudbal."
+       ],
+       "canonical": [
+        "Igrali su fudbal.",
+        "Igrali su fudbal."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "I saw the sea.",
+       "answers": [
+        "Video sam more.",
+        "Vidio sam more.",
+        "Videla sam more.",
+        "Vidjela sam more."
+       ],
+       "canonical": [
+        "Video sam more.",
+        "Vidio sam more."
+       ]
+      },
+      {
+       "prompt": "I didn’t understand.",
+       "answers": [
+        "Nisam razumeo.",
+        "Nisam razumio.",
+        "Nisam razumela.",
+        "Nisam razumjela."
+       ],
+       "canonical": [
+        "Nisam razumeo.",
+        "Nisam razumio."
+       ]
+      },
+      {
+       "prompt": "We lived in Novi Sad.",
+       "answers": [
+        "Živeli smo u Novom Sadu.",
+        "Živjeli smo u Novom Sadu."
+       ],
+       "canonical": [
+        "Živeli smo u Novom Sadu.",
+        "Živjeli smo u Novom Sadu."
+       ]
+      },
+      {
+       "prompt": "He always loved music.",
+       "answers": [
+        "Uvek je voleo muziku.",
+        "Uvijek je volio muziku."
+       ],
+       "canonical": [
+        "Uvek je voleo muziku.",
+        "Uvijek je volio muziku."
+       ]
+      },
+      {
+       "prompt": "Did you see Ana? (to a woman)",
+       "answers": [
+        "Jesi li videla Anu?",
+        "Jesi li vidjela Anu?",
+        "Da li si videla Anu?",
+        "Da li si vidjela Anu?"
+       ],
+       "canonical": [
+        "Jesi li videla Anu?",
+        "Jesi li vidjela Anu?"
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "I went to the shop.",
+       "answers": [
+        "Išao sam u prodavnicu.",
+        "Išla sam u prodavnicu."
+       ],
+       "canonical": [
+        "Išao sam u prodavnicu.",
+        "Išao sam u prodavnicu."
+       ]
+      },
+      {
+       "prompt": "She came late.",
+       "answers": [
+        "Došla je kasno.",
+        "Ona je došla kasno."
+       ],
+       "canonical": [
+        "Došla je kasno.",
+        "Došla je kasno."
+       ]
+      },
+      {
+       "prompt": "When did you come?",
+       "answers": [
+        "Kada si došao?",
+        "Kad si došao?",
+        "Kada si došla?",
+        "Kad si došla?"
+       ],
+       "canonical": [
+        "Kada si došao?",
+        "Kada si došao?"
+       ]
+      },
+      {
+       "prompt": "They went home.",
+       "answers": [
+        "Otišli su kući.",
+        "Oni su otišli kući."
+       ],
+       "canonical": [
+        "Otišli su kući.",
+        "Otišli su kući."
+       ]
+      },
+      {
+       "prompt": "Yesterday we went to the cinema.",
+       "answers": [
+        "Juče smo išli u bioskop.",
+        "Išli smo u bioskop juče.",
+        "Juče smo išle u bioskop."
+       ],
+       "canonical": [
+        "Juče smo išli u bioskop.",
+        "Juče smo išli u bioskop."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "I ate soup.",
+       "answers": [
+        "Jeo sam supu.",
+        "Jela sam supu."
+       ],
+       "canonical": [
+        "Jeo sam supu.",
+        "Jeo sam supu."
+       ]
+      },
+      {
+       "prompt": "We drank coffee.",
+       "answers": [
+        "Pili smo kafu."
+       ],
+       "canonical": [
+        "Pili smo kafu.",
+        "Pili smo kafu."
+       ]
+      },
+      {
+       "prompt": "Have you eaten? (to a woman)",
+       "answers": [
+        "Da li si jela?",
+        "Jesi li jela?"
+       ],
+       "canonical": [
+        "Da li si jela?",
+        "Da li si jela?"
+       ]
+      },
+      {
+       "prompt": "The children drank milk.",
+       "answers": [
+        "Deca su pila mleko.",
+        "Djeca su pila mlijeko."
+       ],
+       "canonical": [
+        "Deca su pila mleko.",
+        "Djeca su pila mlijeko."
+       ]
+      },
+      {
+       "prompt": "What did you eat for lunch?",
+       "answers": [
+        "Šta ste jeli za ručak?"
+       ],
+       "canonical": [
+        "Šta ste jeli za ručak?",
+        "Šta ste jeli za ručak?"
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "I wasn’t there.",
+       "answers": [
+        "Nisam bio tamo.",
+        "Nisam bila tamo."
+       ],
+       "canonical": [
+        "Nisam bio tamo.",
+        "Nisam bio tamo."
+       ]
+      },
+      {
+       "prompt": "He didn’t come.",
+       "answers": [
+        "Nije došao.",
+        "On nije došao."
+       ],
+       "canonical": [
+        "Nije došao.",
+        "Nije došao."
+       ]
+      },
+      {
+       "prompt": "We didn’t see the film.",
+       "answers": [
+        "Nismo videli film.",
+        "Nismo vidjeli film."
+       ],
+       "canonical": [
+        "Nismo videli film.",
+        "Nismo vidjeli film."
+       ]
+      },
+      {
+       "prompt": "They didn’t know.",
+       "answers": [
+        "Nisu znali.",
+        "Oni nisu znali."
+       ],
+       "canonical": [
+        "Nisu znali.",
+        "Nisu znali."
+       ]
+      },
+      {
+       "prompt": "You didn’t call.",
+       "answers": [
+        "Nisi zvao.",
+        "Nisi zvala."
+       ],
+       "canonical": [
+        "Nisi zvao.",
+        "Nisi zvao."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Have you been to Serbia?",
+       "answers": [
+        "Jesi li bio u Srbiji?",
+        "Da li si bio u Srbiji?",
+        "Jesi li bila u Srbiji?",
+        "Da li si bila u Srbiji?"
+       ],
+       "canonical": [
+        "Jesi li bio u Srbiji?",
+        "Jesi li bio u Srbiji?"
+       ]
+      },
+      {
+       "prompt": "What did you buy?",
+       "answers": [
+        "Šta ste kupili?"
+       ],
+       "canonical": [
+        "Šta ste kupili?",
+        "Šta ste kupili?"
+       ]
+      },
+      {
+       "prompt": "Who called?",
+       "answers": [
+        "Ko je zvao?"
+       ],
+       "canonical": [
+        "Ko je zvao?",
+        "Ko je zvao?"
+       ]
+      },
+      {
+       "prompt": "Where were you?",
+       "answers": [
+        "Gde ste bili?",
+        "Gdje ste bili?"
+       ],
+       "canonical": [
+        "Gde ste bili?",
+        "Gdje ste bili?"
+       ]
+      },
+      {
+       "prompt": "How did you sleep?",
+       "answers": [
+        "Kako si spavao?",
+        "Kako si spavala?"
+       ],
+       "canonical": [
+        "Kako si spavao?",
+        "Kako si spavao?"
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "I worked yesterday.",
+       "answers": [
+        "Juče sam radio.",
+        "Radio sam juče.",
+        "Juče sam radila.",
+        "Radila sam juče."
+       ],
+       "canonical": [
+        "Juče sam radio.",
+        "Juče sam radio."
+       ]
+      },
+      {
+       "prompt": "She was at school.",
+       "answers": [
+        "Bila je u školi.",
+        "Ona je bila u školi."
+       ],
+       "canonical": [
+        "Bila je u školi.",
+        "Bila je u školi."
+       ]
+      },
+      {
+       "prompt": "We saw Ana.",
+       "answers": [
+        "Videli smo Anu.",
+        "Vidjeli smo Anu."
+       ],
+       "canonical": [
+        "Videli smo Anu.",
+        "Vidjeli smo Anu."
+       ]
+      },
+      {
+       "prompt": "I didn’t eat.",
+       "answers": [
+        "Nisam jeo.",
+        "Nisam jela."
+       ],
+       "canonical": [
+        "Nisam jeo.",
+        "Nisam jeo."
+       ]
+      },
+      {
+       "prompt": "When did you arrive?",
+       "answers": [
+        "Kada ste stigli?",
+        "Kad ste stigli?"
+       ],
+       "canonical": [
+        "Kada ste stigli?",
+        "Kada ste stigli?"
+       ]
+      }
+     ]
+    ],
+    "en": [
+     [
+      {
+       "prompt": "Bio sam kod kuće.",
+       "ijekavianPrompt": "Bio sam kod kuće.",
+       "answers": [
+        "I was at home."
+       ],
+       "canonical": [
+        "I was at home.",
+        "I was at home."
+       ]
+      },
+      {
+       "prompt": "Bili smo u Beogradu.",
+       "ijekavianPrompt": "Bili smo u Beogradu.",
+       "answers": [
+        "We were in Belgrade."
+       ],
+       "canonical": [
+        "We were in Belgrade.",
+        "We were in Belgrade."
+       ]
+      },
+      {
+       "prompt": "Gde si bio juče?",
+       "ijekavianPrompt": "Gdje si bio juče?",
+       "answers": [
+        "Where were you yesterday?"
+       ],
+       "canonical": [
+        "Where were you yesterday?",
+        "Where were you yesterday?"
+       ]
+      },
+      {
+       "prompt": "Ona je bila umorna.",
+       "ijekavianPrompt": "Ona je bila umorna.",
+       "answers": [
+        "She was tired."
+       ],
+       "canonical": [
+        "She was tired.",
+        "She was tired."
+       ]
+      },
+      {
+       "prompt": "Film je bio dobar.",
+       "ijekavianPrompt": "Film je bio dobar.",
+       "answers": [
+        "The film was good.",
+        "The movie was good."
+       ],
+       "canonical": [
+        "The film was good.",
+        "The film was good."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Radio sam ceo dan.",
+       "ijekavianPrompt": "Radio sam cio dan.",
+       "answers": [
+        "I worked all day.",
+        "I worked the whole day.",
+        "I was working all day.",
+        "I have worked all day."
+       ],
+       "canonical": [
+        "I worked all day.",
+        "I worked all day."
+       ]
+      },
+      {
+       "prompt": "Čitala je knjigu.",
+       "ijekavianPrompt": "Čitala je knjigu.",
+       "answers": [
+        "She read a book.",
+        "She was reading a book.",
+        "She read the book.",
+        "She was reading the book.",
+        "She has read a book."
+       ],
+       "canonical": [
+        "She read a book.",
+        "She read a book."
+       ]
+      },
+      {
+       "prompt": "Gledali smo film.",
+       "ijekavianPrompt": "Gledali smo film.",
+       "answers": [
+        "We watched a film.",
+        "We watched a movie.",
+        "We were watching a film.",
+        "We were watching a movie."
+       ],
+       "canonical": [
+        "We watched a film.",
+        "We watched a film."
+       ]
+      },
+      {
+       "prompt": "Šta si radio?",
+       "ijekavianPrompt": "Šta si radio?",
+       "answers": [
+        "What did you do?",
+        "What were you doing?",
+        "What have you done?",
+        "What have you been doing?"
+       ],
+       "canonical": [
+        "What did you do?",
+        "What did you do?"
+       ]
+      },
+      {
+       "prompt": "Igrali su fudbal.",
+       "ijekavianPrompt": "Igrali su fudbal.",
+       "answers": [
+        "They played football.",
+        "They played soccer.",
+        "They were playing football.",
+        "They were playing soccer."
+       ],
+       "canonical": [
+        "They played football.",
+        "They played football."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Video sam more.",
+       "ijekavianPrompt": "Vidio sam more.",
+       "answers": [
+        "I saw the sea.",
+        "I have seen the sea.",
+        "I’ve seen the sea."
+       ],
+       "canonical": [
+        "I saw the sea.",
+        "I saw the sea."
+       ]
+      },
+      {
+       "prompt": "Nisam razumeo.",
+       "ijekavianPrompt": "Nisam razumio.",
+       "answers": [
+        "I didn’t understand.",
+        "I did not understand."
+       ],
+       "canonical": [
+        "I didn’t understand.",
+        "I didn’t understand."
+       ]
+      },
+      {
+       "prompt": "Živeli smo u Novom Sadu.",
+       "ijekavianPrompt": "Živjeli smo u Novom Sadu.",
+       "answers": [
+        "We lived in Novi Sad.",
+        "We used to live in Novi Sad."
+       ],
+       "canonical": [
+        "We lived in Novi Sad.",
+        "We lived in Novi Sad."
+       ]
+      },
+      {
+       "prompt": "Uvek je voleo muziku.",
+       "ijekavianPrompt": "Uvijek je volio muziku.",
+       "answers": [
+        "He always loved music.",
+        "He has always loved music.",
+        "He always liked music.",
+        "He has always liked music."
+       ],
+       "canonical": [
+        "He always loved music.",
+        "He always loved music."
+       ]
+      },
+      {
+       "prompt": "Jesi li videla Anu?",
+       "ijekavianPrompt": "Jesi li vidjela Anu?",
+       "answers": [
+        "Did you see Ana?",
+        "Have you seen Ana?"
+       ],
+       "canonical": [
+        "Did you see Ana?",
+        "Did you see Ana?"
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Išao sam u prodavnicu.",
+       "ijekavianPrompt": "Išao sam u prodavnicu.",
+       "answers": [
+        "I went to the shop.",
+        "I went to the store."
+       ],
+       "canonical": [
+        "I went to the shop.",
+        "I went to the shop."
+       ]
+      },
+      {
+       "prompt": "Došla je kasno.",
+       "ijekavianPrompt": "Došla je kasno.",
+       "answers": [
+        "She came late.",
+        "She arrived late."
+       ],
+       "canonical": [
+        "She came late.",
+        "She came late."
+       ]
+      },
+      {
+       "prompt": "Kada si došao?",
+       "ijekavianPrompt": "Kada si došao?",
+       "answers": [
+        "When did you come?",
+        "When did you arrive?",
+        "When did you get here?"
+       ],
+       "canonical": [
+        "When did you come?",
+        "When did you come?"
+       ]
+      },
+      {
+       "prompt": "Otišli su kući.",
+       "ijekavianPrompt": "Otišli su kući.",
+       "answers": [
+        "They went home.",
+        "They have gone home.",
+        "They’ve gone home."
+       ],
+       "canonical": [
+        "They went home.",
+        "They went home."
+       ]
+      },
+      {
+       "prompt": "Juče smo išli u bioskop.",
+       "ijekavianPrompt": "Juče smo išli u bioskop.",
+       "answers": [
+        "Yesterday we went to the cinema.",
+        "We went to the cinema yesterday.",
+        "Yesterday we went to the movies.",
+        "We went to the movies yesterday."
+       ],
+       "canonical": [
+        "Yesterday we went to the cinema.",
+        "Yesterday we went to the cinema."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Jeo sam supu.",
+       "ijekavianPrompt": "Jeo sam supu.",
+       "answers": [
+        "I ate soup.",
+        "I had soup.",
+        "I ate the soup.",
+        "I was eating soup."
+       ],
+       "canonical": [
+        "I ate soup.",
+        "I ate soup."
+       ]
+      },
+      {
+       "prompt": "Pili smo kafu.",
+       "ijekavianPrompt": "Pili smo kafu.",
+       "answers": [
+        "We drank coffee.",
+        "We had coffee.",
+        "We were drinking coffee."
+       ],
+       "canonical": [
+        "We drank coffee.",
+        "We drank coffee."
+       ]
+      },
+      {
+       "prompt": "Da li si jela?",
+       "ijekavianPrompt": "Da li si jela?",
+       "answers": [
+        "Have you eaten?",
+        "Did you eat?"
+       ],
+       "canonical": [
+        "Have you eaten?",
+        "Have you eaten?"
+       ]
+      },
+      {
+       "prompt": "Deca su pila mleko.",
+       "ijekavianPrompt": "Djeca su pila mlijeko.",
+       "answers": [
+        "The children drank milk.",
+        "The kids drank milk.",
+        "The children were drinking milk."
+       ],
+       "canonical": [
+        "The children drank milk.",
+        "The children drank milk."
+       ]
+      },
+      {
+       "prompt": "Šta ste jeli za ručak?",
+       "ijekavianPrompt": "Šta ste jeli za ručak?",
+       "answers": [
+        "What did you eat for lunch?",
+        "What did you have for lunch?"
+       ],
+       "canonical": [
+        "What did you eat for lunch?",
+        "What did you eat for lunch?"
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Nisam bio tamo.",
+       "ijekavianPrompt": "Nisam bio tamo.",
+       "answers": [
+        "I wasn’t there.",
+        "I was not there.",
+        "I haven’t been there.",
+        "I have not been there."
+       ],
+       "canonical": [
+        "I wasn’t there.",
+        "I wasn’t there."
+       ]
+      },
+      {
+       "prompt": "Nije došao.",
+       "ijekavianPrompt": "Nije došao.",
+       "answers": [
+        "He didn’t come.",
+        "He did not come.",
+        "He hasn’t come.",
+        "He has not come."
+       ],
+       "canonical": [
+        "He didn’t come.",
+        "He didn’t come."
+       ]
+      },
+      {
+       "prompt": "Nismo videli film.",
+       "ijekavianPrompt": "Nismo vidjeli film.",
+       "answers": [
+        "We didn’t see the film.",
+        "We did not see the film.",
+        "We didn’t see the movie.",
+        "We did not see the movie.",
+        "We haven’t seen the film."
+       ],
+       "canonical": [
+        "We didn’t see the film.",
+        "We didn’t see the film."
+       ]
+      },
+      {
+       "prompt": "Nisu znali.",
+       "ijekavianPrompt": "Nisu znali.",
+       "answers": [
+        "They didn’t know.",
+        "They did not know."
+       ],
+       "canonical": [
+        "They didn’t know.",
+        "They didn’t know."
+       ]
+      },
+      {
+       "prompt": "Nisi zvao.",
+       "ijekavianPrompt": "Nisi zvao.",
+       "answers": [
+        "You didn’t call.",
+        "You did not call.",
+        "You haven’t called.",
+        "You have not called."
+       ],
+       "canonical": [
+        "You didn’t call.",
+        "You didn’t call."
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Jesi li bio u Srbiji?",
+       "ijekavianPrompt": "Jesi li bio u Srbiji?",
+       "answers": [
+        "Have you been to Serbia?",
+        "Were you in Serbia?",
+        "Have you ever been to Serbia?"
+       ],
+       "canonical": [
+        "Have you been to Serbia?",
+        "Have you been to Serbia?"
+       ]
+      },
+      {
+       "prompt": "Šta ste kupili?",
+       "ijekavianPrompt": "Šta ste kupili?",
+       "answers": [
+        "What did you buy?",
+        "What have you bought?"
+       ],
+       "canonical": [
+        "What did you buy?",
+        "What did you buy?"
+       ]
+      },
+      {
+       "prompt": "Ko je zvao?",
+       "ijekavianPrompt": "Ko je zvao?",
+       "answers": [
+        "Who called?",
+        "Who has called?",
+        "Who rang?"
+       ],
+       "canonical": [
+        "Who called?",
+        "Who called?"
+       ]
+      },
+      {
+       "prompt": "Gde ste bili?",
+       "ijekavianPrompt": "Gdje ste bili?",
+       "answers": [
+        "Where were you?",
+        "Where have you been?"
+       ],
+       "canonical": [
+        "Where were you?",
+        "Where were you?"
+       ]
+      },
+      {
+       "prompt": "Kako si spavao?",
+       "ijekavianPrompt": "Kako si spavao?",
+       "answers": [
+        "How did you sleep?"
+       ],
+       "canonical": [
+        "How did you sleep?",
+        "How did you sleep?"
+       ]
+      }
+     ],
+     [
+      {
+       "prompt": "Juče sam radio.",
+       "ijekavianPrompt": "Juče sam radio.",
+       "answers": [
+        "I worked yesterday.",
+        "Yesterday I worked.",
+        "I was working yesterday."
+       ],
+       "canonical": [
+        "I worked yesterday.",
+        "I worked yesterday."
+       ]
+      },
+      {
+       "prompt": "Bila je u školi.",
+       "ijekavianPrompt": "Bila je u školi.",
+       "answers": [
+        "She was at school.",
+        "She was in school."
+       ],
+       "canonical": [
+        "She was at school.",
+        "She was at school."
+       ]
+      },
+      {
+       "prompt": "Videli smo Anu.",
+       "ijekavianPrompt": "Vidjeli smo Anu.",
+       "answers": [
+        "We saw Ana.",
+        "We have seen Ana."
+       ],
+       "canonical": [
+        "We saw Ana.",
+        "We saw Ana."
+       ]
+      },
+      {
+       "prompt": "Nisam jeo.",
+       "ijekavianPrompt": "Nisam jeo.",
+       "answers": [
+        "I didn’t eat.",
+        "I did not eat.",
+        "I haven’t eaten.",
+        "I have not eaten."
+       ],
+       "canonical": [
+        "I didn’t eat.",
+        "I didn’t eat."
+       ]
+      },
+      {
+       "prompt": "Kada ste stigli?",
+       "ijekavianPrompt": "Kada ste stigli?",
+       "answers": [
+        "When did you arrive?",
+        "When did you get here?"
+       ],
+       "canonical": [
+        "When did you arrive?",
+        "When did you arrive?"
+       ]
+      }
+     ]
+    ]
+   }
+  }
+ ],
+ "grammar": [
+  [
+   {
+    "headings": [
+     "This, that and that one over there",
+     "This, that i that"
+    ],
+    "examples": [
+     [
+      "Ovaj hleb je svež.~Ovaj hljeb je svjež.",
+      "This bread is fresh."
+     ],
+     [
+      "Ta knjiga je zanimljiva.",
+      "That book is interesting."
+     ],
+     [
+      "Onaj grad je daleko.",
+      "That city is far away."
+     ]
+    ],
+    "notes": [
+     "Serbian has three words where English has two: {ovaj} (this, near me), {taj} (that, near you or just mentioned) and {onaj} (that over there). Each one changes with the noun: {ovaj} grad, {ova} kuća, {ovo} selo.",
+     "Engleski ima samo dve reči: “this” (ovaj) i “that” (taj i onaj). U množini su “these” i “those”. Ne menjaju se po rodu.~Engleski ima samo dvije riječi: “this” (ovaj) i “that” (taj i onaj). U množini su “these” i “those”. Ne mijenjaju se po rodu."
+    ]
+   },
+   {
+    "headings": [
+     "Some, every and none",
+     "Some, every i no"
+    ],
+    "examples": [
+     [
+      "Neki ljudi vole kafu.",
+      "Some people like coffee."
+     ],
+     [
+      "Svaki dan učim srpski.",
+      "I learn Serbian every day."
+     ],
+     [
+      "Niko nije ovde.~Niko nije ovdje.",
+      "Nobody is here."
+     ]
+    ],
+    "notes": [
+     "Serbian uses a double negative: {Ništa ne vidim} is literally \"nothing I don't see\". With {niko}, {ništa}, {nikad} and {nijedan}, always keep {ne} or {nije} with the verb.",
+     "U engleskom se koristi samo jedna negacija: “I don't see anything” ili “I see nothing”, a nikada “I don't see nothing”."
+    ]
+   },
+   {
+    "headings": [
+     "The whole",
+     "The whole"
+    ],
+    "examples": [
+     [
+      "Ceo dan radim.~Cio dan radim.",
+      "I work all day."
+     ],
+     [
+      "Cela porodica je ovde.~Cijela porodica je ovdje.",
+      "The whole family is here."
+     ]
+    ],
+    "notes": [
+     "{Ceo} (ekavian) and {cio} (ijekavian) mean \"whole\". The feminine is {cela} or {cijela}, the neuter {celo} or {cijelo}.",
+     "“The whole” ili “all” stoji ispred imenice: “the whole day”, “all day”."
+    ]
+   }
+  ],
+  [
+   {
+    "headings": [
+     "Present tense groups",
+     "Present simple"
+    ],
+    "examples": [
+     [
+      "čitati → čitam, čitaš, čita",
+      "to read → I read, you read, he reads"
+     ],
+     [
+      "govoriti → govorim, govoriš, govori",
+      "to speak → I speak, you speak, she speaks"
+     ],
+     [
+      "razumeti → razumem~razumjeti → razumijem",
+      "to understand → I understand"
+     ]
+    ],
+    "notes": [
+     "The ending of the infinitive tells you the pattern: {-ati} verbs take {-am, -aš, -a}; {-iti} and most {-eti} verbs take {-im, -iš, -i}; {-ovati} verbs change to {-ujem, -uješ, -uje}: {putovati → putujem}.",
+     "U engleskom se glagol skoro ne menja: “I read, you read”, samo u trećem licu jednine dobija -s: “she reads”.~U engleskom se glagol skoro ne mijenja: “I read, you read”, samo u trećem licu jednine dobija -s: “she reads”."
+    ]
+   },
+   {
+    "headings": [
+     "Irregular verbs",
+     "Present continuous"
+    ],
+    "examples": [
+     [
+      "ići → idem",
+      "to go → I go / I am going"
+     ],
+     [
+      "moći → mogu",
+      "can → I can"
+     ],
+     [
+      "hteti → hoću~htjeti → hoću",
+      "to want → I want"
+     ]
+    ],
+    "notes": [
+     "Learn these as single words: {idem} (I go), {mogu} (I can), {hoću} (I want), {jedem} (I eat), {pijem} (I drink).",
+     "Za radnju koja se dešava sada engleski koristi “am/is/are” + -ing: “I am reading”. Srpski ima samo jedan oblik: čitam."
+    ]
+   },
+   {
+    "headings": [
+     "Questions and no",
+     "Questions and negatives"
+    ],
+    "examples": [
+     [
+      "Da li razumeš?~Da li razumiješ?",
+      "Do you understand?"
+     ],
+     [
+      "Ne znam.",
+      "I don't know."
+     ]
+    ],
+    "notes": [
+     "Make a question with {da li} at the start, or put {li} after the verb: {Slušaš li muziku?} Say no by putting {ne} before the verb: {ne znam}.",
+     "Pitanja i odrične rečenice u engleskom grade se sa “do/does”: “Do you understand?”, “I don't know.”~Pitanja i odrične rečenice u engleskom grade se sa “do/does”: “Do you understand?”, “I don't know.”"
+    ]
+   }
+  ],
+  [
+   {
+    "headings": [
+     "How the past tense is built",
+     "Past simple"
+    ],
+    "examples": [
+     [
+      "Bio sam kod kuće.",
+      "I was at home."
+     ],
+     [
+      "Radila sam ceo dan.~Radila sam cio dan.",
+      "I worked all day."
+     ],
+     [
+      "Gledali smo film.",
+      "We watched a film."
+     ]
+    ],
+    "notes": [
+     "Serbian past = a short form of {biti} ({sam, si, je, smo, ste, su}) + the past form of the verb. The past form shows gender: a man says {radio sam}, a woman says {radila sam}; plural {radili smo}.",
+     "Engleski prošli oblik ne zavisi od roda: “I worked” kaže i muškarac i žena. Pravilni glagoli dobijaju -ed: work → worked, watch → watched.~Engleski prošli oblik ne zavisi od roda: “I worked” kaže i muškarac i žena. Pravilni glagoli dobijaju -ed: work → worked, watch → watched."
+    ]
+   },
+   {
+    "headings": [
+     "Ekavian and ijekavian past forms",
+     "Irregular past forms"
+    ],
+    "examples": [
+     [
+      "video sam~vidio sam",
+      "I saw"
+     ],
+     [
+      "razumeo sam~razumio sam",
+      "I understood"
+     ],
+     [
+      "išao sam",
+      "I went"
+     ]
+    ],
+    "notes": [
+     "Verbs in {-eti} end in {-eo} in ekavian ({video, voleo}) and {-io} in ijekavian ({vidio, volio}). Learn {išao} (went), {došao} (came), {jeo} (ate) and {pio} (drank) as words of their own.",
+     "Mnogi česti glagoli su nepravilni: go → went, come → came, eat → ate, drink → drank, see → saw, be → was/were."
+    ]
+   },
+   {
+    "headings": [
+     "Didn't and did you…?",
+     "Didn't and did you…?"
+    ],
+    "examples": [
+     [
+      "Nisam bio tamo.",
+      "I wasn't there."
+     ],
+     [
+      "Jesi li bio u Srbiji?",
+      "Have you been to Serbia?"
+     ]
+    ],
+    "notes": [
+     "For no, use {nisam, nisi, nije, nismo, niste, nisu} instead of {sam, si, je…}: {nisam razumeo}. For a question, start with {Jesi li} or {Da li si}.",
+     "U odričnim rečenicama i pitanjima engleski koristi “did”, a glagol ostaje u osnovnom obliku: “I didn't eat”, “Did you see Ana?”~U odričnim rečenicama i pitanjima engleski koristi “did”, a glagol ostaje u osnovnom obliku: “I didn't eat”, “Did you see Ana?”"
+    ]
+   }
+  ]
+ ]
+}

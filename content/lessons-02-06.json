@@ -1,0 +1,2113 @@
+{
+ "2": [
+  [
+   [
+    "Ona jede pomorandžu.",
+    null,
+    "She eats an orange.",
+    [
+     "She is eating an orange.",
+     "She's eating an orange.",
+     "She eats the orange."
+    ],
+    [
+     "Jede pomorandžu."
+    ]
+   ],
+   [
+    "Muškarac pije limunadu.",
+    null,
+    "The man drinks lemonade.",
+    [
+     "The man is drinking lemonade."
+    ],
+    [
+     "Čovek pije limunadu.",
+     "Čovjek pije limunadu."
+    ]
+   ],
+   [
+    "Jedem džem.",
+    null,
+    "I eat jam.",
+    [
+     "I am eating jam.",
+     "I'm eating jam.",
+     "I eat the jam."
+    ],
+    [
+     "Ja jedem džem."
+    ]
+   ],
+   [
+    "Pijemo sok.",
+    null,
+    "We drink juice.",
+    [
+     "We are drinking juice.",
+     "We're drinking juice."
+    ],
+    [
+     "Mi pijemo sok."
+    ]
+   ],
+   [
+    "Dečak jede hleb.",
+    "Dječak jede hljeb.",
+    "The boy eats bread.",
+    [
+     "The boy is eating bread."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Žena pije čaj.",
+    null,
+    "The woman drinks tea.",
+    [
+     "The woman is drinking tea."
+    ],
+    []
+   ],
+   [
+    "Devojčica jede jabuku.",
+    "Djevojčica jede jabuku.",
+    "The girl eats an apple.",
+    [
+     "The girl is eating an apple.",
+     "The little girl eats an apple."
+    ],
+    []
+   ],
+   [
+    "Pijem vodu sa ledom.",
+    null,
+    "I drink water with ice.",
+    [
+     "I am drinking water with ice.",
+     "I'm drinking water with ice."
+    ],
+    [
+     "Pijem vodu s ledom."
+    ]
+   ],
+   [
+    "Ti jedeš sendvič.",
+    null,
+    "You eat a sandwich.",
+    [
+     "You are eating a sandwich.",
+     "You're eating a sandwich."
+    ],
+    [
+     "Jedeš sendvič."
+    ]
+   ],
+   [
+    "Oni piju mleko.",
+    "Oni piju mlijeko.",
+    "They drink milk.",
+    [
+     "They are drinking milk.",
+     "They're drinking milk."
+    ],
+    [
+     "Piju mleko.",
+     "Piju mlijeko."
+    ]
+   ]
+  ],
+  [
+   [
+    "Muškarci jedu meso.",
+    null,
+    "The men eat meat.",
+    [
+     "The men are eating meat."
+    ],
+    []
+   ],
+   [
+    "Žene jedu salatu.",
+    null,
+    "The women eat salad.",
+    [
+     "The women eat a salad.",
+     "The women are eating salad.",
+     "The women are eating a salad."
+    ],
+    []
+   ],
+   [
+    "Deca jedu sladoled.",
+    "Djeca jedu sladoled.",
+    "The children eat ice cream.",
+    [
+     "The children are eating ice cream.",
+     "The kids eat ice cream.",
+     "The kids are eating ice cream."
+    ],
+    []
+   ],
+   [
+    "Kuvar jede supu.",
+    null,
+    "The cook eats soup.",
+    [
+     "The cook is eating soup.",
+     "The cook eats the soup.",
+     "The chef eats soup."
+    ],
+    []
+   ],
+   [
+    "Konobar jede ribu.",
+    null,
+    "The waiter eats fish.",
+    [
+     "The waiter is eating fish."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Ja pijem kafu.",
+    null,
+    "I drink coffee.",
+    [
+     "I am drinking coffee.",
+     "I'm drinking coffee."
+    ],
+    [
+     "Pijem kafu."
+    ]
+   ],
+   [
+    "Ti piješ sok.",
+    null,
+    "You drink juice.",
+    [
+     "You are drinking juice.",
+     "You're drinking juice."
+    ],
+    [
+     "Piješ sok."
+    ]
+   ],
+   [
+    "On pije pivo.",
+    null,
+    "He drinks beer.",
+    [
+     "He is drinking beer.",
+     "He's drinking beer."
+    ],
+    [
+     "Pije pivo."
+    ]
+   ],
+   [
+    "Mi jedemo pastu.",
+    null,
+    "We eat pasta.",
+    [
+     "We are eating pasta.",
+     "We're eating pasta."
+    ],
+    [
+     "Jedemo pastu."
+    ]
+   ],
+   [
+    "Vi jedete pirinač.",
+    null,
+    "You eat rice. (more than one person)",
+    [
+     "You are eating rice.",
+     "You're eating rice."
+    ],
+    [
+     "Jedete pirinač."
+    ]
+   ]
+  ],
+  [
+   [
+    "Ne jedem led.",
+    null,
+    "I don't eat ice.",
+    [
+     "I do not eat ice."
+    ],
+    [
+     "Ja ne jedem led."
+    ]
+   ],
+   [
+    "Oni ne jedu meso.",
+    null,
+    "They don't eat meat.",
+    [
+     "They do not eat meat."
+    ],
+    [
+     "Ne jedu meso."
+    ]
+   ],
+   [
+    "On nije vegetarijanac.",
+    null,
+    "He is not a vegetarian.",
+    [
+     "He isn't a vegetarian.",
+     "He's not a vegetarian.",
+     "He is not vegetarian.",
+     "He isn't vegetarian.",
+     "He's not vegetarian."
+    ],
+    [
+     "Nije vegetarijanac."
+    ]
+   ],
+   [
+    "Ne pijem ulje.",
+    null,
+    "I don't drink oil.",
+    [
+     "I do not drink oil."
+    ],
+    [
+     "Ja ne pijem ulje."
+    ]
+   ],
+   [
+    "Nemam ručak.",
+    null,
+    "I don't have lunch.",
+    [
+     "I do not have lunch.",
+     "I don't have the lunch.",
+     "I have no lunch."
+    ],
+    [
+     "Ja nemam ručak."
+    ]
+   ]
+  ],
+  [
+   [
+    "Za doručak jedem jaje.",
+    null,
+    "I eat an egg for breakfast.",
+    [
+     "For breakfast I eat an egg.",
+     "I have an egg for breakfast."
+    ],
+    [
+     "Jedem jaje za doručak."
+    ]
+   ],
+   [
+    "Ona pije kafu sa mlekom.",
+    "Ona pije kafu sa mlijekom.",
+    "She drinks coffee with milk.",
+    [
+     "She is drinking coffee with milk.",
+     "She's drinking coffee with milk."
+    ],
+    [
+     "Ona pije kafu s mlekom.",
+     "Ona pije kafu s mlijekom."
+    ]
+   ],
+   [
+    "Džem je sladak.",
+    null,
+    "The jam is sweet.",
+    [],
+    []
+   ],
+   [
+    "Hleb je svež.",
+    "Hljeb je svjež.",
+    "The bread is fresh.",
+    [],
+    []
+   ],
+   [
+    "Jedemo hleb i džem.",
+    "Jedemo hljeb i džem.",
+    "We eat bread and jam.",
+    [
+     "We are eating bread and jam.",
+     "We're eating bread and jam."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Pomorandža je slatka.",
+    null,
+    "The orange is sweet.",
+    [],
+    []
+   ],
+   [
+    "Limun je kiseo.",
+    null,
+    "The lemon is sour.",
+    [],
+    []
+   ],
+   [
+    "Čovek jede limun.",
+    "Čovjek jede limun.",
+    "The man eats a lemon.",
+    [
+     "The man is eating a lemon.",
+     "The man eats the lemon."
+    ],
+    [
+     "Muškarac jede limun."
+    ]
+   ],
+   [
+    "Ona jede jagodu.",
+    null,
+    "She eats a strawberry.",
+    [
+     "She is eating a strawberry.",
+     "She's eating a strawberry.",
+     "She eats the strawberry."
+    ],
+    [
+     "Jede jagodu."
+    ]
+   ],
+   [
+    "On jede krompir.",
+    null,
+    "He eats the potato.",
+    [
+     "He eats a potato.",
+     "He is eating a potato.",
+     "He is eating the potato."
+    ],
+    [
+     "Jede krompir."
+    ]
+   ]
+  ],
+  [
+   [
+    "Voće ima sladak ukus.",
+    null,
+    "The fruit has a sweet taste.",
+    [
+     "The fruit tastes sweet."
+    ],
+    []
+   ],
+   [
+    "Nije kiselo.",
+    null,
+    "It is not sour.",
+    [
+     "It isn't sour.",
+     "It's not sour."
+    ],
+    []
+   ],
+   [
+    "Ukus je sladak.",
+    null,
+    "The taste is sweet.",
+    [],
+    []
+   ],
+   [
+    "Šta jedeš?",
+    null,
+    "What are you eating?",
+    [
+     "What do you eat?"
+    ],
+    []
+   ],
+   [
+    "Jedem obrok.",
+    null,
+    "I eat a meal.",
+    [
+     "I am eating a meal.",
+     "I'm eating a meal.",
+     "I am having a meal.",
+     "I'm having a meal."
+    ],
+    []
+   ]
+  ]
+ ],
+ "3": [
+  [
+   [
+    "Imam nož.",
+    null,
+    "I have a knife.",
+    [
+     "I've got a knife."
+    ],
+    [
+     "Ja imam nož."
+    ]
+   ],
+   [
+    "Imam kašiku.",
+    null,
+    "I have a spoon.",
+    [
+     "I've got a spoon."
+    ],
+    [
+     "Ja imam kašiku."
+    ]
+   ],
+   [
+    "On ima viljušku.",
+    null,
+    "He has a fork.",
+    [
+     "He's got a fork."
+    ],
+    [
+     "Ima viljušku."
+    ]
+   ],
+   [
+    "Kuvar ima kobasicu.",
+    null,
+    "The cook has a sausage.",
+    [
+     "The chef has a sausage."
+    ],
+    []
+   ],
+   [
+    "Ona ima so.",
+    null,
+    "She has the salt.",
+    [
+     "She has salt.",
+     "She's got salt.",
+     "She's got the salt."
+    ],
+    [
+     "Ima so."
+    ]
+   ]
+  ],
+  [
+   [
+    "Konobar ima čašu.",
+    null,
+    "The waiter has a glass.",
+    [
+     "The waiter has the glass."
+    ],
+    []
+   ],
+   [
+    "Devojka ima tanjire.",
+    "Djevojka ima tanjire.",
+    "The girl has the plates.",
+    [
+     "The girl has plates."
+    ],
+    []
+   ],
+   [
+    "Žena ima flaše.",
+    null,
+    "The woman has the bottles.",
+    [
+     "The woman has bottles."
+    ],
+    [
+     "Žena ima boce."
+    ]
+   ],
+   [
+    "Imam činiju.",
+    null,
+    "I have a bowl.",
+    [
+     "I've got a bowl."
+    ],
+    [
+     "Ja imam činiju."
+    ]
+   ],
+   [
+    "Kuhinja ima roštilj.",
+    null,
+    "The kitchen has a grill.",
+    [],
+    []
+   ]
+  ],
+  [
+   [
+    "Led je u čaši.",
+    null,
+    "The ice is in the glass.",
+    [],
+    []
+   ],
+   [
+    "Luk je u ribi.",
+    null,
+    "The onion is in the fish.",
+    [],
+    []
+   ],
+   [
+    "Supa je u tanjiru.",
+    null,
+    "The soup is in the dish.",
+    [
+     "The soup is on the plate.",
+     "The soup is in the plate."
+    ],
+    []
+   ],
+   [
+    "Povrće je u sendviču.",
+    null,
+    "The vegetables are in the sandwich.",
+    [
+     "The vegetable is in the sandwich."
+    ],
+    []
+   ],
+   [
+    "Kuvar je u kuhinji.",
+    null,
+    "The cook is in the kitchen.",
+    [
+     "The chef is in the kitchen."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Stavljam nož na sto.",
+    null,
+    "I put the knife on the table.",
+    [
+     "I am putting the knife on the table.",
+     "I'm putting the knife on the table."
+    ],
+    []
+   ],
+   [
+    "Nož je na stolu.",
+    null,
+    "The knife is on the table.",
+    [],
+    []
+   ],
+   [
+    "Sipam sok u čašu.",
+    null,
+    "I pour juice into the glass.",
+    [
+     "I pour the juice into the glass.",
+     "I am pouring juice into the glass.",
+     "I'm pouring juice into the glass."
+    ],
+    []
+   ],
+   [
+    "Sok je u čaši.",
+    null,
+    "The juice is in the glass.",
+    [],
+    []
+   ],
+   [
+    "Stavljam mleko u frižider.",
+    "Stavljam mlijeko u frižider.",
+    "I put the milk in the fridge.",
+    [
+     "I put the milk into the fridge.",
+     "I am putting the milk in the fridge.",
+     "I'm putting the milk in the fridge."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Nemam biber.",
+    null,
+    "I don't have pepper.",
+    [
+     "I do not have pepper.",
+     "I have no pepper."
+    ],
+    [
+     "Ja nemam biber."
+    ]
+   ],
+   [
+    "Kuvar nema nož.",
+    null,
+    "The cook doesn't have a knife.",
+    [
+     "The cook does not have a knife.",
+     "The cook has no knife."
+    ],
+    []
+   ],
+   [
+    "Nemamo so.",
+    null,
+    "We don't have salt.",
+    [
+     "We do not have salt.",
+     "We have no salt."
+    ],
+    [
+     "Mi nemamo so."
+    ]
+   ],
+   [
+    "Ona nema kašiku.",
+    null,
+    "She doesn't have a spoon.",
+    [
+     "She does not have a spoon.",
+     "She has no spoon."
+    ],
+    [
+     "Nema kašiku."
+    ]
+   ],
+   [
+    "Nemaju ulje.",
+    null,
+    "They don't have oil.",
+    [
+     "They do not have oil.",
+     "They have no oil."
+    ],
+    [
+     "Oni nemaju ulje."
+    ]
+   ]
+  ],
+  [
+   [
+    "Sastojak je so.",
+    null,
+    "The ingredient is salt.",
+    [],
+    []
+   ],
+   [
+    "Sastojak je džem.",
+    null,
+    "The ingredient is jam.",
+    [
+     "The ingredient is the jam."
+    ],
+    []
+   ],
+   [
+    "Imam recept u knjizi.",
+    null,
+    "I have a recipe in the book.",
+    [
+     "I have the recipe in the book."
+    ],
+    []
+   ],
+   [
+    "Imam recept.",
+    null,
+    "I have the recipe.",
+    [
+     "I have a recipe.",
+     "I've got the recipe."
+    ],
+    [
+     "Ja imam recept."
+    ]
+   ],
+   [
+    "Biber je u supi.",
+    null,
+    "The pepper is in the soup.",
+    [],
+    []
+   ]
+  ],
+  [
+   [
+    "Kuvam ručak.",
+    null,
+    "I cook lunch.",
+    [
+     "I am cooking lunch.",
+     "I'm cooking lunch.",
+     "I make lunch."
+    ],
+    [
+     "Ja kuvam ručak."
+    ]
+   ],
+   [
+    "Kuvar kuva svinjetinu.",
+    null,
+    "The cook cooks pork.",
+    [
+     "The cook cooks the pork.",
+     "The cook is cooking pork.",
+     "The chef cooks pork."
+    ],
+    []
+   ],
+   [
+    "Žena kuva ćuretinu.",
+    null,
+    "The woman cooks the turkey.",
+    [
+     "The woman cooks turkey.",
+     "The woman is cooking turkey.",
+     "The woman is cooking the turkey."
+    ],
+    []
+   ],
+   [
+    "Kuvam svinjetinu u mleku.",
+    "Kuvam svinjetinu u mlijeku.",
+    "I cook pork in milk.",
+    [
+     "I am cooking pork in milk.",
+     "I'm cooking pork in milk."
+    ],
+    []
+   ],
+   [
+    "Sečem pomorandžu.",
+    "Siječem pomorandžu.",
+    "I cut the orange.",
+    [
+     "I cut an orange.",
+     "I am cutting the orange.",
+     "I'm cutting the orange."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Nož seče.",
+    "Nož siječe.",
+    "The knife cuts.",
+    [],
+    []
+   ],
+   [
+    "Sečem sendvič.",
+    "Siječem sendvič.",
+    "I cut the sandwich.",
+    [
+     "I cut a sandwich.",
+     "I am cutting the sandwich.",
+     "I'm cutting the sandwich."
+    ],
+    []
+   ],
+   [
+    "Kuvar kuva pečurke.",
+    null,
+    "The cook cooks the mushrooms.",
+    [
+     "The cook cooks mushrooms.",
+     "The cook is cooking the mushrooms.",
+     "The cook is cooking mushrooms."
+    ],
+    []
+   ],
+   [
+    "Devojka kuva slatki krompir.",
+    "Djevojka kuva slatki krompir.",
+    "The girl cooks a sweet potato.",
+    [
+     "The girl is cooking a sweet potato.",
+     "The girl cooks sweet potatoes."
+    ],
+    []
+   ],
+   [
+    "Kuvamo zajedno.",
+    null,
+    "We cook together.",
+    [
+     "We are cooking together.",
+     "We're cooking together."
+    ],
+    [
+     "Mi kuvamo zajedno."
+    ]
+   ]
+  ]
+ ],
+ "4": [
+  [
+   [
+    "Čitam meni.",
+    null,
+    "I read the menu.",
+    [
+     "I am reading the menu.",
+     "I'm reading the menu.",
+     "I read a menu."
+    ],
+    [
+     "Ja čitam meni."
+    ]
+   ],
+   [
+    "Čitamo meni.",
+    null,
+    "We read the menu.",
+    [
+     "We are reading the menu.",
+     "We're reading the menu."
+    ],
+    [
+     "Mi čitamo meni."
+    ]
+   ],
+   [
+    "Salata je na meniju.",
+    null,
+    "The salad is on the menu.",
+    [],
+    []
+   ],
+   [
+    "Žena čita meni u restoranu.",
+    null,
+    "The woman reads the menu at the restaurant.",
+    [
+     "The woman reads the menu in the restaurant.",
+     "The woman is reading the menu at the restaurant.",
+     "The woman is reading the menu in the restaurant."
+    ],
+    []
+   ],
+   [
+    "Riba je na meniju.",
+    null,
+    "The fish is on the menu.",
+    [
+     "Fish is on the menu."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Jednu limunadu, molim.",
+    null,
+    "One lemonade, please.",
+    [
+     "A lemonade, please."
+    ],
+    []
+   ],
+   [
+    "Jedan sok, molim.",
+    null,
+    "One juice, please.",
+    [
+     "A juice, please."
+    ],
+    []
+   ],
+   [
+    "Čašu vina, molim.",
+    null,
+    "A glass of wine, please.",
+    [
+     "One glass of wine, please."
+    ],
+    []
+   ],
+   [
+    "Jednu picu, molim.",
+    null,
+    "One pizza, please.",
+    [
+     "A pizza, please."
+    ],
+    []
+   ],
+   [
+    "Jedan sendvič, molim.",
+    null,
+    "One sandwich, please.",
+    [
+     "A sandwich, please."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Muškarci ručaju u restoranu.",
+    null,
+    "The men have lunch at the restaurant.",
+    [
+     "The men have lunch in the restaurant.",
+     "The men are having lunch at the restaurant.",
+     "The men are having lunch in the restaurant.",
+     "The men eat lunch at the restaurant."
+    ],
+    []
+   ],
+   [
+    "Žene ručaju u restoranu.",
+    null,
+    "The women have lunch at the restaurant.",
+    [
+     "The women have lunch in the restaurant.",
+     "The women are having lunch at the restaurant.",
+     "The women are having lunch in the restaurant.",
+     "The women eat lunch at the restaurant."
+    ],
+    []
+   ],
+   [
+    "Dečak ruča.",
+    "Dječak ruča.",
+    "The boy has lunch.",
+    [
+     "The boy is having lunch.",
+     "The boy eats lunch."
+    ],
+    []
+   ],
+   [
+    "Čovek večera.",
+    "Čovjek večera.",
+    "The man has dinner.",
+    [
+     "The man is having dinner.",
+     "The man eats dinner."
+    ],
+    [
+     "Muškarac večera."
+    ]
+   ],
+   [
+    "Večeramo u restoranu.",
+    null,
+    "We have dinner at the restaurant.",
+    [
+     "We have dinner in the restaurant.",
+     "We are having dinner at the restaurant.",
+     "We're having dinner at the restaurant.",
+     "We eat dinner at the restaurant."
+    ],
+    [
+     "Mi večeramo u restoranu."
+    ]
+   ]
+  ],
+  [
+   [
+    "Imate li ribu?",
+    null,
+    "Do you have fish?",
+    [
+     "Have you got fish?",
+     "Do you have any fish?"
+    ],
+    [
+     "Da li imate ribu?"
+    ]
+   ],
+   [
+    "Možete li da donesete vino?",
+    null,
+    "Could you bring wine?",
+    [
+     "Can you bring wine?",
+     "Could you bring the wine?",
+     "Can you bring the wine?",
+     "Could you bring some wine?"
+    ],
+    [
+     "Možete li doneti vino?",
+     "Možete li donijeti vino?"
+    ]
+   ],
+   [
+    "Izvolite meni.",
+    null,
+    "Here is the menu.",
+    [
+     "Here's the menu."
+    ],
+    []
+   ],
+   [
+    "Želite li čaj?",
+    null,
+    "Would you like tea?",
+    [
+     "Would you like some tea?",
+     "Do you want tea?"
+    ],
+    [
+     "Da li želite čaj?"
+    ]
+   ],
+   [
+    "Izvinite, gde je konobar?",
+    "Izvinite, gdje je konobar?",
+    "Excuse me, where is the waiter?",
+    [
+     "Excuse me, where's the waiter?"
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Ne jedem meso.",
+    null,
+    "I don't eat meat.",
+    [
+     "I do not eat meat."
+    ],
+    [
+     "Ja ne jedem meso."
+    ]
+   ],
+   [
+    "Ona voli pastu.",
+    null,
+    "She likes pasta.",
+    [
+     "She loves pasta."
+    ],
+    [
+     "Voli pastu."
+    ]
+   ],
+   [
+    "On jede biftek sa biberom.",
+    null,
+    "He eats a pepper steak.",
+    [
+     "He eats steak with pepper.",
+     "He is eating a pepper steak."
+    ],
+    [
+     "On jede biftek s biberom."
+    ]
+   ],
+   [
+    "Vegetarijanac sam.",
+    null,
+    "I am a vegetarian.",
+    [
+     "I'm a vegetarian.",
+     "I am vegetarian.",
+     "I'm vegetarian."
+    ],
+    [
+     "Ja sam vegetarijanac.",
+     "Vegetarijanka sam.",
+     "Ja sam vegetarijanka."
+    ]
+   ],
+   [
+    "Volimo ribu.",
+    null,
+    "We like fish.",
+    [
+     "We love fish."
+    ],
+    [
+     "Mi volimo ribu."
+    ]
+   ]
+  ],
+  [
+   [
+    "Jedno pivo, molim.",
+    null,
+    "One beer, please.",
+    [
+     "A beer, please."
+    ],
+    []
+   ],
+   [
+    "Biftek, molim.",
+    null,
+    "A steak, please.",
+    [
+     "The steak, please.",
+     "Steak, please."
+    ],
+    []
+   ],
+   [
+    "Supu bez luka, molim.",
+    null,
+    "Soup without onion, please.",
+    [
+     "Soup without onions, please.",
+     "The soup without onion, please.",
+     "A soup without onions, please."
+    ],
+    []
+   ],
+   [
+    "Hoću ćuretinu.",
+    null,
+    "I want the turkey.",
+    [
+     "I want turkey.",
+     "I'd like the turkey.",
+     "I would like the turkey."
+    ],
+    [
+     "Želim ćuretinu."
+    ]
+   ],
+   [
+    "Još hleba, molim.",
+    "Još hljeba, molim.",
+    "More bread, please.",
+    [
+     "Some more bread, please."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Račun, molim.",
+    null,
+    "The bill, please.",
+    [
+     "The check, please."
+    ],
+    []
+   ],
+   [
+    "Konobar ima račun.",
+    null,
+    "The waiter has the bill.",
+    [
+     "The waiter has the check."
+    ],
+    []
+   ],
+   [
+    "Plaćam ja.",
+    null,
+    "I'm paying.",
+    [
+     "I am paying.",
+     "I pay.",
+     "I'll pay."
+    ],
+    [
+     "Ja plaćam."
+    ]
+   ],
+   [
+    "Ručak je dobar.",
+    null,
+    "The lunch is good.",
+    [
+     "Lunch is good."
+    ],
+    []
+   ],
+   [
+    "Hvala na večeri.",
+    null,
+    "Thank you for dinner.",
+    [
+     "Thanks for dinner.",
+     "Thank you for the dinner."
+    ],
+    [
+     "Hvala za večeru."
+    ]
+   ]
+  ],
+  [
+   [
+    "Nisam konobar.",
+    null,
+    "I am not the waiter.",
+    [
+     "I'm not the waiter.",
+     "I am not a waiter.",
+     "I'm not a waiter."
+    ],
+    [
+     "Ja nisam konobar."
+    ]
+   ],
+   [
+    "On je konobar.",
+    null,
+    "He is a waiter.",
+    [
+     "He's a waiter.",
+     "He is the waiter."
+    ],
+    []
+   ],
+   [
+    "Konobar ima vino.",
+    null,
+    "The waiter has the wine.",
+    [
+     "The waiter has wine."
+    ],
+    []
+   ],
+   [
+    "Kuvar je u restoranu.",
+    null,
+    "The cook is in the restaurant.",
+    [
+     "The cook is at the restaurant.",
+     "The chef is in the restaurant."
+    ],
+    []
+   ],
+   [
+    "Kuvar ruča.",
+    null,
+    "The cook has lunch.",
+    [
+     "The cook eats lunch.",
+     "The cook is having lunch.",
+     "The chef has lunch."
+    ],
+    []
+   ]
+  ]
+ ],
+ "5": [
+  [
+   [
+    "Mačke jedu hleb.",
+    "Mačke jedu hljeb.",
+    "The cats eat bread.",
+    [
+     "The cats are eating bread."
+    ],
+    []
+   ],
+   [
+    "Konji piju mleko.",
+    "Konji piju mlijeko.",
+    "The horses drink milk.",
+    [
+     "The horses are drinking milk."
+    ],
+    []
+   ],
+   [
+    "Krava jede travu.",
+    null,
+    "The cow eats grass.",
+    [
+     "The cow is eating grass."
+    ],
+    []
+   ],
+   [
+    "Pas pije vodu.",
+    null,
+    "The dog drinks water.",
+    [
+     "The dog is drinking water."
+    ],
+    []
+   ],
+   [
+    "Pile je u dvorištu.",
+    null,
+    "The chicken is in the yard.",
+    [],
+    []
+   ]
+  ],
+  [
+   [
+    "Imam mačku.",
+    null,
+    "I have a cat.",
+    [
+     "I've got a cat."
+    ],
+    [
+     "Ja imam mačku."
+    ]
+   ],
+   [
+    "Imam psa.",
+    null,
+    "I have a dog.",
+    [
+     "I've got a dog."
+    ],
+    [
+     "Ja imam psa."
+    ]
+   ],
+   [
+    "Ona ima konja.",
+    null,
+    "She has a horse.",
+    [
+     "She's got a horse."
+    ],
+    [
+     "Ima konja."
+    ]
+   ],
+   [
+    "Imamo kravu.",
+    null,
+    "We have a cow.",
+    [
+     "We've got a cow."
+    ],
+    [
+     "Mi imamo kravu."
+    ]
+   ],
+   [
+    "Imam ribe.",
+    null,
+    "I have the fish.",
+    [
+     "I have fish.",
+     "I've got fish."
+    ],
+    [
+     "Ja imam ribe."
+    ]
+   ]
+  ],
+  [
+   [
+    "Životinje piju vodu.",
+    null,
+    "The animals drink water.",
+    [
+     "The animals are drinking water."
+    ],
+    []
+   ],
+   [
+    "Slon jede voće.",
+    null,
+    "The elephant eats fruit.",
+    [
+     "The elephant is eating fruit."
+    ],
+    []
+   ],
+   [
+    "Majmun jede bananu.",
+    null,
+    "The monkey eats a banana.",
+    [
+     "The monkey is eating a banana.",
+     "The monkey eats the banana."
+    ],
+    []
+   ],
+   [
+    "Lav spava.",
+    null,
+    "The lion is sleeping.",
+    [
+     "The lion sleeps."
+    ],
+    []
+   ],
+   [
+    "Medved jede med.",
+    "Medvjed jede med.",
+    "The bear eats honey.",
+    [
+     "The bear is eating honey."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Konji jedu.",
+    null,
+    "The horses eat.",
+    [
+     "The horses are eating."
+    ],
+    []
+   ],
+   [
+    "Ribe piju vodu.",
+    null,
+    "Fish drink water.",
+    [
+     "The fish drink water."
+    ],
+    []
+   ],
+   [
+    "Mačka spava.",
+    null,
+    "The cat is sleeping.",
+    [
+     "The cat sleeps."
+    ],
+    []
+   ],
+   [
+    "Mačke spavaju.",
+    null,
+    "The cats are sleeping.",
+    [
+     "The cats sleep."
+    ],
+    []
+   ],
+   [
+    "Ptice lete.",
+    null,
+    "The birds fly.",
+    [
+     "The birds are flying.",
+     "Birds fly."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Mrav je na hlebu.",
+    "Mrav je na hljebu.",
+    "The ant is on the bread.",
+    [
+     "An ant is on the bread.",
+     "There is an ant on the bread."
+    ],
+    []
+   ],
+   [
+    "Pčela voli cveće.",
+    "Pčela voli cvijeće.",
+    "The bee likes flowers.",
+    [
+     "The bee loves flowers."
+    ],
+    []
+   ],
+   [
+    "Muva je na tanjiru.",
+    null,
+    "The fly is on the plate.",
+    [
+     "A fly is on the plate."
+    ],
+    []
+   ],
+   [
+    "Leptir je insekt.",
+    null,
+    "The butterfly is an insect.",
+    [
+     "A butterfly is an insect."
+    ],
+    []
+   ],
+   [
+    "Vidim pauka.",
+    null,
+    "I see a spider.",
+    [
+     "I can see a spider.",
+     "I see the spider."
+    ],
+    [
+     "Ja vidim pauka."
+    ]
+   ]
+  ],
+  [
+   [
+    "Vuk jede meso.",
+    null,
+    "The wolf eats meat.",
+    [
+     "The wolf is eating meat."
+    ],
+    []
+   ],
+   [
+    "Lisica je u šumi.",
+    null,
+    "The fox is in the forest.",
+    [
+     "The fox is in the woods."
+    ],
+    []
+   ],
+   [
+    "Medved spava.",
+    "Medvjed spava.",
+    "The bear is sleeping.",
+    [
+     "The bear sleeps."
+    ],
+    []
+   ],
+   [
+    "Zec jede šargarepu.",
+    null,
+    "The rabbit eats a carrot.",
+    [
+     "The rabbit is eating a carrot.",
+     "The rabbit eats the carrot."
+    ],
+    []
+   ],
+   [
+    "Zmija je pod kamenom.",
+    null,
+    "The snake is under the stone.",
+    [
+     "The snake is under the rock."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Riba pliva.",
+    null,
+    "The fish swims.",
+    [
+     "The fish is swimming."
+    ],
+    []
+   ],
+   [
+    "Delfin je u moru.",
+    null,
+    "The dolphin is in the sea.",
+    [],
+    []
+   ],
+   [
+    "Kornjača pliva.",
+    null,
+    "The turtle is swimming.",
+    [
+     "The turtle swims."
+    ],
+    []
+   ],
+   [
+    "Kit je velik.",
+    null,
+    "The whale is big.",
+    [
+     "The whale is large."
+    ],
+    [
+     "Kit je veliki."
+    ]
+   ],
+   [
+    "Ribe su u moru.",
+    null,
+    "The fish are in the sea.",
+    [],
+    []
+   ]
+  ],
+  [
+   [
+    "Pas jede meso.",
+    null,
+    "The dog eats meat.",
+    [
+     "The dog is eating meat."
+    ],
+    []
+   ],
+   [
+    "Mačka pije mleko.",
+    "Mačka pije mlijeko.",
+    "The cat drinks milk.",
+    [
+     "The cat is drinking milk."
+    ],
+    []
+   ],
+   [
+    "Konj jede jabuku.",
+    null,
+    "The horse eats an apple.",
+    [
+     "The horse is eating an apple.",
+     "The horse eats the apple."
+    ],
+    []
+   ],
+   [
+    "Ptica je na drvetu.",
+    null,
+    "The bird is in the tree.",
+    [
+     "The bird is on the tree."
+    ],
+    []
+   ],
+   [
+    "Imamo psa i mačku.",
+    null,
+    "We have a dog and a cat.",
+    [
+     "We've got a dog and a cat."
+    ],
+    [
+     "Mi imamo psa i mačku."
+    ]
+   ]
+  ]
+ ],
+ "6": [
+  [
+   [
+    "Tanjiri su na stolu.",
+    null,
+    "The plates are on the table.",
+    [],
+    []
+   ],
+   [
+    "Čaše su na stolu.",
+    null,
+    "The glasses are on the table.",
+    [],
+    []
+   ],
+   [
+    "Flaše su u kuhinji.",
+    null,
+    "The bottles are in the kitchen.",
+    [],
+    [
+     "Boce su u kuhinji."
+    ]
+   ],
+   [
+    "Noževi su u fioci.",
+    null,
+    "The knives are in the drawer.",
+    [],
+    []
+   ],
+   [
+    "Kašike su na tanjiru.",
+    null,
+    "The spoons are on the plate.",
+    [],
+    []
+   ]
+  ],
+  [
+   [
+    "Imam dva noža.",
+    null,
+    "I have two knives.",
+    [
+     "I've got two knives."
+    ],
+    [
+     "Ja imam dva noža."
+    ]
+   ],
+   [
+    "Imam dve čaše.",
+    "Imam dvije čaše.",
+    "I have two glasses.",
+    [
+     "I've got two glasses."
+    ],
+    [
+     "Ja imam dve čaše.",
+     "Ja imam dvije čaše."
+    ]
+   ],
+   [
+    "Ona ima dve flaše.",
+    "Ona ima dvije flaše.",
+    "She has two bottles.",
+    [
+     "She's got two bottles."
+    ],
+    [
+     "Ona ima dve boce.",
+     "Ona ima dvije boce."
+    ]
+   ],
+   [
+    "Vidim dva konja.",
+    null,
+    "I see two horses.",
+    [
+     "I can see two horses."
+    ],
+    [
+     "Ja vidim dva konja."
+    ]
+   ],
+   [
+    "Imamo dve mačke.",
+    "Imamo dvije mačke.",
+    "We have two cats.",
+    [
+     "We've got two cats."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Muškarci piju limunadu.",
+    null,
+    "The men drink lemonade.",
+    [
+     "The men are drinking lemonade."
+    ],
+    []
+   ],
+   [
+    "Žene kuvaju.",
+    null,
+    "The women cook.",
+    [
+     "The women are cooking."
+    ],
+    []
+   ],
+   [
+    "Deca jedu.",
+    "Djeca jedu.",
+    "The children eat.",
+    [
+     "The children are eating.",
+     "The kids eat.",
+     "The kids are eating."
+    ],
+    []
+   ],
+   [
+    "Dečaci piju sok.",
+    "Dječaci piju sok.",
+    "The boys drink juice.",
+    [
+     "The boys are drinking juice."
+    ],
+    []
+   ],
+   [
+    "Devojčice čitaju.",
+    "Djevojčice čitaju.",
+    "The girls are reading.",
+    [
+     "The girls read.",
+     "The little girls are reading."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Konobar je u restoranu.",
+    null,
+    "The waiter is in the restaurant.",
+    [
+     "The waiter is at the restaurant."
+    ],
+    []
+   ],
+   [
+    "Konobari su u restoranu.",
+    null,
+    "The waiters are in the restaurant.",
+    [
+     "The waiters are at the restaurant."
+    ],
+    []
+   ],
+   [
+    "Jabuka je slatka.",
+    null,
+    "The apple is sweet.",
+    [],
+    []
+   ],
+   [
+    "Jabuke su slatke.",
+    null,
+    "The apples are sweet.",
+    [],
+    []
+   ],
+   [
+    "Muškarci su u restoranu.",
+    null,
+    "The men are at the restaurant.",
+    [
+     "The men are in the restaurant."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Nemam jabuka.",
+    null,
+    "I don't have apples.",
+    [
+     "I do not have apples.",
+     "I have no apples.",
+     "I don't have any apples."
+    ],
+    [
+     "Nemam jabuke."
+    ]
+   ],
+   [
+    "Jedem banane.",
+    null,
+    "I eat bananas.",
+    [
+     "I eat the bananas.",
+     "I am eating bananas.",
+     "I'm eating bananas."
+    ],
+    [
+     "Ja jedem banane."
+    ]
+   ],
+   [
+    "Pečurke su u supi.",
+    null,
+    "The mushrooms are in the soup.",
+    [],
+    []
+   ],
+   [
+    "Kobasice su na roštilju.",
+    null,
+    "The sausages are on the grill.",
+    [],
+    []
+   ],
+   [
+    "Jaja su u frižideru.",
+    null,
+    "The eggs are in the fridge.",
+    [],
+    []
+   ]
+  ],
+  [
+   [
+    "Deca piju vodu.",
+    "Djeca piju vodu.",
+    "The children drink water.",
+    [
+     "The children are drinking water.",
+     "The kids drink water."
+    ],
+    []
+   ],
+   [
+    "Ljudi su u restoranu.",
+    null,
+    "The people are in the restaurant.",
+    [
+     "The people are at the restaurant."
+    ],
+    []
+   ],
+   [
+    "Psi jedu meso.",
+    null,
+    "The dogs eat meat.",
+    [
+     "The dogs are eating meat."
+    ],
+    []
+   ],
+   [
+    "Vidim pse.",
+    null,
+    "I see the dogs.",
+    [
+     "I can see the dogs.",
+     "I see dogs."
+    ],
+    [
+     "Ja vidim pse."
+    ]
+   ],
+   [
+    "Braća jedu ručak.",
+    null,
+    "The brothers eat lunch.",
+    [
+     "The brothers are eating lunch.",
+     "The brothers have lunch.",
+     "The brothers are having lunch."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Ona čita novine.",
+    null,
+    "She reads the newspapers.",
+    [
+     "She reads the newspaper.",
+     "She is reading the newspaper.",
+     "She's reading the newspaper.",
+     "She reads newspapers."
+    ],
+    [
+     "Čita novine."
+    ]
+   ],
+   [
+    "Pišem knjige.",
+    null,
+    "I write books.",
+    [
+     "I am writing books.",
+     "I'm writing books."
+    ],
+    [
+     "Ja pišem knjige."
+    ]
+   ],
+   [
+    "Imam nekoliko knjiga.",
+    null,
+    "I have several books.",
+    [
+     "I have a few books.",
+     "I have some books."
+    ],
+    []
+   ],
+   [
+    "Kuvar pere tanjire.",
+    null,
+    "The cook washes the plates.",
+    [
+     "The cook is washing the plates.",
+     "The chef washes the plates."
+    ],
+    []
+   ],
+   [
+    "Vidim nekoliko ptica.",
+    null,
+    "I see several birds.",
+    [
+     "I can see several birds.",
+     "I see a few birds.",
+     "I see some birds."
+    ],
+    []
+   ]
+  ],
+  [
+   [
+    "Knjige su na stolu.",
+    null,
+    "The books are on the table.",
+    [],
+    []
+   ],
+   [
+    "Mačke jedu ribu.",
+    null,
+    "The cats eat fish.",
+    [
+     "The cats are eating fish."
+    ],
+    []
+   ],
+   [
+    "Imam tri čaše.",
+    null,
+    "I have three glasses.",
+    [
+     "I've got three glasses."
+    ],
+    [
+     "Ja imam tri čaše."
+    ]
+   ],
+   [
+    "Žene čitaju meni.",
+    null,
+    "The women read the menu.",
+    [
+     "The women are reading the menu."
+    ],
+    []
+   ],
+   [
+    "Konji su u polju.",
+    null,
+    "The horses are in the field.",
+    [],
+    []
+   ]
+  ]
+ ]
+}
