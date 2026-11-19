@@ -52,6 +52,13 @@
   #pomalo-gate button.main{font-size:20px;font-weight:900;min-height:54px;padding:10px 28px;border-radius:16px;box-shadow:0 4px 0 light-dark(#8a0b20,#b83a40)}
   #pomalo-gate .you button{min-height:32px;padding:4px 10px;font-size:13px;border-radius:999px}
   @media(max-width:520px){#pomalo-gate fieldset.variant{grid-template-columns:1fr}#pomalo-gate .welcome-head{grid-template-columns:80px 1fr}#pomalo-gate .welcome-bird{width:80px;height:80px}#pomalo-gate h2{font-size:22px}}
+  #pomalo-gate .who{grid-template-columns:1fr}
+  #pomalo-gate .tile{display:grid;gap:2px;text-align:left;padding:16px 18px;border-radius:18px;border:2px solid var(--g-line);background:light-dark(#fff,#16224a);font-size:18px;min-height:64px}
+  #pomalo-gate .tile:hover{border-color:light-dark(#0c3c9e,#a9c1ff)}
+  #pomalo-gate .pick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:14px 0}
+  #pomalo-gate .pick-grid .tile{text-align:center;justify-items:center;font-weight:900}
+  #pomalo-gate .pick-grid .tile .ava{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:26px;color:#fff;background:#0c40a8}
+  #pomalo-gate .pick-grid .tile.paused{opacity:.5}
   #pomalo-gate .err{color:var(--g-warn)}
   #pomalo-gate .admin summary{cursor:pointer;font:500 21px Georgia,serif;list-style-position:inside}
   #pomalo-gate .stats{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
@@ -68,7 +75,50 @@
   #pomalo-gate .you{max-width:760px;margin:10px auto 0;font-size:13px;color:var(--g-muted);display:flex;justify-content:flex-end;gap:8px}
   </style>
 
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><g id="vrapko-shape"><ellipse cx="60" cy="76" rx="34" ry="29" fill="#b98656"/><ellipse cx="60" cy="84" rx="22" ry="18" fill="#f1e6d3"/><circle cx="60" cy="42" r="25" fill="#b98656"/><path d="M36 38 C38 18 82 18 84 38 C74 30 46 30 36 38 Z" fill="#8a5a33"/><ellipse cx="45" cy="50" rx="9" ry="7" fill="#ece5d8"/><ellipse cx="75" cy="50" rx="9" ry="7" fill="#ece5d8"/><circle cx="51" cy="41" r="4.6" fill="#1d1712"/><circle cx="69" cy="41" r="4.6" fill="#1d1712"/><path d="M54 49 L66 49 L60 58 Z" fill="#f2b233"/></g></defs></svg>
   <section class="card" data-gate="status" aria-live="polite"><p data-status>Checking your access…</p></section>
+
+  <section class="card welcome" data-gate="signin" hidden>
+    <div class="welcome-head">
+      <svg class="welcome-bird" viewBox="0 0 120 120" aria-hidden="true"><use href="#vrapko-shape"/></svg>
+      <div>
+        <h2>Welcome to Pomalo · Dobro došli</h2>
+        <p>Sign in with your email to save progress on any device.<br><span class="muted">Prijavi se emailom da sačuvaš napredak na svakom uređaju.</span></p>
+      </div>
+    </div>
+    <form data-signin novalidate>
+      <label for="si-email" class="name-field">Email (parent or adult learner) · Email (roditelja ili odraslog učenika)<input id="si-email" type="email" autocomplete="email" required></label>
+      <p class="err" data-si-error hidden></p>
+      <button class="main" type="submit">Send me a sign-in email · Pošalji mi email</button>
+      <p class="muted">We store your email, the learners’ first names, their choices and their progress, only to run Pomalo. You can ask for everything to be deleted at any time. · Čuvamo email, imena učenika i njihov napredak samo za rad Pomala. <a href="https://bymilossavic.com/privacy.html" target="_blank" rel="noopener">Privacy</a></p>
+    </form>
+  </section>
+
+  <section class="card welcome" data-gate="code" hidden>
+    <h2>Check your email · Proveri email</h2>
+    <p data-code-intro></p>
+    <form data-code novalidate>
+      <label for="si-code" class="name-field">Or type the code from the email · Ili upiši kod iz emaila<input id="si-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10"></label>
+      <p class="err" data-code-error hidden></p>
+      <div class="row-actions"><button class="main" type="submit">Sign in · Prijavi se</button><button type="button" data-code-back>Use a different email</button></div>
+    </form>
+  </section>
+
+  <section class="card welcome" data-gate="who" hidden>
+    <h2>Who will learn with Pomalo? · Ko će učiti?</h2>
+    <fieldset class="variant who">
+      <legend class="muted">Choose one · Izaberi</legend>
+      <button type="button" class="tile" data-who="me"><strong>Just me</strong><span class="muted">Samo ja</span></button>
+      <button type="button" class="tile" data-who="kids"><strong>My children</strong><span class="muted">Moja deca / djeca</span></button>
+      <button type="button" class="tile" data-who="both"><strong>Me and my children</strong><span class="muted">Ja i moja deca / djeca</span></button>
+    </fieldset>
+  </section>
+
+  <section class="card welcome" data-gate="pick" hidden>
+    <h2>Who’s learning today? · Ko danas uči?</h2>
+    <div class="pick-grid" data-pick-list></div>
+    <div class="row-actions"><button type="button" class="main" data-add-learner>+ Add a learner · Dodaj učenika</button><button type="button" data-signout>Sign out · Odjavi se</button></div>
+  </section>
 
   <section class="card welcome" data-gate="register" hidden>
     <div class="welcome-head">
@@ -246,13 +296,187 @@
     you.append(' ', btn);
   }
 
+  let whoChoice = 'me', sb_signout = null;
+
+  // ===== Supabase: email sign-in, several learners per account, progress on any device =====
+  const SUPA_URL = 'https://jxjviouxkayfnxehzmbt.supabase.co', SUPA_KEY = 'sb_publishable_3C5DrP3IVgs6yx0A4Uz2HA_0rV0yJE1';
+  let sb = null, account = null, learnersCache = [];
+  function loadSupabase() {
+    return new Promise(resolve => {
+      if (window.supabase?.createClient) return resolve(true);
+      const sc = document.createElement('script');
+      sc.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
+      sc.onload = () => resolve(Boolean(window.supabase?.createClient));
+      sc.onerror = () => resolve(false);
+      document.head.append(sc);
+      setTimeout(() => resolve(Boolean(window.supabase?.createClient)), 10000);
+    });
+  }
+  const LOCAL_ACTIVE = 'pomalo-active-learner';
+  // A stand-in for the shared store, so the rest of Pomalo keeps working unchanged.
+  function supaStore(learner) {
+    let sentLog = (learner.log || []).length;
+    return {
+      doc: path => ({
+        get: async () => ({exists: false, data: () => undefined}),
+        set: async () => {},
+        update: async data => {
+          const jobs = [];
+          if ('courses' in data || 'mistakes' in data || 'progress' in data) {
+            jobs.push(sb.from('progress').upsert({learner_id: learner.id, parent_id: account.id,
+              data: {courses: data.courses ?? me.courses, mistakes: data.mistakes ?? me.mistakes, savedAt: data.savedAt ?? me.savedAt, courseVersion: data.courseVersion ?? me.courseVersion},
+              summary: {progress: data.progress ?? me.progress, mistakeSummary: data.mistakeSummary ?? me.mistakeSummary},
+              updated_at: new Date().toISOString()}));
+          }
+          if ('lastSeen' in data || 'visits' in data) {
+            const row = {last_seen: data.lastSeen || new Date().toISOString()};
+            if ('visits' in data) row.visits = data.visits;
+            jobs.push(sb.from('learners').update(row).eq('id', learner.id));
+          }
+          if (Array.isArray(data.log) && data.log.length > sentLog) {
+            const fresh = data.log.slice(sentLog).slice(-5).map(ev => ({learner_id: learner.id, parent_id: account.id, event: String(ev.e).slice(0, 200), at: ev.t}));
+            sentLog = data.log.length;
+            if (fresh.length) jobs.push(sb.from('activity').insert(fresh));
+          }
+          const res = await Promise.all(jobs);
+          const bad = res.find(r => r && r.error);
+          if (bad) throw bad.error;
+        }
+      }),
+      collection: () => ({onSnapshot: () => () => {}})
+    };
+  }
+  // Admin view reads everyone through the same shape the Learners panel expects.
+  function supaAdminStore() {
+    const listeners = {learners: [], blocked: []};
+    let rows = [];
+    async function refresh() {
+      const [{data: ls}, {data: ps}, {data: acts}] = await Promise.all([
+        sb.from('learners').select('*'),
+        sb.from('progress').select('learner_id, summary'),
+        sb.from('activity').select('learner_id, event, at').order('at', {ascending: false}).limit(1000)
+      ]);
+      const sum = Object.fromEntries((ps || []).map(p => [p.learner_id, p.summary || {}]));
+      const logs = {};
+      for (const a of acts || []) (logs[a.learner_id] = logs[a.learner_id] || []).unshift({t: a.at, e: a.event});
+      rows = (ls || []).map(l => ({id: l.id, name: l.name, course: l.course, dialect: l.dialect, script: l.script, registeredAt: l.created_at, lastSeen: l.last_seen, visits: l.visits, paused: l.paused,
+        progress: sum[l.id]?.progress || {}, mistakeSummary: sum[l.id]?.mistakeSummary, log: logs[l.id] || []}));
+      const snap = list => ({docs: list.map(r => ({id: r.id, data: () => r}))});
+      listeners.learners.forEach(f => f(snap(rows)));
+      listeners.blocked.forEach(f => f({docs: rows.filter(r => r.paused).map(r => ({id: r.id, data: () => ({blocked: true})}))}));
+    }
+    setInterval(refresh, 30000);
+    setTimeout(refresh, 0);
+    return {
+      collection: name => ({onSnapshot: (next, err) => { listeners[name] = listeners[name] || []; listeners[name].push(next); return () => {}; }}),
+      doc: path => ({set: async ({blocked}) => { const id = path.split('/')[1]; const {error} = await sb.from('learners').update({paused: Boolean(blocked)}).eq('id', id); if (error) throw error; await refresh(); }})
+    };
+  }
+  async function supaFlow() {
+    const ok = await loadSupabase();
+    if (!ok) { [db, user] = localStore(); return false; }
+    sb = window.supabase.createClient(SUPA_URL, SUPA_KEY, {auth: {persistSession: true, detectSessionInUrl: true, flowType: 'implicit'}});
+    const {data: {session}} = await sb.auth.getSession();
+    if (!session) { showSignIn(); return true; }
+    account = session.user;
+    await afterSignIn();
+    return true;
+  }
+  function showSignIn() {
+    show('signin'); $('#si-email').focus();
+  }
+  $('[data-signin]').addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = $('#si-email').value.trim(), err = $('[data-si-error]'), btn = e.currentTarget.querySelector('button');
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = 'Enter a valid email address. · Upiši ispravnu email adresu.'; err.hidden = false; return; }
+    btn.disabled = true; err.hidden = true;
+    const {error} = await sb.auth.signInWithOtp({email, options: {emailRedirectTo: location.origin + location.pathname, shouldCreateUser: true}});
+    btn.disabled = false;
+    if (error) { err.textContent = (/rate|seconds/i.test(error.message) ? 'Please wait a minute before asking for another email. · Sačekaj minut pa probaj ponovo.' : 'The email could not be sent: ' + error.message); err.hidden = false; return; }
+    try { localStorage.setItem('pomalo-signin-email', email); } catch {}
+    $('[data-code-intro]').innerHTML = 'We sent an email to <strong></strong>. Open it on this device and tap the sign-in link.<br><span class="muted">Poslali smo email. Otvori ga na ovom uređaju i dodirni link za prijavu.</span>';
+    $('[data-code-intro] strong').textContent = email;
+    show('code');
+  });
+  $('[data-code-back]').addEventListener('click', showSignIn);
+  $('[data-code]').addEventListener('submit', async e => {
+    e.preventDefault();
+    const token = $('#si-code').value.replace(/\s/g, ''), err = $('[data-code-error]');
+    let email = ''; try { email = localStorage.getItem('pomalo-signin-email') || ''; } catch {}
+    if (!token) { err.textContent = 'Type the code from the email. · Upiši kod iz emaila.'; err.hidden = false; return; }
+    const {data, error} = await sb.auth.verifyOtp({email, token, type: 'email'});
+    if (error) { err.textContent = 'That code did not work. Check it, or ask for a new email. · Kod nije ispravan.'; err.hidden = false; return; }
+    account = data.user; await afterSignIn();
+  });
+  sb_signout = async () => { try { localStorage.removeItem(LOCAL_ACTIVE); } catch {} await sb.auth.signOut(); location.reload(); };
+  async function afterSignIn() {
+    if (location.hash.includes('access_token')) history.replaceState(null, '', location.pathname);
+    const {data: isAdmin} = await sb.rpc('is_admin');
+    if (isAdmin) { db = supaAdminStore(); startAdmin(); }
+    const {data: ls, error} = await sb.from('learners').select('*').eq('parent_id', account.id).order('created_at');
+    if (error) { status('Pomalo can’t load your learners right now. Check your connection, then reload the page.'); return; }
+    learnersCache = ls || [];
+    if (!learnersCache.length) { show('who'); return; }
+    let last = null; try { last = localStorage.getItem(LOCAL_ACTIVE); } catch {}
+    const active = learnersCache.length === 1 ? learnersCache[0] : learnersCache.find(l => l.id === last && location.hash !== '#pick');
+    if (active && !active.paused) return chooseLearner(active);
+    showPicker();
+  }
+  function showPicker() {
+    const list = $('[data-pick-list]');
+    const colors = ['#0c40a8', '#c8102e', '#2f9e5b', '#f2862e', '#8e44ad', '#0b7a8a'];
+    list.replaceChildren(...learnersCache.map((l, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tile' + (l.paused ? ' paused' : '');
+      const ava = document.createElement('span'); ava.className = 'ava'; ava.style.background = colors[i % colors.length]; ava.textContent = (l.name || '?').charAt(0).toUpperCase();
+      const nm = document.createElement('span'); nm.textContent = l.name;
+      const d = document.createElement('span'); d.className = 'muted'; d.textContent = l.paused ? 'Paused · Pauzirano' : describe(l);
+      b.append(ava, nm, d); b.disabled = l.paused;
+      b.addEventListener('click', () => chooseLearner(l));
+      return b;
+    }));
+    show('pick');
+  }
+  $('[data-add-learner]').addEventListener('click', () => { whoChoice = 'kids'; openRegister(); });
+  $('[data-signout]').addEventListener('click', () => sb_signout && sb_signout());
+  document.querySelectorAll('#pomalo-gate [data-who]').forEach(b => b.addEventListener('click', () => {
+    whoChoice = b.dataset.who;
+    openRegister();
+  }));
+  function openRegister() {
+    show('register');
+    const kid = whoChoice === 'kids' || (whoChoice === 'both' && learnersCache.length > 0);
+    $('.name-field').firstChild.textContent = kid ? 'Child’s first name · Ime deteta ' : 'Your name · Tvoje ime ';
+    $('#reg-name').value = ''; $('#reg-name').focus();
+  }
+  async function chooseLearner(l) {
+    status('Loading ' + l.name + '…');
+    const {data: prog} = await sb.from('progress').select('data, summary').eq('learner_id', l.id).maybeSingle();
+    const d = prog?.data || {};
+    const {data: acts} = await sb.from('activity').select('event, at').eq('learner_id', l.id).order('at', {ascending: false}).limit(30);
+    let lastActive = null; try { lastActive = localStorage.getItem(LOCAL_ACTIVE); } catch {}
+    if (lastActive !== l.id && window.pomaloResetState) window.pomaloResetState();
+    try { localStorage.setItem(LOCAL_ACTIVE, l.id); } catch {}
+    uid = l.id;
+    me = {name: l.name, course: l.course, dialect: l.dialect, script: l.script, visits: l.visits, registeredAt: l.created_at, lastSeen: l.last_seen,
+      courses: d.courses, mistakes: d.mistakes, savedAt: d.savedAt, courseVersion: d.courseVersion,
+      progress: prog?.summary?.progress || {}, mistakeSummary: prog?.summary?.mistakeSummary,
+      log: (acts || []).reverse().map(a => ({t: a.at, e: a.event}))};
+    db = supaStore({id: l.id, log: me.log});
+    await recordVisit();
+    begin();
+  }
+
   async function start() {
     const timeout = setTimeout(() => status('Pomalo can’t reach its server right now. Check your connection, then reload the page.'), 12000);
     const framed = (() => { try { return window.top !== window; } catch { return true; } })();
     for (let i = 0; i < (framed ? 40 : 2) && !window.claude?.use; i++) await new Promise(r => setTimeout(r, 250));
     const claude = window.claude;
-    if (!claude?.use && !framed) { [db, user] = localStore(); }
-    else [db, user] = claude?.use ? await Promise.all([claude.use('db'), claude.use('user')]) : [null, null];
+    if (!claude?.use && !framed) {
+      clearTimeout(timeout);
+      window.pomaloStandalone = true;
+      if (await supaFlow()) { window.pomaloSupabase = true; return; }
+    }
+    else if (!db) [db, user] = claude?.use ? await Promise.all([claude.use('db'), claude.use('user')]) : [null, null];
     if (!db || !user) { clearTimeout(timeout); status('Sign in to claude.ai with the account this course was shared with, then reload this page.'); return; }
     uid = await user.id();
     if (window.pomaloStandalone) standaloneTexts();
@@ -281,8 +505,16 @@
     lastSummary = '';
     const you = $('[data-gate="you"]');
     you.textContent = (window.pomaloStandalone ? 'Learner: ' : 'Signed in as ') + me.name; you.hidden = false;
+    if (location.hash === '#pick') history.replaceState(null, '', location.pathname);
     window.addEventListener('pomalo:progress', onProgress);
-    if (window.pomaloStandalone) setTimeout(() => newLearnerButton(you), 0);
+    if (window.pomaloSupabase) setTimeout(() => {
+      const sw = document.createElement('button'); sw.type = 'button'; sw.textContent = 'Switch learner';
+      sw.addEventListener('click', () => { location.hash = 'pick'; location.reload(); });
+      const so = document.createElement('button'); so.type = 'button'; so.textContent = 'Sign out';
+      so.addEventListener('click', () => sb_signout && sb_signout());
+      you.append(' ', sw, ' ', so);
+    }, 0);
+    else if (window.pomaloStandalone) setTimeout(() => newLearnerButton(you), 0);
     const settings = {course: me.course === 'en' ? 'en' : 'sr', dialect: me.dialect === 'ij' ? 'ij' : 'ek', script: me.script === 'cy' ? 'cy' : 'la'};
     you.textContent += ' · ' + describe(me);
     const apply = () => { document.getElementById('pomalo-design').classList.add('fixed-variant'); window.pomaloMergeProgress(me.courses, me.savedAt, me.courseVersion); window.pomaloSetDialect(settings); window.pomaloMergeMistakes(me.mistakes, me.courseVersion); };
@@ -302,6 +534,16 @@
     btn.disabled = true; err.hidden = true;
     const t = now();
     const doc = {name, why, course, dialect, script, registeredAt: t, lastSeen: t, visits: 1, progress: {}, log: [{t, e: 'Registered'}]};
+    if (window.pomaloSupabase) {
+      const {data: row, error} = await sb.from('learners').insert({name, course, dialect, script, parent_id: account.id}).select().single();
+      if (error) { err.textContent = 'Could not add the learner: ' + error.message; err.hidden = false; btn.disabled = false; return; }
+      await sb.from('activity').insert({learner_id: row.id, parent_id: account.id, event: 'Registered'});
+      learnersCache.push(row);
+      btn.disabled = false; form.reset();
+      if (whoChoice === 'kids' || whoChoice === 'both') { whoChoice = 'kids'; showPicker(); }
+      else chooseLearner(row);
+      return;
+    }
     try {
       await db.doc('learners/' + uid).set(doc);
       me = doc; begin();
@@ -337,7 +579,7 @@
         [learners.filter(l => Date.parse(l.lastSeen) > week).length, 'active this week'],
       ];
       $('[data-stats]').replaceChildren(...stats.map(([n, l]) => { const s = document.createElement('span'); s.textContent = n + ' ' + l; return s; }));
-      note.textContent = learners.length ? 'Newest activity first. Select a name to see that person’s recent activity.' : 'No one has registered yet. Share this page with your learners as Contributors; they register the first time they open it.';
+      note.textContent = learners.length ? 'Newest activity first. Select a name to see that person’s recent activity.' : (window.pomaloSupabase ? 'No learners yet. They appear here after someone signs in and adds a learner.' : 'No one has registered yet. Share this page with your learners as Contributors; they register the first time they open it.');
       table.hidden = !learners.length;
       const agg = new Map();
       for (const l of learners) for (const m of l.mistakeSummary?.top || []) {
@@ -555,6 +797,14 @@
   #pomalo-design .map .dot.locked{background:light-dark(#dfe4f2,#232f5c);border-color:transparent;border-style:solid;opacity:1}
   #pomalo-design .map-key{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px;font-size:12px;font-weight:700;color:light-dark(#46527e,#aab5de)}
   #pomalo-design .map-key i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+  #pomalo-design .buddy{grid-template-columns:96px 1fr}
+  #pomalo-design header .sound,#pomalo-design header .sound[aria-pressed]{min-height:36px;padding:4px 12px;font-size:13px;border-radius:999px;background:transparent;color:#fff;border:2px solid rgba(255,255,255,.6);box-shadow:none;margin-left:auto}
+  #pomalo-design .side{position:relative}
+  #pomalo-design .hear{position:absolute;top:8px;right:8px;width:48px;height:48px;min-height:0;padding:0;border-radius:50%;font-size:22px;line-height:1;display:grid;place-items:center;background:light-dark(#e3e9fb,#1f2c5e);border:2px solid light-dark(#0c40a8,#7da2ff);box-shadow:none}
+  #pomalo-design .hear:active{transform:scale(.92)}
+  #pomalo-design .hear.playing{animation:pulse 1s ease-in-out infinite}
+  @keyframes pulse{50%{box-shadow:0 0 0 8px light-dark(rgba(12,64,168,.15),rgba(125,162,255,.2))}}
+  @media(max-width:460px){#pomalo-design header .sound{order:3}}
   @keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}}
   @keyframes flapL{50%{transform:rotate(28deg)}}
   @keyframes flapR{50%{transform:rotate(-28deg)}}
@@ -569,7 +819,7 @@
     Loading Pomalo…
   </p>
   <div class="shell" hidden>
-    <header><div class="wordmark">pomalo · <span lang="en">little by little</span> · помало</div><div class="direction" role="group" aria-label="Course direction"><button type="button" data-course="sr" aria-pressed="true">Learn Serbian</button><button type="button" data-course="en" aria-pressed="false">Uči engleski</button></div></header>
+    <header><div class="wordmark">pomalo · <span lang="en">little by little</span> · помало</div><button type="button" class="sound" data-sound aria-pressed="true">Sound on</button><div class="direction" role="group" aria-label="Course direction"><button type="button" data-course="sr" aria-pressed="true">Learn Serbian</button><button type="button" data-course="en" aria-pressed="false">Uči engleski</button></div></header>
     <main>
       <nav class="map" data-map aria-label="Your progress">
         <div class="level-row"><span class="level" data-level="1">A1</span><ol class="lesson-dots" data-lesson-dots></ol></div>
@@ -613,7 +863,7 @@
 </svg>
         <span class="notes" aria-hidden="true"><i>♪</i><i>♫</i><i>♪</i></span>
         <p class="bubble" data-buddy-say aria-live="polite"></p>
-        <span class="buddy-buttons"><button type="button" class="sound hear" data-hear>🔊 Listen</button><button type="button" class="sound" data-sound aria-pressed="true">Sound on</button></span>
+
       </div>
       <div class="credit-line" role="status"><span data-credit="exercise">0 of 5 correct</span><span class="credit-total" data-credit="total">0 credits total</span></div>
       <div class="steps" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
@@ -622,7 +872,7 @@
       <div class="pics" data-pics aria-hidden="true"></div>
       <form>
         <div class="panel">
-          <section class="side" data-side="en"><strong>English</strong><div class="phrase" data-phrase="en" lang="en">I don’t understand.</div><input class="answer" data-answer="en" lang="en" aria-label="Your answer in English" autocomplete="off" hidden><div class="choices" data-options="en" role="group" aria-label="English answer options" hidden></div></section>
+          <section class="side" data-side="en"><strong>English</strong><button type="button" class="hear" data-hear aria-label="Listen to the sentence">🔊</button><div class="phrase" data-phrase="en" lang="en">I don’t understand.</div><input class="answer" data-answer="en" lang="en" aria-label="Your answer in English" autocomplete="off" hidden><div class="choices" data-options="en" role="group" aria-label="English answer options" hidden></div></section>
           <section class="side" data-side="sr"><strong data-label="serbian">Serbian</strong>
             <div class="pair" role="group" aria-label="Serbian variant"><button type="button" data-dialect="ek" aria-pressed="true">Ekavski</button><button type="button" data-dialect="ij" aria-pressed="false">Ijekavski</button></div>
             <div class="pair" role="group" aria-label="Serbian script"><button type="button" data-script="cy" aria-pressed="false">Ćirilica</button><button type="button" data-script="la" aria-pressed="true">Latinica</button></div>
@@ -4014,6 +4264,12 @@
     render();
     window.pomaloSnapshot = () => JSON.parse(JSON.stringify({state,courses}));
     // Bring in progress saved to the learner's account (from another device).
+    window.pomaloResetState = () => {
+      courses.sr = startCourse(); courses.en = startCourse(); mistakes = {}; savedAt = 0;
+      progress = activeCourse().records[activeCourse().selected];
+      grammarIndex = null; mistakeReview = null;
+      try { localStorage.removeItem(storageKey); } catch {}
+    };
     window.pomaloMergeProgress = (remote, remoteAt, remoteVersion) => {
       if (!remote || typeof remote !== 'object' || remoteVersion !== COURSE_VERSION) return;
       const remoteNewer = (remoteAt || 0) > savedAt;
@@ -4197,14 +4453,42 @@
       for (const p of prefs) { const v = voices.find(v => v.lang && v.lang.toLowerCase().replace('_', '-').startsWith(p.toLowerCase())); if (v) return v; }
       return null;
     };
+    // Recorded Serbian clips live in audio/sr/<id>.mp3, where id is a hash of the sentence.
+    const clipId = t => { let h = 0x811c9dc5; for (const ch of t.normalize('NFC')) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
+    const missing = new Set();
+    let clip = null, queue = Promise.resolve();
+    function playClip(text) {
+      return new Promise(resolve => {
+        const id = clipId(text);
+        if (missing.has(id)) return resolve(false);
+        try {
+          clip = new Audio('audio/sr/' + id + '.mp3');
+          clip.onended = () => resolve(true);
+          clip.onerror = () => { missing.add(id); resolve(false); };
+          clip.play().catch(() => resolve(false));
+        } catch { resolve(false); }
+      });
+    }
     function speakText(text, lang) {
+      if (!text) return false;
+      if (lang === 'sr') {
+        queue = queue.then(() => playClip(text)).then(ok => { if (!ok) ttsText(text, lang); });
+        return true;
+      }
+      queue = queue.then(() => new Promise(r => { if (!ttsText(text, lang, r)) r(); }));
+      return true;
+    }
+    function ttsText(text, lang, done) {
       if (!synth || !text) return false;
       try {
         const u = new SpeechSynthesisUtterance(text.replace(/[„“”"]/g, ''));
         const v = voiceFor(lang);
+        // never read Serbian with a non-Serbian voice: it sounds wrong
+        if (lang === 'sr' && !v) return false;
         if (v) u.voice = v;
         u.lang = v ? v.lang : (lang === 'sr' ? 'sr-RS' : 'en-GB');
         u.rate = lang === 'sr' ? 0.85 : 0.95;
+        if (done) { u.onend = done; u.onerror = done; }
         synth.speak(u);
         return true;
       } catch { return false; }
@@ -4215,6 +4499,8 @@
     hearBtn.addEventListener('click', () => {
       if (!lastDetail) return;
       try { synth.cancel(); } catch {}
+      try { clip && clip.pause(); } catch {}
+      queue = Promise.resolve();
       // read the prompt; once answered, also read the Serbian sentence
       if (lastDetail.course === 'sr') { speakText(lastDetail.englishSay, 'en'); if (lastDetail.feedback === 'correct') speakText(lastDetail.serbian, 'sr'); }
       else { speakText(lastDetail.serbian, 'sr'); if (lastDetail.feedback === 'correct') speakText(lastDetail.englishSay, 'en'); }
@@ -4233,7 +4519,10 @@
       if (!d.review) totalEl.textContent = '★ ' + d.total;
       showPictures(d.englishFull || d.english, d.lessonFinished);
       if (!d.review) lastDetail = d;
-      hearBtn.textContent = d.course === 'sr' ? '🔊 Listen' : (window.pomaloDisplay ? window.pomaloDisplay('🔊 Slušaj') : '🔊');
+      const promptSide = root.querySelector('[data-side="' + (d.course === 'sr' ? 'en' : 'sr') + '"]');
+      if (promptSide && hearBtn.parentElement !== promptSide) promptSide.append(hearBtn);
+      hearBtn.setAttribute('aria-label', d.course === 'sr' ? 'Listen to the sentence' : (window.pomaloDisplay ? window.pomaloDisplay('Slušaj rečenicu') : 'Listen'));
+      hearBtn.hidden = d.review;
       const state = [d.key, d.feedback, d.lessonFinished].join('|');
       if (state === last) return;
       const prev = last; last = state;
@@ -4244,7 +4533,7 @@
       if (levelDone) { mood = 'party'; msg = (d.course === 'sr' ? '🏆 Level 1 complete! Level 2 is open. ' : (window.pomaloDisplay ? window.pomaloDisplay('🏆 Nivo 1 je završen! Nivo 2 je otvoren. ') : '')) + lyric(); song(); confetti(); setTimeout(confetti, 1200); setTimeout(() => { if (buddy.dataset.mood === 'party') buddy.dataset.mood = 'idle'; }, 8000); }
       else if (d.lessonFinished) { mood = 'party'; msg = text('done', d) + starLine(d.lessonStars) + ' ' + lyric(); song(); confetti(); setTimeout(() => { if (buddy.dataset.mood === 'party') buddy.dataset.mood = 'idle'; }, 6000); }
       else if (d.taskFinished) { mood = 'sing'; msg = lyric(); song(); setTimeout(() => { if (buddy.dataset.mood === 'sing') buddy.dataset.mood = 'idle'; }, 3200); }
-      else if (d.feedback === 'correct') { mood = 'cheer'; msg = text('correct', d); chirp(); if (soundOn && !d.review && d.serbian) setTimeout(() => { try { synth && synth.cancel(); } catch {} speakText(d.serbian, 'sr'); }, 450); }
+      else if (d.feedback === 'correct') { mood = 'cheer'; msg = text('correct', d); chirp(); if (soundOn && !d.review && d.serbian) setTimeout(() => { try { synth && synth.cancel(); } catch {} try { clip && clip.pause(); } catch {} queue = Promise.resolve(); speakText(d.serbian, 'sr'); }, 450); }
       else if (d.feedback === 'retry') { mood = 'oops'; msg = text('wrong', d); soft(); }
       else if (!greeted) { msg = text(d.review ? 'review' : 'hello', d); greeted = true; }
       else if (d.review && prev && !prev.startsWith('review')) msg = text('review', d);
