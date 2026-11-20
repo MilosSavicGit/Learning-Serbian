@@ -367,6 +367,7 @@
     }
     setInterval(refresh, 30000);
     setTimeout(refresh, 0);
+    window.pomaloAdminRefresh = () => refresh().catch(() => {});
     return {
       collection: name => ({onSnapshot: (next, err) => { listeners[name] = listeners[name] || []; listeners[name].push(next); return () => {}; }}),
       doc: path => ({set: async ({blocked}) => { const id = path.split('/')[1]; const {error} = await sb.from('learners').update({paused: Boolean(blocked)}).eq('id', id); if (error) throw error; await refresh(); }})
@@ -375,6 +376,7 @@
   async function supaFlow() {
     const ok = await loadSupabase();
     if (!ok) { [db, user] = localStore(); return false; }
+    window.pomaloSupabase = true;
     sb = window.supabase.createClient(SUPA_URL, SUPA_KEY, {auth: {persistSession: true, detectSessionInUrl: true, flowType: 'implicit'}});
     const {data: {session}} = await sb.auth.getSession();
     if (!session) { showSignIn(); return true; }
@@ -464,6 +466,7 @@
     db = supaStore({id: l.id, log: me.log});
     await recordVisit();
     begin();
+    setTimeout(() => window.pomaloAdminRefresh && window.pomaloAdminRefresh(), 1500);
   }
 
   async function start() {
@@ -539,6 +542,7 @@
       if (error) { err.textContent = 'Could not add the learner: ' + error.message; err.hidden = false; btn.disabled = false; return; }
       await sb.from('activity').insert({learner_id: row.id, parent_id: account.id, event: 'Registered'});
       learnersCache.push(row);
+      window.pomaloAdminRefresh && window.pomaloAdminRefresh();
       btn.disabled = false; form.reset();
       if (whoChoice === 'kids' || whoChoice === 'both') { whoChoice = 'kids'; showPicker(); }
       else chooseLearner(row);
