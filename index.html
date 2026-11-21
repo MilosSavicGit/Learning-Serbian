@@ -3639,13 +3639,88 @@
     }
     const currentTask = () => activeLesson().tasks[state.course][progress.task];
     const words = {
-      sr:{serbian:'Serbian',check:'Check answer',next:'Next sentence',placeholder:'Type your answer',correct:'Correct.',retry:'Try again.',done:'Task complete.'},
-      en:{serbian:'Srpski',check:'Proveri odgovor',next:'Sledeća rečenica',placeholder:'Upiši odgovor',correct:'Tačno.',retry:'Pokušaj ponovo.',done:'Zadatak je završen.'}
+      sr:{serbian:'Serbian',check:'Check answer',next:'Next sentence',placeholder:'Type your answer',correct:'Correct.',retry:'Try again.',typo:'Almost! There is a spelling mistake. Check it and try again.',done:'Task complete.'},
+      en:{serbian:'Srpski',check:'Proveri odgovor',next:'Sledeća rečenica',placeholder:'Upiši odgovor',correct:'Tačno.',retry:'Pokušaj ponovo.',typo:'Skoro! Imaš grešku u pisanju. Proveri i pokušaj ponovo.',done:'Zadatak je završen.'}
     };
     const nativeUi = value => display(state.dialect === 'ij' ? value.replace('Proveri','Provjeri').replace('Sledeća','Sljedeća').replace('vežba','vježba') : value);
     const activeOptions = item => state.dialect === 'ij' && item.ijekavianOptions ? item.ijekavianOptions : item.options;
     const answerInput = () => get('[data-answer="'+state.course+'"]');
     const normalize = value => value.normalize('NFC').toLowerCase().replace(/[’']/g,'').replace(/[.?!,]/g,'').trim().replace(/\s+/g,' ');
+
+
+    // ---- Flexible answer check (lessons, mistake review and the A1 test) ----
+    // Accepted without fuss: capitals, punctuation, Cyrillic or Latin, missing č/ć/š/ž/đ,
+    // Serbian word order, a dropped or added subject pronoun (ja, ti, on…), "Jesi li" = "Da li si",
+    // English contractions (don't = do not), a/an/the, British or American spelling.
+    // Not accepted, but warned: one typo in a longer word (not in its ending, which carries grammar).
+    // The learner gets another chance and it is not counted as a mistake.
+    const latinOf = (() => { const back = Object.fromEntries(Object.entries(alphabet).map(([l, c]) => [c, l]));
+      return value => value.replace(/[Ѐ-ӿ]/g, ch => { const low = ch.toLowerCase(); const l = back[low] || ch; return ch === low ? l : l.charAt(0).toUpperCase() + l.slice(1); }); })();
+    const plainLetters = value => value.replace(/đ/g, 'dj').normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const EN_SPELL = {colour:'color',colours:'colors',coloured:'colored',favourite:'favorite',favourites:'favorites',centre:'center',theatre:'theater',grey:'gray',mum:'mom',mummy:'mommy',okay:'ok',neighbour:'neighbor',neighbours:'neighbors',travelling:'traveling',travelled:'traveled',traveller:'traveler',organise:'organize',realise:'realize',flavour:'flavor',behaviour:'behavior',honour:'honor',programme:'program',metre:'meter',metres:'meters',kilometre:'kilometer',kilometres:'kilometers',litre:'liter',litres:'liters',jewellery:'jewelry',pyjamas:'pajamas',aeroplane:'airplane',cosy:'cozy',labour:'labor',harbour:'harbor',humour:'humor',rumour:'rumor',neighbourhood:'neighborhood',practise:'practice',licence:'license',defence:'defense',cancelled:'canceled',tyre:'tire',tyres:'tires',moustache:'mustache'};
+    const canonEn = value => {
+      let v = value.normalize('NFC').toLowerCase().replace(/[’‘`´]/g, "'").replace(/\(.*?\)/g, ' ');
+      v = v.replace(/\bwon't\b/g, 'will not').replace(/\bcan't\b/g, 'can not').replace(/\bcannot\b/g, 'can not').replace(/\bshan't\b/g, 'shall not')
+        .replace(/n't\b/g, ' not').replace(/'m\b/g, ' am').replace(/'re\b/g, ' are').replace(/'ve\b/g, ' have').replace(/'ll\b/g, ' will').replace(/'d\b/g, ' would')
+        .replace(/\b(it|that|what|where|who|there|here|he|she|how|this|when|why)'s\b/g, '$1 is');
+      v = v.replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+      return v ? v.split(' ').map(w => EN_SPELL[w] || w).map(w => /^(a|an|the)$/.test(w) ? 'the' : w) : [];
+    };
+    const JES = {jesam:'sam', jesi:'si', je:'je', jesmo:'smo', jeste:'ste', jesu:'su'};
+    const SUBJECTS = new Set(['ja','ti','on','ona','ono','mi','vi','oni','one']);
+    const canonSr = (value, plain) => {
+      let v = latinOf(value.normalize('NFC')).toLowerCase().replace(/\(.*?\)/g, ' ').replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+      if (plain) v = plainLetters(v);
+      let w = v ? v.split(' ') : [];
+      // "Jesi li umoran?" / "Imaš li psa?"  ->  "da li si umoran" / "da li imaš psa"
+      if (w.length > 1 && w[1] === 'li' && w[0] !== 'da') w = ['da', 'li', JES[w[0]] || w[0], ...w.slice(2)];
+      return w;
+    };
+    const subjectAt = w => (w[0] === 'da' && w[1] === 'li') ? 2 : 0;
+    const bag = w => [...w].sort().join(' ');
+    const editDistance = (a, b) => {
+      if (Math.abs(a.length - b.length) > 1) return 2;
+      const d = Array.from({length: a.length + 1}, (_, i) => [i, ...Array(b.length).fill(0)]);
+      for (let j = 1; j <= b.length; j++) d[0][j] = j;
+      for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
+        d[i][j] = Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1),
+          i > 1 && j > 1 && a[i-1] === b[j-2] && a[i-2] === b[j-1] ? d[i-2][j-2] + 1 : Infinity);
+      return d[a.length][b.length];
+    };
+    // one small typo in one word of 5+ letters, with the last two letters (the grammar ending) unchanged
+    const oneTypo = (r, a) => {
+      if (r.length !== a.length) return false;
+      const diff = r.map((w, i) => [w, a[i]]).filter(([x, y]) => x !== y);
+      if (diff.length !== 1) return false;
+      const [x, y] = diff[0];
+      return x.length >= 5 && y.length >= 5 && x.slice(-2) === y.slice(-2) && editDistance(x, y) === 1;
+    };
+    const PRONOUNS_FOR = {i:['ja'], me:['ja'], my:['ja'], you:['ti','vi'], your:['ti','vi'], he:['on'], him:['on'], his:['on'], she:['ona'], her:['ona'], it:['ono','on','ona'], its:['ono','on','ona'], we:['mi'], us:['mi'], our:['mi'], they:['oni','one','ona'], them:['oni','one','ona'], their:['oni','one','ona']};
+    function checkAnswer(response, item, course = state.course) {
+      const answers = item.answers || [];
+      if (course === 'en') {
+        const r = canonEn(response);
+        if (!r.length) return {ok: false};
+        for (const a of answers) if (canonEn(a).join(' ') === r.join(' ')) return {ok: true};
+        for (const a of answers) if (oneTypo(r, canonEn(a))) return {ok: false, typo: true};
+        return {ok: false};
+      }
+      const plain = !/[čćšžđ]/.test(latinOf(response).toLowerCase());
+      const r = canonSr(response, plain);
+      if (!r.length) return {ok: false};
+      const allowed = new Set(canonEn(item.prompt || '').flatMap(w => PRONOUNS_FOR[w] || []));
+      const rs = subjectAt(r), rHasSubject = SUBJECTS.has(r[rs]);
+      const forms = a => {
+        const w = canonSr(a, plain), out = [w], at = subjectAt(w);
+        if (SUBJECTS.has(w[at]) && !rHasSubject) out.push([...w.slice(0, at), ...w.slice(at + 1)]);         // pronoun dropped
+        if (!SUBJECTS.has(w[at]) && rHasSubject && allowed.has(r[rs])) out.push([...w.slice(0, at), r[rs], ...w.slice(at)]); // pronoun added
+        return out;
+      };
+      for (const a of answers) for (const w of forms(a)) if (bag(w) === bag(r)) return {ok: true};
+      for (const a of answers) for (const w of forms(a)) if (oneTypo(r, w)) return {ok: false, typo: true};
+      return {ok: false};
+    }
+    window.pomaloCheckAnswer = (response, answers, course, prompt) => checkAnswer(response, {answers, prompt}, course);
 
     // Difficulty grows lesson by lesson. Each entry: [last lesson number, exercise type].
     const STAGES = [[4,'choose'],[7,'pickWord'],[10,'typeWord'],[Infinity,'translate']];
@@ -3835,13 +3910,11 @@
       const r = mistakeReview;
       if (r.feedback === 'correct') return;
       const {key, item} = reviewItem();
-      const answers = state.course === 'en' ? item.answers : [...item.answers, ...item.answers.map(cyrillic)];
       const response = item.options ? item.options[r.choice] : answerInput().value;
       if (!response?.trim()) return;
-      const normalized = normalize(response);
-      const plainSerbian = value => value.replace(/đ/g,'dj').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-      const allowPlain = state.course === 'sr' && !item.options && !/[čćšžđ\u0400-\u04ff]/.test(normalized);
-      const correct = answers.some(a => { const e = normalize(a); return e === normalized || (allowPlain && plainSerbian(e) === normalized); });
+      const verdict = item.options ? {ok: item.answers.some(a => normalize(a) === normalize(response))} : checkAnswer(response, item);
+      if (verdict.typo) { r.feedback = 'typo'; render(); answerInput().focus(); return; }
+      const correct = verdict.ok;
       get('[data-answer-help]').open = false;
       if (correct) {
         r.feedback = 'correct';
@@ -3884,6 +3957,27 @@
       render();
       get('[data-test-go]').focus();
     }
+    // How many reasonable translations a sentence may have that are not in its answer list.
+    // you → ti or vi; I/we → masculine or feminine endings; Serbian present → "I go" or "I am going";
+    // a dropped Serbian pronoun → he, she or it.
+    function ambiguity(item) {
+      let n = 0;
+      if (state.course === 'sr') {
+        const p = ' ' + canonEn(item.prompt || '').join(' ') + ' ';
+        const variants = new Set((item.answers || []).map(a => canonSr(a, true).join(' '))).size;
+        if (/ (you|your|yours|yourself) /.test(p)) n += 2;
+        if (/ (i|we|me|us|my|our) /.test(p)) n += 1;
+        if (variants > 2) n -= 1; // alternatives are already listed
+      } else {
+        const answers = (item.answers || []).map(a => ' ' + canonEn(a).join(' ') + ' ');
+        if (answers.some(a => / (am|is|are) \w+ing /.test(a)) && !answers.every(a => / (am|is|are) \w+ing /.test(a))) n += 0;
+        else if (answers.some(a => / (am|is|are) \w+ing /.test(a))) n += 2;
+        const first = canonSr(item.prompt || '', true)[0];
+        if (answers.some(a => /^ (he|she|it) /.test(a)) && !SUBJECTS.has(first)) n += 2;
+        if (answers.length > 2) n -= 1;
+      }
+      return n;
+    }
     function beginA1Test() {
       const r = n => Math.floor(Math.random() * n);
       // Spread over all of A1: Lessons 1–35 are split into 15 equal bands (2–3 lessons each),
@@ -3899,7 +3993,13 @@
         }));
         all.sort((a, b) => a.words - b.words);
         const middle = all.slice(Math.floor(all.length / 4), Math.ceil(all.length * 3 / 4));
-        const pool = middle.length ? middle : all;
+        let pool = middle.length ? middle : all;
+        // For "translate the whole sentence", prefer sentences with one clear translation.
+        if (mode === 'translate') {
+          const scored = pool.map(c => ({c, n: ambiguity(lessons[c.l].tasks[state.course][c.t][c.i])}));
+          const least = Math.min(...scored.map(x => x.n));
+          pool = scored.filter(x => x.n === least).map(x => x.c);
+        }
         const pick = pool[r(pool.length)];
         return {l: pick.l, t: pick.t, i: pick.i, mode};
       });
@@ -4014,23 +4114,23 @@
       next.textContent = t.pos === A1_QUESTIONS - 1 ? T('See my result', 'Pogledaj rezultat') : local(labels.next);
       const answer = item.options?.find(o => item.answers.some(a => normalize(a) === normalize(o))) || item.answers[0];
       const shown = learningSerbian ? display(answer) : answer;
-      get('.feedback').textContent = t.feedback === 'correct' ? local(labels.correct)
+      get('.feedback').textContent = t.note === 'typo' && !t.feedback ? local(labels.typo) : t.feedback === 'correct' ? local(labels.correct)
         : t.feedback === 'wrong' ? T('Not quite. The right answer: ', 'Nije tačno. Tačan odgovor: ') + shown : '';
       get('[data-answer-help]').hidden = true;
       steps(t.pos / A1_QUESTIONS);
-      event({feedback: t.feedback === 'wrong' ? 'retry' : t.feedback, key: 'a1test|' + t.pos});
+      event({feedback: t.feedback === 'wrong' ? 'retry' : (t.note === 'typo' && !t.feedback ? 'typo' : t.feedback), key: 'a1test|' + t.pos + (t.note ? '|typo' : '')});
     }
     function submitTest() {
       const t = a1Test;
       if (t.stage !== 'ask' || t.feedback) return;
       const {q, key, item} = testItem();
-      const answers = state.course === 'en' ? item.answers : [...item.answers, ...item.answers.map(cyrillic)];
       const response = item.options ? item.options[t.choice] : answerInput().value;
       if (!response?.trim()) return;
-      const normalized = normalize(response);
-      const plainSerbian = value => value.replace(/đ/g,'dj').normalize('NFD').replace(/[̀-ͯ]/g,'');
-      const allowPlain = state.course === 'sr' && !item.options && !/[čćšžđЀ-ӿ]/.test(normalized);
-      const correct = answers.some(a => { const e = normalize(a); return e === normalized || (allowPlain && plainSerbian(e) === normalized); });
+      const verdict = item.options ? {ok: item.answers.some(a => normalize(a) === normalize(response))} : checkAnswer(response, item);
+      // one extra chance per question for a genuine misspelling
+      if (verdict.typo && !t.typoUsed) { t.typoUsed = true; t.note = 'typo'; render(); answerInput().focus(); return; }
+      t.note = '';
+      const correct = verdict.ok;
       if (correct) { t.feedback = 'correct'; t.right++; }
       else {
         t.feedback = 'wrong';
@@ -4045,7 +4145,7 @@
       const t = a1Test;
       if (t.stage !== 'ask' || !t.feedback) return;
       answerInput().value = '';
-      if (t.pos < A1_QUESTIONS - 1) { t.pos++; t.feedback = ''; t.choice = null; render(); focusExercise(); return; }
+      if (t.pos < A1_QUESTIONS - 1) { t.pos++; t.feedback = ''; t.choice = null; t.note = ''; t.typoUsed = false; render(); focusExercise(); return; }
       const course = activeCourse();
       const old = course.a1Test || {passed: false, best: 0, attempts: 0};
       t.passed = t.right >= A1_PASS;
@@ -4404,16 +4504,11 @@
       if (mistakeReview) { submitReview(); return; }
       if(progress.feedback === 'correct') return;
       const item = current();
-      const answers = state.course === 'en' ? item.answers : [...item.answers,...item.answers.map(cyrillic)];
       const response = item.options ? activeOptions(item)[progress.choice] : answerInput().value;
       if(!response?.trim()) return;
-      const normalized = normalize(response);
-      const plainSerbian = value => value.replace(/đ/g,'dj').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-      const allowPlainSerbian = state.course === 'sr' && !item.options && !/[čćšžđ\u0400-\u04ff]/.test(normalized);
-      const correct = answers.some(answer => {
-        const expected = normalize(answer);
-        return expected === normalized || (allowPlainSerbian && plainSerbian(expected) === normalized);
-      });
+      const verdict = item.options ? {ok: item.answers.some(answer => normalize(answer) === normalize(response))} : checkAnswer(response, item);
+      if (verdict.typo) { progress.feedback = 'typo'; save(); render(); answerInput().focus(); return; }
+      const correct = verdict.ok;
       get('[data-answer-help]').open = false;
       progress.feedback = correct ? 'correct' : 'retry';
       if (!correct) { recordMistake(mistakeKey()); progress.wrong = (progress.wrong || 0) + 1; }
@@ -4776,6 +4871,7 @@
       else if (d.lessonFinished) { mood = 'party'; msg = text('done', d) + starLine(d.lessonStars) + ' ' + lyric(); song(); confetti(); setTimeout(() => { if (buddy.dataset.mood === 'party') buddy.dataset.mood = 'idle'; }, 6000); }
       else if (d.taskFinished) { mood = 'sing'; msg = lyric(); song(); setTimeout(() => { if (buddy.dataset.mood === 'sing') buddy.dataset.mood = 'idle'; }, 3200); }
       else if (d.feedback === 'correct') { mood = 'cheer'; msg = text('correct', d); chirp(); if (soundOn && !d.review && d.serbian) setTimeout(() => { try { synth && synth.cancel(); } catch {} try { clip && clip.pause(); } catch {} queue = Promise.resolve(); speakText(d.serbian, 'sr'); }, 450); }
+      else if (d.feedback === 'typo') { mood = 'idle'; msg = d.course === 'sr' ? 'So close! Look at the spelling.' : (window.pomaloDisplay ? window.pomaloDisplay(d.dialect === 'ij' ? 'Skoro! Pogledaj kako si napisao.' : 'Skoro! Pogledaj kako si napisao.') : ''); }
       else if (d.feedback === 'retry') { mood = 'oops'; msg = text('wrong', d); soft(); }
       else if (d.test && d.key === 'a1test|intro') msg = text('test', d);
       else if (!greeted) { msg = text(d.test ? 'test' : d.review ? 'review' : 'hello', d); greeted = true; }
