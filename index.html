@@ -701,6 +701,11 @@
   #pomalo-design [data-test-panel] button{font:700 17px system-ui,sans-serif;padding:12px 20px;border-radius:14px;border:2px solid light-dark(#0c40a8,#7da2ff);background:light-dark(#fff,#16204a);color:light-dark(#0c40a8,#cfe0ff);cursor:pointer}
   #pomalo-design [data-test-panel] button.go{background:light-dark(#0c40a8,#7da2ff);color:light-dark(#fff,#0b1433)}
   #pomalo-design [data-test-panel] p{flex-basis:100%;margin:0;font-size:17px}
+  #pomalo-design .test-review{flex-basis:100%;margin:6px 0 0;padding-left:22px;display:grid;gap:8px;font-size:15px}
+  #pomalo-design .test-review li{padding:6px 8px;border-radius:10px;background:light-dark(#eef7f0,#12321f)}
+  #pomalo-design .test-review li.no{background:light-dark(#fdecee,#3a1418)}
+  #pomalo-design .test-review .q{font-weight:700}
+  #pomalo-design .test-review .exp{font-weight:600;color:light-dark(#0c40a8,#9db8ff)}
   #pomalo-design .steps{display:flex;gap:5px;margin:12px 0}
   #pomalo-design .steps span{flex:1;height:5px;background:light-dark(#d6ddf2,#2c3870);border-radius:5px}
   #pomalo-design header{background:light-dark(#0c3c9e,#0d2b78);color:#fff;border-bottom:5px solid light-dark(#c8102e,#ff6b72)}
@@ -3667,6 +3672,14 @@
       return v ? v.split(' ').map(w => EN_SPELL[w] || w).map(w => /^(a|an|the)$/.test(w) ? 'the' : w) : [];
     };
     const JES = {jesam:'sam', jesi:'si', je:'je', jesmo:'smo', jeste:'ste', jesu:'su'};
+    // words that can always replace each other
+    const SR_SAME = {jako: 'veoma', vrlo: 'veoma', ponovo: 'opet', sada: 'sad', kada: 'kad', takodje: 'takođe', isto: 'takođe'};
+    // Mixing accepted versions word by word: "Bend je svirao jako dobro" + "Grupa je svirala veoma dobro"
+    // also accept "Grupa je svirala jako dobro".
+    const mixes = (r, versions) => {
+      const same = versions.filter(v => v.length === r.length);
+      return same.length > 1 && r.every((x, i) => same.some(v => v[i] === x));
+    };
     const SUBJECTS = new Set(['ja','ti','on','ona','ono','mi','vi','oni','one']);
     const canonSr = (value, plain) => {
       let v = latinOf(value.normalize('NFC')).toLowerCase().replace(/\(.*?\)/g, ' ').replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
@@ -3674,7 +3687,7 @@
       let w = v ? v.split(' ') : [];
       // "Jesi li umoran?" / "Imaš li psa?"  ->  "da li si umoran" / "da li imaš psa"
       if (w.length > 1 && w[1] === 'li' && w[0] !== 'da') w = ['da', 'li', JES[w[0]] || w[0], ...w.slice(2)];
-      return w;
+      return w.map(x => SR_SAME[x] || x);
     };
     const subjectAt = w => (w[0] === 'da' && w[1] === 'li') ? 2 : 0;
     const bag = w => [...w].sort().join(' ');
@@ -3730,6 +3743,7 @@
         const r = canonEn(response);
         if (!r.length) return {ok: false};
         for (const a of answers) if (canonEn(a).join(' ') === r.join(' ')) return {ok: true};
+        if (mixes(r, answers.map(canonEn))) return {ok: true};
         for (const a of answers) {
           const w = canonEn(a), names = nameWords(a);
           if (names.size && r.length === w.length && w.every((x, i) => x === r[i] || isName(x, names))) return {ok: true};
@@ -3749,9 +3763,24 @@
         return out;
       };
       for (const a of answers) for (const w of forms(a)) if (bag(w) === bag(r)) return {ok: true};
+      if (mixes(r, answers.flatMap(forms))) return {ok: true};
       for (const a of answers) { const names = nameWords(a); if (names.size) for (const w of forms(a)) if (fitsWithNames(r, w, names)) return {ok: true}; }
       for (const a of answers) for (const w of forms(a)) if (oneTypo(r, w)) return {ok: false, typo: true};
       return {ok: false};
+    }
+    // Gap questions: a word also counts when the whole sentence with it in the gap is correct,
+    // and typing the whole sentence instead of one word is fine too.
+    function judge(response, item) {
+      if (item.options) return {ok: item.answers.some(a => normalize(a) === normalize(response))};
+      let v = checkAnswer(response, item);
+      if (!v.ok && item.blank && item.full) {
+        const blank = state.dialect === 'ij' && item.ijekavianBlank ? item.ijekavianBlank : item.blank;
+        const filled = checkAnswer(blank.replace('___', response.trim()), {answers: item.full, prompt: item.prompt});
+        const whole = checkAnswer(response, {answers: item.full, prompt: item.prompt});
+        if (filled.ok || whole.ok) v = {ok: true};
+        else if (!v.typo && (filled.typo || whole.typo)) v = {ok: false, typo: true};
+      }
+      return v;
     }
     window.pomaloCheckAnswer = (response, answers, course, prompt) => checkAnswer(response, {answers, prompt}, course);
 
@@ -3823,6 +3852,7 @@
         out.blank = parts.join(' ');
         out.answers = [word];
         out.model = word;
+        out.full = fullAnswers(item);
         if (mode === 'pickWord') {
           // Same capitalisation for every option, so the answer can't be spotted by its capital letter.
           const capital = /^\p{Lu}/u.test(word);
@@ -3948,7 +3978,7 @@
       const {key, item} = reviewItem();
       const response = item.options ? item.options[r.choice] : answerInput().value;
       if (!response?.trim()) return;
-      const verdict = item.options ? {ok: item.answers.some(a => normalize(a) === normalize(response))} : checkAnswer(response, item);
+      const verdict = judge(response, item);
       if (verdict.typo) { r.feedback = 'typo'; render(); answerInput().focus(); return; }
       const correct = verdict.ok;
       get('[data-answer-help]').open = false;
@@ -4102,6 +4132,7 @@
         i < Math.round(n * 5) ? 'light-dark(#f2b233,#f2b233)' : 'light-dark(#d6ddf2,#2c3870)');
       const event = extra => window.dispatchEvent(new CustomEvent('pomalo:render', {detail: {review: true, test: true, lessonFinished: false, taskFinished: false,
         course: state.course, dialect: state.dialect, stars: t.right || 0, total: A1_QUESTIONS, english: '', englishFull: '', ...extra}}));
+      if (t.stage !== 'result') panel.querySelector('[data-test-review]')?.remove();
       if (t.stage !== 'ask') {
         get('form').hidden = true;
         instructionEl.hidden = true;
@@ -4110,7 +4141,7 @@
         get('[data-label="lesson"]').textContent = T('Level 1 · Final test', 'Nivo 1 · Završni test');
         if (t.stage === 'intro') {
           get('[data-credit="exercise"]').textContent = T(A1_QUESTIONS + ' questions', A1_QUESTIONS + ' pitanja');
-          get('[data-credit="total"]').textContent = T('Pass: ' + A1_PASS + ' of ' + A1_QUESTIONS, 'Prolaz: ' + A1_PASS + ' od ' + A1_QUESTIONS);
+          get('[data-credit="total"]').textContent = T('Needed to pass: ' + A1_PASS + ' of ' + A1_QUESTIONS, 'Za prolaz treba: ' + A1_PASS + ' od ' + A1_QUESTIONS);
           get('[data-credit="unlock"]').textContent = best ? T('Your best so far: ' + best.best + ' of ' + (best.of || A1_QUESTIONS) + (best.passed ? ' · passed ✓' : ''), 'Tvoj najbolji rezultat: ' + best.best + ' od ' + (best.of || A1_QUESTIONS) + (best.passed ? ' · položeno ✓' : '')) : '';
           get('[data-test-text]').textContent = T(
             A1_QUESTIONS + ' questions from Lessons 1–35. Answer at least ' + A1_PASS + ' correctly to open Level 2 (A2). Each question has one try and no hints. Good luck!',
@@ -4121,8 +4152,8 @@
           event({feedback: '', key: 'a1test|intro'});
         } else {
           const passed = t.passed;
-          get('[data-credit="exercise"]').textContent = T(t.right + ' of ' + A1_QUESTIONS + ' correct', t.right + ' od ' + A1_QUESTIONS + ' tačno');
-          get('[data-credit="total"]').textContent = T('Pass: ' + A1_PASS, 'Prolaz: ' + A1_PASS);
+          get('[data-credit="exercise"]').textContent = T('Your score: ' + t.right + ' of ' + A1_QUESTIONS, 'Tvoj rezultat: ' + t.right + ' od ' + A1_QUESTIONS);
+          get('[data-credit="total"]').textContent = T('Needed to pass: ' + A1_PASS, 'Za prolaz treba: ' + A1_PASS);
           get('[data-credit="unlock"]').textContent = '';
           get('[data-test-text]').textContent = passed
             ? T('🏆 You passed the A1 test! Level 2 (A2) is open.', '🏆 Položio si A1 test! Nivo 2 (A2) je otvoren.')
@@ -4130,6 +4161,17 @@
           go.textContent = passed ? T('Start Level 2', 'Započni Nivo 2') : T('Practise my mistakes', 'Vežbaj greške~Vježbaj greške');
           other.textContent = passed ? T('Back to my lesson', 'Nazad na lekciju') : T('Try the test again', 'Probaj test ponovo');
           steps(t.right / A1_QUESTIONS);
+          const list = document.createElement('ol'); list.className = 'test-review'; list.setAttribute('data-test-review', '');
+          (t.log || []).forEach(x => {
+            const li = document.createElement('li'); li.className = x.ok ? 'ok' : 'no';
+            const q = document.createElement('div'); q.className = 'q'; q.textContent = (x.ok ? '✓ ' : '✗ ') + x.prompt;
+            const a = document.createElement('div'); a.textContent = T('Your answer: ', 'Tvoj odgovor: ') + x.response;
+            li.append(q, a);
+            if (!x.ok) { const e = document.createElement('div'); e.className = 'exp'; e.textContent = T('Expected: ', 'Očekivano: ') + x.expected; li.append(e); }
+            list.append(li);
+          });
+          panel.querySelector('[data-test-review]')?.remove();
+          panel.append(list);
           event({feedback: '', key: 'a1test|result', testResult: passed ? 'pass' : 'fail'});
         }
         return;
@@ -4141,8 +4183,8 @@
       const answered = Boolean(t.feedback);
       for (const k of ['serbian','check','next']) get('[data-label="'+k+'"]').textContent = local(labels[k]);
       get('[data-label="lesson"]').textContent = T('A1 test · Question ' + (t.pos + 1) + ' of ' + A1_QUESTIONS, 'A1 test · Pitanje ' + (t.pos + 1) + ' od ' + A1_QUESTIONS);
-      get('[data-credit="exercise"]').textContent = T(t.right + ' correct', t.right + ' tačno');
-      get('[data-credit="total"]').textContent = T('Pass: ' + A1_PASS + ' of ' + A1_QUESTIONS, 'Prolaz: ' + A1_PASS + ' od ' + A1_QUESTIONS);
+      get('[data-credit="exercise"]').textContent = T('Your score so far: ' + t.right, 'Tvoj rezultat: ' + t.right);
+      get('[data-credit="total"]').textContent = T('Needed to pass: ' + A1_PASS + ' of ' + A1_QUESTIONS, 'Za prolaz treba: ' + A1_PASS + ' od ' + A1_QUESTIONS);
       get('[data-credit="unlock"]').textContent = T('One try per question.', 'Jedan pokušaj po pitanju.');
       const [modeEn, modeSr] = modeText[item.mode];
       instructionEl.textContent = T('From Lesson ' + (q.l + 1), 'Iz lekcije ' + (q.l + 1)) + ' · ' + (learningSerbian ? modeEn : local(selectDialect(modeSr)));
@@ -4189,12 +4231,16 @@
       const {q, key, item} = testItem();
       const response = item.options ? item.options[t.choice] : answerInput().value;
       if (!response?.trim()) return;
-      const verdict = item.options ? {ok: item.answers.some(a => normalize(a) === normalize(response))} : checkAnswer(response, item);
+      const verdict = judge(response, item);
       // one extra chance per question for a genuine misspelling
       if (verdict.typo && !t.typoUsed) { t.typoUsed = true; t.note = 'typo'; render(); answerInput().focus(); return; }
       t.note = '';
       const correct = verdict.ok;
       t.model = correct && !item.options && !sameAsModel(response, item.model) ? item.model : '';
+      const promptShown = state.course === 'sr' ? item.prompt : display(state.dialect === 'ij' && item.ijekavianPrompt ? item.ijekavianPrompt : item.prompt);
+      const expected = item.options?.find(o => item.answers.some(a => normalize(a) === normalize(o))) || item.model || item.answers[0];
+      (t.log = t.log || []).push({prompt: (item.blank ? (state.course === 'sr' ? display(item.blank) : item.blank) + ' · ' : '') + promptShown,
+        response: state.course === 'sr' ? display(response) : response, ok: correct, expected: state.course === 'sr' ? display(expected) : expected});
       if (correct) { t.feedback = 'correct'; t.right++; }
       else {
         t.feedback = 'wrong';
@@ -4571,7 +4617,7 @@
       const item = current();
       const response = item.options ? activeOptions(item)[progress.choice] : answerInput().value;
       if(!response?.trim()) return;
-      const verdict = item.options ? {ok: item.answers.some(answer => normalize(answer) === normalize(response))} : checkAnswer(response, item);
+      const verdict = judge(response, item);
       if (verdict.typo) { progress.feedback = 'typo'; save(); render(); answerInput().focus(); return; }
       const correct = verdict.ok;
       get('[data-answer-help]').open = false;
