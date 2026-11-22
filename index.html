@@ -965,13 +965,14 @@
       <section data-complete hidden>
         <button type="button" data-replay></button>
       </section>
-      <section data-break hidden aria-label="Commercial break">
+      <section data-break hidden aria-label="Little break">
         <div class="break-ad">
           <div class="sub" data-ad="label">Wellbeing break</div>
           <h3 data-ad="name">Have a sip of water</h3>
           <p data-ad="copy">Take a moment to drink some water if you’re thirsty.</p>
         </div>
         <p data-ad="auto" tabindex="-1" hidden></p>
+        <button type="button" class="main-action" data-break-skip></button>
       </section>
       </div>
       <section data-grammar-page aria-labelledby="grammar-title" hidden>
@@ -4599,23 +4600,28 @@
       get('[data-complete]').hidden = !lessonFinished || hasNextLesson;
       get('[data-replay]').textContent = learningSerbian ? 'Practise this lesson again' : local('Ponovi ovu lekciju');
       get('[data-break]').hidden = !showBreak;
-      get('[data-ad="label"]').textContent = learningSerbian ? 'Sponsored · Break between lessons' : local('Sponzorisano · Pauza između lekcija');
-      // Generic sponsor slots shown between lessons. Replace with real sponsors later.
-      const sponsors = [
-        ['Explore Serbia', 'Plan your trip: flights, trains and places to stay.',
-          'Otkrij Srbiju', 'Isplaniraj putovanje: letovi, vozovi i smeštaj.~Isplaniraj putovanje: letovi, vozovi i smještaj.'],
-        ['Books and dictionaries', 'Read more Serbian with books for every level.',
-          'Knjige i rečnici~Knjige i rječnici', 'Čitaj više uz knjige za svaki nivo.'],
-        ['Practise with a tutor', 'Speak Serbian with a teacher online or in your town.',
-          'Vežbaj sa nastavnikom~Vježbaj sa nastavnikom', 'Pričaj sa nastavnikom onlajn ili u svom gradu.'],
-        ['A taste of the Balkans', 'Cafés and restaurants where you can order in Serbian.',
-          'Ukusi Balkana', 'Kafići i restorani u kojima možeš da naručiš na srpskom.'],
-        ['Your brand here', 'Reach people learning Serbian every day. Become a Pomalo sponsor.',
-          'Ovde može biti vaša reklama~Ovdje može biti vaša reklama', 'Svakog dana dopirite do ljudi koji uče jezik. Postanite sponzor Pomala.']
+      get('[data-ad="label"]').textContent = learningSerbian ? 'Little break · between lessons' : local('Mala pauza · između lekcija');
+      // A short, child-friendly break between lessons (no advertising).
+      const breaks = [
+        ['Stretch like a sparrow! 🐦', 'Arms up, wings out, and take a deep breath.',
+          'Protegni se kao vrabac! 🐦', 'Ruke gore, raširi krila i duboko udahni.'],
+        ['Have a sip of water 💧', 'A little water helps your brain learn.',
+          'Popij malo vode 💧', 'Malo vode pomaže mozgu da uči.'],
+        ['Look out of the window 🪟', 'Can you name three things you see in Serbian?',
+          'Pogledaj kroz prozor 🪟', 'Možeš li da kažeš tri stvari koje vidiš na engleskom?'],
+        ['Share a new word 🗣️', 'Tell someone at home one word you learned today.',
+          'Podeli novu reč 🗣️~Podijeli novu riječ 🗣️', 'Reci nekome kod kuće jednu reč koju si danas naučio.~Reci nekome kod kuće jednu riječ koju si danas naučio.'],
+        ['Rest your eyes 👀', 'Close your eyes and count slowly to five.',
+          'Odmori oči 👀', 'Zatvori oči i polako izbroj do pet.']
       ];
-      const [title, message, titleSr, messageSr] = sponsors[course.selected % sponsors.length];
+      const [title, message, titleSr, messageSr] = breaks[course.selected % breaks.length];
       get('[data-ad="name"]').textContent = learningSerbian ? title : local(selectDialect(titleSr));
       get('[data-ad="copy"]').textContent = learningSerbian ? message : local(selectDialect(messageSr));
+      const skip = get('[data-break-skip]');
+      skip.hidden = !showBreak;
+      skip.textContent = lessonFinished && lessonNumber === LEVEL1_END && !a1Passed()
+        ? (learningSerbian ? 'Start the A1 test now' : local('Započni A1 test sada'))
+        : (learningSerbian ? 'Next lesson now' : local(selectDialect('Sledeća lekcija sada~Sljedeća lekcija sada')));
       clearTimeout(breakTimer);
       const autoMessage = get('[data-ad="auto"]');
       autoMessage.hidden = !showBreak;
@@ -4709,6 +4715,11 @@
       focusExercise();
     }
     get('[data-label="next"]').addEventListener('click', () => a1Test ? nextTest() : mistakeReview ? nextReview() : advance());
+    get('[data-break-skip]').addEventListener('click', () => {
+      clearTimeout(breakTimer);
+      const n = activeCourse().selected + 1;
+      if (n === LEVEL1_END && !a1Passed()) openA1Test(); else if (n < lessons.length) openLesson(n);
+    });
     function openLesson(index) {
       const course = activeCourse();
       if(index > course.unlocked || !course.records[index]) return;
