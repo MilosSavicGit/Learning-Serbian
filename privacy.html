@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pomalo Privacy</title>
+<meta name="description" content="What Pomalo stores about parents, children and adult learners, who can see it, and how to delete it.">
+<style>
+@font-face{font-family:Nunito;font-weight:700;font-display:swap;src:url(fonts/nunito-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:Nunito;font-weight:900;font-display:swap;src:url(fonts/nunito-latin-900-normal.woff2) format('woff2')}
+@font-face{font-family:Nunito;font-weight:700;font-display:swap;src:url(fonts/nunito-latin-ext-700-normal.woff2) format('woff2');unicode-range:U+0100-02AF}
+@font-face{font-family:Nunito;font-weight:900;font-display:swap;src:url(fonts/nunito-latin-ext-900-normal.woff2) format('woff2');unicode-range:U+0100-02AF}
+:root{--bg:#eef2fb;--panel:#fff;--ink:#0b1d51;--muted:#4a5785;--line:#c3cbe3;--blue:#0c40a8;--red:#c8102e;--soft:#e1e9ff;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1230;--panel:#111b3d;--ink:#eef2ff;--muted:#a9b4d8;--line:#34417a;--blue:#9db8ff;--red:#ff6b72;--soft:#1b2c66;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0a1230;--panel:#111b3d;--ink:#eef2ff;--muted:#a9b4d8;--line:#34417a;--blue:#9db8ff;--red:#ff6b72;--soft:#1b2c66;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:24px 16px 56px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:28px 24px}
+header.top{background:var(--blue);color:#fff;border-radius:24px 24px 0 0;border-bottom:5px solid var(--red);padding:18px 24px;font:900 22px/1.2 Nunito,system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) header.top{background:#0c3c9e}}
+.card.body{border-radius:0 0 24px 24px;border-top:0}
+h1{font:900 34px/1.1 Nunito,system-ui,sans-serif;margin:0 0 6px;color:var(--blue)}
+h2{font:900 22px/1.25 Nunito,system-ui,sans-serif;margin:30px 0 8px;color:var(--blue)}
+.muted{color:var(--muted)}
+.summary{background:var(--soft);border-radius:16px;padding:14px 18px;margin:18px 0}
+.summary p{margin:6px 0}
+ul{padding-left:22px}li{margin:4px 0}
+a{color:var(--blue);font-weight:700}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;vertical-align:top;border-top:1px solid var(--line);padding:8px 6px}
+th{font-weight:700}
+.tablewrap{overflow-x:auto}
+footer{margin-top:28px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">pomalo · little by little · помало</header>
+  <main class="card body">
+    <h1>Privacy</h1>
+    <p class="muted">Last updated: 22 November 2026</p>
+
+    <div class="summary">
+      <p><strong>In short.</strong> Pomalo is free and has no ads, no tracking and no selling of data. We store a parent’s or adult learner’s email address, the first names the learners choose, and their progress, only so that learning can continue on any device. You can delete a learner or your whole account yourself, at any time, inside Pomalo.</p>
+      <p lang="sr"><strong>Ukratko.</strong> Pomalo je besplatan, bez reklama, bez praćenja i bez prodaje podataka. Čuvamo email roditelja ili odraslog učenika, imena koja učenici izaberu i njihov napredak, samo da bi učenje moglo da se nastavi na bilo kom uređaju. Učenika ili ceo nalog možeš sam da obrišeš u svakom trenutku, u Pomalu.</p>
+    </div>
+
+    <h2>Who runs Pomalo</h2>
+    <p>Pomalo is made by Miloš Savić. For any question about your data, or to ask for a copy or a correction, write to <a href="mailto:contact@bymilossavic.com">contact@bymilossavic.com</a>.</p>
+
+    <h2>What we store</h2>
+    <ul>
+      <li><strong>Email address</strong> of the parent or adult learner, used to sign in with a one-time code.</li>
+      <li><strong>Learners</strong>: the first name or nickname you type (a real surname is never needed), the course direction, Ekavian or Ijekavian, Latin or Cyrillic.</li>
+      <li><strong>Progress</strong>: finished lessons, stars, points, A1 test results, and which sentences were answered wrongly, so Pomalo can practise them again.</li>
+      <li><strong>Activity</strong>: dates of registration and visits, and when a lesson or test was finished.</li>
+      <li><strong>Sign-in records</strong> kept by our database provider for security, such as sign-in times, IP address and browser type.</li>
+    </ul>
+    <p>We do <strong>not</strong> collect location, photos, contacts, microphone or camera recordings, advertising IDs or analytics. Pomalo has no ads and no tracking cookies.</p>
+
+    <h2>Stored on your device</h2>
+    <p>The browser keeps a copy of the current learner’s progress and settings (in “local storage”, not cookies), so Pomalo starts quickly and works with a weak connection. Signing out or deleting the account removes it.</p>
+
+    <h2>Children</h2>
+    <p>Children’s profiles are created and managed by a parent or guardian under the parent’s own email address. Children never need an email address of their own, and we only ask for a first name or nickname. A parent can see, change or delete their children’s profiles at any time. If you believe a child has been registered without a parent’s permission, write to us and we will delete the profile.</p>
+
+    <h2>Who can see the data</h2>
+    <ul>
+      <li><strong>You</strong>: a parent sees only their own learners. Database rules prevent anyone from reading another family’s data.</li>
+      <li><strong>The course administrator</strong> (Miloš Savić) can see learners’ names, progress and mistakes, to keep the course working, improve sentences that many learners find hard, and pause access in case of misuse.</li>
+      <li>We never sell or share the data with advertisers or anyone else.</li>
+    </ul>
+
+    <h2>Services that help run Pomalo</h2>
+    <div class="tablewrap"><table>
+      <tr><th>Service</th><th>What it does</th><th>What it receives</th></tr>
+      <tr><td>Supabase</td><td>Database and sign-in</td><td>Email, learners and progress as listed above, and sign-in records</td></tr>
+      <tr><td>Brevo (France)</td><td>Sends the sign-in emails</td><td>The email address and the email itself</td></tr>
+      <tr><td>GitHub Pages</td><td>Hosts the Pomalo website</td><td>Technical request data such as IP address, as for any website</td></tr>
+    </table></div>
+    <p>Pomalo’s font, program code and the Serbian voice recordings are served from Pomalo’s own website. The voice recordings were made in advance with Microsoft Azure; no learner data is ever sent to Microsoft.</p>
+    <p>Some of these providers may process data outside your country, including outside the EU. They do so under their data protection agreements and, where needed, the EU’s standard contractual clauses.</p>
+
+    <h2>Why we use the data</h2>
+    <p>Only to provide what you asked for: an account, saved progress on any device, practice of past mistakes, and the parent or administrator overview. For children, we rely on the parent who creates the profile.</p>
+
+    <h2>How long we keep it</h2>
+    <p>As long as the account exists. When you delete a learner or the account, the data is removed from the database straight away. Sign-in records kept by our providers for security are deleted by them on their own schedules.</p>
+
+    <h2 id="delete">How to delete your data</h2>
+    <ul>
+      <li><strong>In Pomalo:</strong> sign in, and on the “Who’s learning today?” screen open <strong>Account and privacy</strong>. There you can delete one learner, or your whole account with all learners.</li>
+      <li><strong>By email:</strong> write to <a href="mailto:contact@bymilossavic.com">contact@bymilossavic.com</a> from the account’s email address, and we will delete it for you.</li>
+    </ul>
+
+    <h2>Your rights</h2>
+    <p>You can ask for a copy of your data, a correction, or deletion, and you can object to how it is used. If you are in the EU, you can also complain to your national data protection authority.</p>
+
+    <h2>Changes</h2>
+    <p>If this page changes in an important way, we will update the date at the top and tell learners in Pomalo.</p>
+
+    <footer>© 2026 Miloš Savić · <a href="./">Back to Pomalo</a> · <a href="https://bymilossavic.com/">bymilossavic.com</a></footer>
+  </main>
+</div>
+</body>
+</html>

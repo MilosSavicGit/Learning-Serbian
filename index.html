@@ -31,6 +31,11 @@
   #pomalo-gate fieldset.variant p{margin:0}
   #pomalo-design .pair[aria-label="Serbian variant"],#pomalo-design .pair[aria-label="Serbian script"],#pomalo-design header .direction{display:none}
   #pomalo-gate{font-family:Nunito,system-ui,sans-serif}
+  #pomalo-gate .manage{margin-top:18px;border-top:1px solid var(--g-line);padding-top:12px}
+  #pomalo-gate .manage summary{cursor:pointer;font-weight:700}
+  #pomalo-gate .manage-list{list-style:none;padding:0;display:grid;gap:8px}
+  #pomalo-gate .manage-list li{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  #pomalo-gate button.danger{border-color:light-dark(#b3261e,#ff8a80);color:light-dark(#b3261e,#ff8a80)}
   #pomalo-gate h2{font-family:Nunito,system-ui,sans-serif;font-weight:900;letter-spacing:-.3px;font-size:26px;color:light-dark(#0c3c9e,#a9c1ff)}
   #pomalo-gate .welcome{border-width:2px;border-radius:28px}
   #pomalo-gate .welcome-head{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center;margin-bottom:12px}
@@ -90,7 +95,7 @@
       <label for="si-email" class="name-field">Email (parent or adult learner) · Email (roditelja ili odraslog učenika)<input id="si-email" type="email" autocomplete="email" required></label>
       <p class="err" data-si-error hidden></p>
       <button class="main" type="submit">Send me a sign-in email · Pošalji mi email</button>
-      <p class="muted">We store your email, the learners’ first names, their choices and their progress, only to run Pomalo. You can ask for everything to be deleted at any time. · Čuvamo email, imena učenika i njihov napredak samo za rad Pomala. <a href="https://bymilossavic.com/privacy.html" target="_blank" rel="noopener">Privacy</a></p>
+      <p class="muted">We store your email, the learners’ first names, their choices and their progress, only to run Pomalo. You can ask for everything to be deleted at any time. · Čuvamo email, imena učenika i njihov napredak samo za rad Pomala. <a href="privacy.html" target="_blank" rel="noopener">Privacy · Privatnost</a></p>
     </form>
   </section>
 
@@ -118,6 +123,13 @@
     <h2>Who’s learning today? · Ko danas uči?</h2>
     <div class="pick-grid" data-pick-list></div>
     <div class="row-actions"><button type="button" class="main" data-add-learner>+ Add a learner · Dodaj učenika</button><button type="button" data-signout>Sign out · Odjavi se</button></div>
+    <details class="manage" data-manage>
+      <summary>Account and privacy · Nalog i privatnost</summary>
+      <p class="muted">Delete a learner’s profile and all their progress, or delete your whole account. This cannot be undone. · Obriši profil učenika i sav njegov napredak, ili ceo nalog. Ovo se ne može poništiti. <a href="privacy.html" target="_blank" rel="noopener">Privacy · Privatnost</a></p>
+      <ul class="manage-list" data-manage-list></ul>
+      <button type="button" class="danger" data-delete-account>Delete my account and all learners · Obriši moj nalog i sve učenike</button>
+      <p class="err" data-manage-error hidden></p>
+    </details>
   </section>
 
   <section class="card welcome" data-gate="register" hidden>
@@ -307,7 +319,7 @@
     return new Promise(resolve => {
       if (window.supabase?.createClient) return resolve(true);
       const sc = document.createElement('script');
-      sc.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
+      sc.src = 'vendor/supabase/supabase.js'; // supabase-js 2.45.4, served from this site
       sc.onload = () => resolve(Boolean(window.supabase?.createClient));
       sc.onerror = () => resolve(false);
       document.head.append(sc);
@@ -438,8 +450,37 @@
       b.addEventListener('click', () => chooseLearner(l));
       return b;
     }));
+    const ml = $('[data-manage-list]');
+    ml.replaceChildren(...learnersCache.map(l => {
+      const li = document.createElement('li');
+      const nm = document.createElement('span'); nm.textContent = l.name + ' · ' + describe(l);
+      const del = document.createElement('button'); del.type = 'button'; del.className = 'danger';
+      del.textContent = 'Delete · Obriši'; del.setAttribute('aria-label', 'Delete ' + l.name);
+      del.addEventListener('click', () => deleteLearner(l));
+      li.append(nm, del); return li;
+    }));
     show('pick');
   }
+  const manageError = text => { const e = $('[data-manage-error]'); e.textContent = text; e.hidden = !text; };
+  async function deleteLearner(l) {
+    if (!confirm('Delete ' + l.name + ' and all of their progress? This cannot be undone.\nObrisati ' + l.name + ' i sav napredak? Ovo se ne može poništiti.')) return;
+    manageError('');
+    const {error} = await sb.from('learners').delete().eq('id', l.id);
+    if (error) { manageError('Could not delete: ' + error.message); return; }
+    try { if (localStorage.getItem(LOCAL_ACTIVE) === l.id) { localStorage.removeItem(LOCAL_ACTIVE); localStorage.removeItem('pomalo-course-v3'); } } catch {}
+    learnersCache = learnersCache.filter(x => x.id !== l.id);
+    if (learnersCache.length) showPicker(); else show('who');
+  }
+  $('[data-delete-account]').addEventListener('click', async () => {
+    const typed = prompt('This deletes your account, every learner and all progress for good.\nType DELETE to confirm.\n\nOvo trajno briše nalog, sve učenike i sav napredak. Upiši OBRIŠI za potvrdu.');
+    if (!typed || !['delete', 'obriši', 'obrisi'].includes(typed.trim().toLowerCase())) return;
+    manageError('');
+    const {error} = await sb.rpc('delete_my_account');
+    if (error) { manageError('Could not delete the account right now. Please write to contact@bymilossavic.com and we will delete it for you.'); return; }
+    try { ['pomalo-course-v3', LOCAL_ACTIVE, 'pomalo-signin-email'].forEach(k => localStorage.removeItem(k)); } catch {}
+    try { await sb.auth.signOut(); } catch {}
+    status('Your account and all learners have been deleted. Thank you for learning with Pomalo. · Tvoj nalog i svi učenici su obrisani. Hvala što si učio sa Pomalom.');
+  });
   $('[data-add-learner]').addEventListener('click', () => { whoChoice = 'kids'; openRegister(); });
   $('[data-signout]').addEventListener('click', () => sb_signout && sb_signout());
   document.querySelectorAll('#pomalo-gate [data-who]').forEach(b => b.addEventListener('click', () => {
@@ -716,7 +757,20 @@
   @media(max-width:460px){#pomalo-design{padding:5px}#pomalo-design header,#pomalo-design main{padding-inline:12px}#pomalo-design .panel{grid-template-columns:1fr}}
   </style>
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap">
+  <style>/* Nunito, served from this site (no Google Fonts) */
+  @font-face{font-family:Nunito;font-style:normal;font-weight:500;font-display:swap;src:url(fonts/nunito-cyrillic-500-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+  @font-face{font-family:Nunito;font-style:normal;font-weight:700;font-display:swap;src:url(fonts/nunito-cyrillic-700-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+  @font-face{font-family:Nunito;font-style:normal;font-weight:800;font-display:swap;src:url(fonts/nunito-cyrillic-800-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+  @font-face{font-family:Nunito;font-style:normal;font-weight:900;font-display:swap;src:url(fonts/nunito-cyrillic-900-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+  @font-face{font-family:Nunito;font-style:normal;font-weight:500;font-display:swap;src:url(fonts/nunito-latin-ext-500-normal.woff2) format('woff2');unicode-range:U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+  @font-face{font-family:Nunito;font-style:normal;font-weight:700;font-display:swap;src:url(fonts/nunito-latin-ext-700-normal.woff2) format('woff2');unicode-range:U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+  @font-face{font-family:Nunito;font-style:normal;font-weight:800;font-display:swap;src:url(fonts/nunito-latin-ext-800-normal.woff2) format('woff2');unicode-range:U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+  @font-face{font-family:Nunito;font-style:normal;font-weight:900;font-display:swap;src:url(fonts/nunito-latin-ext-900-normal.woff2) format('woff2');unicode-range:U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+  @font-face{font-family:Nunito;font-style:normal;font-weight:500;font-display:swap;src:url(fonts/nunito-latin-500-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+  @font-face{font-family:Nunito;font-style:normal;font-weight:700;font-display:swap;src:url(fonts/nunito-latin-700-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+  @font-face{font-family:Nunito;font-style:normal;font-weight:800;font-display:swap;src:url(fonts/nunito-latin-800-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+  @font-face{font-family:Nunito;font-style:normal;font-weight:900;font-display:swap;src:url(fonts/nunito-latin-900-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+  </style>
   <style>
   /* Child-friendly layer: bigger, rounder, friendlier */
   #pomalo-design .shell{font:18px/1.5 Nunito,"DM Sans",system-ui,sans-serif;border-radius:28px}
