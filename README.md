@@ -24,6 +24,9 @@ Pomalo means "little by little". It is a playful course in Serbian and English, 
 - **Vrapko the sparrow:** cheers, encourages, and sings a short song after each exercise
 - **Pictures:** 91 cartoon pictures of food, animals and everyday things
 - **Progress map:** one dot per lesson, with 1–3 stars for each finished lesson
+- **A1 test:** 15 questions from all of Level 1; 12 correct answers open Level 2 (A2)
+- **Fair answer checking:** synonyms, word order, missing č/ć/š/ž/đ, Cyrillic or Latin, and names are all accepted, and a spelling slip gets a second try
+- **Serbian voice:** every Serbian sentence can be heard, read by Nikola
 
 ## Run it
 
@@ -35,8 +38,6 @@ Pomalo means "little by little". It is a playful course in Serbian and English, 
 3. Choose branch **main** and folder **/ (root)**, then click **Save**.
 4. After a minute or two, the app is live at `https://milossavicgit.github.io/Learning-Serbian/`.
 
-## Where progress is saved
+## Accounts and progress
 
-In this version, each learner's registration, progress and stars are saved **in the browser on that device**.
-
-Accounts, progress on any device, and a teacher or parent view of all learners are planned for the Supabase version.
+Learners sign in with their email address and a 6-digit code, from any device. One parent account can hold several learners, and adults sign up the same way. Progress, stars and mistakes are saved to the learner's account, so they continue where they stopped on any phone, tablet or computer.

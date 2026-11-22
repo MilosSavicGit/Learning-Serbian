@@ -4900,7 +4900,9 @@
       for (const p of prefs) { const v = voices.find(v => v.lang && v.lang.toLowerCase().replace('_', '-').startsWith(p.toLowerCase())); if (v) return v; }
       return null;
     };
-    // Recorded Serbian clips live in audio/sr/<id>.mp3, where id is a hash of the sentence.
+    // Serbian clips live in audio/sr/<voice>/<id>.mp3, where id is a hash of the sentence.
+    // Serbian voice folder: audio/sr/<voice>/<id>.mp3. More voices can be added as more folders.
+    const VOICE = 'nikola';
     const clipId = t => { let h = 0x811c9dc5; for (const ch of t.normalize('NFC')) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
     const missing = new Set();
     let clip = null, queue = Promise.resolve();
@@ -4909,7 +4911,7 @@
         const id = clipId(text);
         if (missing.has(id)) return resolve(false);
         try {
-          clip = new Audio('audio/sr/' + id + '.mp3');
+          clip = new Audio('audio/sr/' + VOICE + '/' + id + '.mp3');
           clip.onended = () => resolve(true);
           clip.onerror = () => { missing.add(id); resolve(false); };
           clip.play().catch(() => resolve(false));
