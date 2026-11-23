@@ -5082,18 +5082,19 @@
     };
     // Serbian clips live in audio/sr/<voice>/<id>.mp3, where id is a hash of the sentence.
     // Serbian voice folder: audio/sr/<voice>/<id>.mp3. More voices can be added as more folders.
-    const VOICE = 'nikola';
+    // Recorded voices per language: audio/<language>/<voice>/<id>.mp3. Languages without one use the device voice.
+    const VOICES = {sr: 'nikola', it: 'giuseppe'};
     const clipId = t => { let h = 0x811c9dc5; for (const ch of t.normalize('NFC')) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
     const missing = new Set();
     let clip = null, queue = Promise.resolve();
-    function playClip(text) {
+    function playClip(text, lang = 'sr') {
       return new Promise(resolve => {
-        const id = clipId(text);
-        if (missing.has(id)) return resolve(false);
+        const id = clipId(text), key = lang + '/' + id;
+        if (!VOICES[lang] || missing.has(key)) return resolve(false);
         try {
-          clip = new Audio('audio/sr/' + VOICE + '/' + id + '.mp3');
+          clip = new Audio('audio/' + lang + '/' + VOICES[lang] + '/' + id + '.mp3');
           clip.onended = () => resolve(true);
-          clip.onerror = () => { missing.add(id); resolve(false); };
+          clip.onerror = () => { missing.add(key); resolve(false); };
           clip.play().catch(() => resolve(false));
         } catch { resolve(false); }
       });
@@ -5109,8 +5110,8 @@
     function speakText(text, lang) {
       if (!text) return false;
       const g = gen;
-      if (lang === 'sr') {
-        queue = queue.then(() => g === gen ? playClip(text) : true).then(ok => { if (!ok && g === gen) ttsText(text, lang); });
+      if (VOICES[lang]) {
+        queue = queue.then(() => g === gen ? playClip(text, lang) : true).then(ok => { if (!ok && g === gen) return new Promise(r => { if (!ttsText(text, lang, r)) r(); }); });
         return true;
       }
       queue = queue.then(() => g !== gen ? null : new Promise(r => { if (!ttsText(text, lang, r)) r(); }));
