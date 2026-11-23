@@ -23,3 +23,9 @@ Add as separate accepted answers:
 - **English:** "I go" / "I am going", he/she/it/they when Serbian drops the pronoun, synonyms (big/large, start/begin, movie/film, soccer/football).
 
 The answer checker in `index.html` already accepts these without listing them: word order in Serbian, adding or dropping ja/ti/on…, missing č/ć/š/ž/đ, Cyrillic, capitals, punctuation, contractions, a/an/the, British/American spelling. A single typo in a longer word gets "check your spelling" and another try.
+
+## Rule: English is the base for every other language
+
+Pomalo always pairs Serbian with one other language. **English is the base:** a new language (Italian, Danish, German…) is made by translating the **English** sentences, exercise names, titles and interface texts into that language. **Serbian is never changed** for another language: the Serbian sentences, their accepted answers, Nikola's recordings and the Serbian grammar examples stay exactly as they are and are shared by all languages.
+
+Each language lives in one file, `lang/<code>.json` (e.g. `lang/it.json`), with its sentences (with all alternative answers), grammar pages, interface texts and Vrapko's lines. To add a language: create that file from English, add one entry to the language list in `index.html`, add its answer-checking rules, and allow its code in Supabase (`docs/supabase-languages.sql`).
