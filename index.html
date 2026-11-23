@@ -449,7 +449,8 @@
     learnersCache = ls || [];
     if (!learnersCache.length) { show('who'); return; }
     let last = null; try { last = localStorage.getItem(LOCAL_ACTIVE); } catch {}
-    const active = learnersCache.length === 1 ? learnersCache[0] : learnersCache.find(l => l.id === last && location.hash !== '#pick');
+    // "Switch learner" (#pick) always shows the picker, also when there is only one learner, so more can be added
+    const active = location.hash === '#pick' ? null : learnersCache.length === 1 ? learnersCache[0] : learnersCache.find(l => l.id === last);
     if (active && !active.paused) return chooseLearner(active);
     showPicker();
   }
