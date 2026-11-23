@@ -5098,13 +5098,22 @@
         } catch { resolve(false); }
       });
     }
+    // Every reading belongs to a "generation"; stopVoice() starts a new one, so nothing queued earlier can still play.
+    let gen = 0;
+    function stopVoice() {
+      gen++;
+      try { synth && synth.cancel(); } catch {}
+      try { clip && clip.pause(); } catch {}
+      queue = Promise.resolve();
+    }
     function speakText(text, lang) {
       if (!text) return false;
+      const g = gen;
       if (lang === 'sr') {
-        queue = queue.then(() => playClip(text)).then(ok => { if (!ok) ttsText(text, lang); });
+        queue = queue.then(() => g === gen ? playClip(text) : true).then(ok => { if (!ok && g === gen) ttsText(text, lang); });
         return true;
       }
-      queue = queue.then(() => new Promise(r => { if (!ttsText(text, lang, r)) r(); }));
+      queue = queue.then(() => g !== gen ? null : new Promise(r => { if (!ttsText(text, lang, r)) r(); }));
       return true;
     }
     function ttsText(text, lang, done) {
@@ -5127,9 +5136,7 @@
     if (!synth) hearBtn.hidden = true;
     hearBtn.addEventListener('click', () => {
       if (!lastDetail) return;
-      try { synth.cancel(); } catch {}
-      try { clip && clip.pause(); } catch {}
-      queue = Promise.resolve();
+      stopVoice();
       // read the prompt; once answered, also read the Serbian sentence
       if (lastDetail.course === 'sr') { speakText(lastDetail.englishSay, lastDetail.lang || 'en'); if (lastDetail.feedback === 'correct') speakText(lastDetail.serbian, 'sr'); }
       else { speakText(lastDetail.serbian, 'sr'); if (lastDetail.feedback === 'correct') speakText(lastDetail.englishSay, lastDetail.lang || 'en'); }
@@ -5155,6 +5162,7 @@
       hearBtn.hidden = d.review;
       const state = [d.key, d.feedback, d.lessonFinished].join('|');
       if (state === last) return;
+      if (last && last.split('|').slice(0, -2).join('|') !== String(d.key)) stopVoice(); // a new sentence silences the old one
       const prev = last; last = state;
       let mood = 'idle', msg = null;
       const lyric = () => { const pk = d.course === 'sr' && window.pomaloPack ? window.pomaloPack() : null; const l = pick(pk && pk.lyrics ? pk.lyrics : LYRICS[d.course]); return d.course === 'en' && window.pomaloDisplay ? window.pomaloDisplay(l) : l; };
@@ -5166,7 +5174,7 @@
       else if (levelDone) { mood = 'party'; msg = testLine + lyric(); song(); confetti(); setTimeout(confetti, 1200); setTimeout(() => { if (buddy.dataset.mood === 'party') buddy.dataset.mood = 'idle'; }, 8000); }
       else if (d.lessonFinished) { mood = 'party'; msg = text('done', d) + starLine(d.lessonStars) + ' ' + lyric(); song(); confetti(); setTimeout(() => { if (buddy.dataset.mood === 'party') buddy.dataset.mood = 'idle'; }, 6000); }
       else if (d.taskFinished) { mood = 'sing'; msg = lyric(); song(); setTimeout(() => { if (buddy.dataset.mood === 'sing') buddy.dataset.mood = 'idle'; }, 3200); }
-      else if (d.feedback === 'correct') { mood = 'cheer'; msg = d.model ? (d.course === 'sr' ? tr('Yes! Most people say: ') + d.model : (window.pomaloDisplay ? window.pomaloDisplay('Da! Najčešće se kaže: ') : '') + d.model) : text('correct', d); chirp(); if (soundOn && !d.review && d.serbian) setTimeout(() => { try { synth && synth.cancel(); } catch {} try { clip && clip.pause(); } catch {} queue = Promise.resolve(); speakText(d.serbian, 'sr'); }, 450); }
+      else if (d.feedback === 'correct') { mood = 'cheer'; msg = d.model ? (d.course === 'sr' ? tr('Yes! Most people say: ') + d.model : (window.pomaloDisplay ? window.pomaloDisplay('Da! Najčešće se kaže: ') : '') + d.model) : text('correct', d); chirp(); if (soundOn && !d.review && d.serbian) setTimeout(() => { stopVoice(); speakText(d.serbian, 'sr'); }, 450); }
       else if (d.feedback === 'typo') { mood = 'idle'; msg = d.course === 'sr' ? tr('So close! Look at the spelling.') : (window.pomaloDisplay ? window.pomaloDisplay(d.dialect === 'ij' ? 'Skoro! Pogledaj kako si napisao.' : 'Skoro! Pogledaj kako si napisao.') : ''); }
       else if (d.feedback === 'retry' && d.test) { mood = 'oops'; msg = d.course === 'sr' ? tr('Not this one. On to the next!') : (window.pomaloDisplay ? window.pomaloDisplay('Ovo nije. Idemo dalje!') : ''); soft(); }
       else if (d.feedback === 'retry') { mood = 'oops'; msg = text('wrong', d); soft(); }
