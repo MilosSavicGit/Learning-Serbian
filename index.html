@@ -31,6 +31,9 @@
   #pomalo-gate fieldset.variant p{margin:0}
   #pomalo-design .pair[aria-label="Serbian variant"],#pomalo-design .pair[aria-label="Serbian script"],#pomalo-design header .direction{display:none}
   #pomalo-gate{font-family:Nunito,system-ui,sans-serif}
+  .flags{display:inline-flex;align-items:center;gap:4px;vertical-align:middle;margin-right:4px}
+  .flag{display:inline-block;height:16px;width:24px;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+  .flag svg{display:block;width:100%;height:100%}
   #pomalo-gate .manage{margin-top:18px;border-top:1px solid var(--g-line);padding-top:12px}
   #pomalo-gate .manage summary{cursor:pointer;font-weight:700}
   #pomalo-gate .manage-list{list-style:none;padding:0;display:grid;gap:8px}
@@ -212,6 +215,20 @@
   const now = () => new Date().toISOString();
   const fmt = iso => iso ? new Date(iso).toLocaleString(undefined, {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'}) : '—';
   const LOG_MAX = 100;
+  // Small flag drawings (emoji flags show as plain letters on Windows)
+  let flagN = 0;
+  window.pomaloFlag = code => {
+    const k = 'fl' + (++flagN);
+    const f = {
+      rs: '<svg viewBox="0 0 30 20"><rect width="30" height="20" fill="#fff"/><rect width="30" height="6.67" fill="#c6363c"/><rect y="6.67" width="30" height="6.67" fill="#0c4076"/></svg>',
+      it: '<svg viewBox="0 0 30 20"><rect width="10" height="20" fill="#009246"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce2b37"/></svg>',
+      dk: '<svg viewBox="0 0 37 28"><rect width="37" height="28" fill="#c8102e"/><rect x="12" width="4" height="28" fill="#fff"/><rect y="12" width="37" height="4" fill="#fff"/></svg>',
+      gb: '<svg viewBox="0 0 60 30"><clipPath id="' + k + '"><path d="M30,15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0L60,30M60,0L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0L60,30M60,0L0,30" clip-path="url(#' + k + ')" stroke="#c8102e" stroke-width="4"/><path d="M30,0v30M0,15h60" stroke="#fff" stroke-width="10"/><path d="M30,0v30M0,15h60" stroke="#c8102e" stroke-width="6"/></svg>'
+    }[code];
+    return f ? '<span class="flag" role="img">' + f + '</span>' : '';
+  };
+  window.pomaloFlagOf = lang => ({en: 'gb', it: 'it', da: 'dk'})[lang] || 'gb';
+  const flagPair = (from, to) => '<span class="flags">' + window.pomaloFlag(from) + '<span aria-hidden="true">→</span>' + window.pomaloFlag(to) + '</span> ';
   // Languages paired with Serbian besides English. Each needs lang/<code>.json. Add Danish etc. here.
   const MORE_LANGS = [
     {code: 'it', name: 'Italian', serbianIn: 'Serbo', speak: 'Parlo italiano (italiano → serbo)', srName: 'Italijanski', srSpeak: 'Govorim srpski (srpski → italijanski)'}
@@ -224,6 +241,10 @@
       l.querySelector('strong').textContent = title; l.querySelector('.muted').textContent = note; return l; };
     for (const g of MORE_LANGS) box.before(opt('sr-' + g.code, g.serbianIn, g.speak), opt('en-' + g.code, g.srName, g.srSpeak));
     box.remove();
+    document.querySelectorAll('#pomalo-gate [data-register] input[name="course"]').forEach(i => {
+      const [course, lang = 'en'] = i.value.split('-'), f = window.pomaloFlagOf(lang);
+      i.closest('label').querySelector('strong').insertAdjacentHTML('beforebegin', course === 'sr' ? flagPair(f, 'rs') : flagPair('rs', f));
+    });
   })();
   const langName = l => (MORE_LANGS.find(g => g.code === l.lang) || {name: 'English'}).name;
   const describe = l => [l.course === 'en' ? 'Serbian → ' + langName(l) : langName(l) + ' → Serbian', l.dialect === 'ij' ? 'Ijekavski' : 'Ekavski', l.script === 'cy' ? 'Ćirilica' : 'Latinica'].join(' · ');
@@ -711,6 +732,8 @@
   #pomalo-design .shell{max-width:760px;margin:24px auto;overflow:hidden;border:1px solid light-dark(#c3cbe3,#34417a);border-radius:20px;background:light-dark(#ffffff,#111b3d);color:light-dark(#0b1d51,#eef2ff);font:15px/1.5 "DM Sans",system-ui,sans-serif}
   #pomalo-design header{background:light-dark(#e3e9fb,#1f2c5e);padding:17px 23px;display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between;align-items:center}
   #pomalo-design .wordmark{font:600 28px Georgia,serif;letter-spacing:-.6px}
+  #pomalo-design .head-flags{display:inline-flex;align-items:center;gap:6px;color:#fff;font-weight:800}
+  #pomalo-design .head-flags .flag{height:22px;width:33px;box-shadow:0 0 0 1.5px rgba(255,255,255,.7)}
   #pomalo-design .direction,#pomalo-design .pair{display:flex;gap:5px}
   #pomalo-design button{color:inherit;background:transparent;border:1px solid light-dark(#8d99c4,#5d6aa3);border-radius:8px;padding:8px 11px;min-height:44px;font:inherit}
   #pomalo-design button[aria-pressed=true],#pomalo-design .main-action{background:light-dark(#c8102e,#ff6b72);color:light-dark(#fff,#24060a);border-color:transparent}
@@ -909,7 +932,7 @@
     Loading Pomalo…
   </p>
   <div class="shell" hidden>
-    <header><div class="wordmark">pomalo · <span lang="en">little by little</span> · помало</div><button type="button" class="sound" data-sound aria-pressed="true">Sound on</button><div class="direction" role="group" aria-label="Course direction"><button type="button" data-course="sr" aria-pressed="true">Learn Serbian</button><button type="button" data-course="en" aria-pressed="false">Uči engleski</button></div></header>
+    <header><div class="wordmark">pomalo · <span lang="en">little by little</span> · помало</div><span class="head-flags" data-flags></span><button type="button" class="sound" data-sound aria-pressed="true">Sound on</button><div class="direction" role="group" aria-label="Course direction"><button type="button" data-course="sr" aria-pressed="true">Learn Serbian</button><button type="button" data-course="en" aria-pressed="false">Uči engleski</button></div></header>
     <main>
       <nav class="map" data-map aria-label="Your progress">
         <div class="level-row"><span class="level" data-level="1">A1</span><ol class="lesson-dots" data-lesson-dots></ol></div>
@@ -4511,6 +4534,15 @@
       const local = learningSerbian ? value => value : nativeUi;
       get('[data-key-now]').textContent = learningSerbian ? tr('now') : local('sada');
       get('[data-key-locked]').textContent = learningSerbian ? tr('locked') : local('zaključano');
+      const fl = get('[data-flags]');
+      if (fl && window.pomaloFlag) {
+        const f = window.pomaloFlagOf(state.lang), key = state.course + f;
+        if (fl.dataset.key !== key) {
+          fl.dataset.key = key;
+          fl.innerHTML = (learningSerbian ? window.pomaloFlag(f) : window.pomaloFlag('rs')) + '<span aria-hidden="true">→</span>' + (learningSerbian ? window.pomaloFlag('rs') : window.pomaloFlag(f));
+          fl.setAttribute('aria-label', learningSerbian ? packMeta.native + ' → Srpski' : 'Srpski → ' + packMeta.sr);
+        }
+      }
       const tag = get('.wordmark span'); if (tag) { tag.textContent = packMeta.tagline; tag.lang = state.lang; }
       const side = get('[data-side="en"] strong');
       if (side) side.textContent = learningSerbian ? packMeta.native : local(packMeta.sr);
