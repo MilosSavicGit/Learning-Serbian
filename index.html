@@ -464,6 +464,7 @@
   async function afterSignIn() {
     if (location.hash.includes('access_token')) history.replaceState(null, '', location.pathname);
     const {data: isAdmin} = await sb.rpc('is_admin');
+    window.pomaloTester = Boolean(isAdmin); // admins may open any lesson and exercise
     if (isAdmin) { db = supaAdminStore(); startAdmin(); }
     const {data: ls, error} = await sb.from('learners').select('*').eq('parent_id', account.id).order('created_at');
     if (error) { status('Pomalo can’t load your learners right now. Check your connection, then reload the page.'); return; }
@@ -908,6 +909,9 @@
   #pomalo-design .map .dot.s1{background:light-dark(#8fd6a5,#2c6e47)}
   #pomalo-design .map .dot.current{border-color:light-dark(#c8102e,#ff6b72);border-width:3px;transform:scale(1.25);box-shadow:0 0 0 3px light-dark(rgba(200,16,46,.15),rgba(255,107,114,.2))}
   #pomalo-design .map .dot.locked{background:light-dark(#dfe4f2,#232f5c);border-color:transparent;border-style:solid;opacity:1}
+  #pomalo-design .task-dots .jump{cursor:pointer;outline-offset:2px}
+  #pomalo-design .task-dots .jump:hover{transform:scale(1.25)}
+  #pomalo-design .tester-tag{font-style:normal;font-size:12px;font-weight:800;background:#f2b233;color:#3a2a00;border-radius:999px;padding:1px 8px;margin-right:6px}
   #pomalo-design .map-key{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px;font-size:12px;font-weight:700;color:light-dark(#46527e,#aab5de)}
   #pomalo-design .map-key i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
   #pomalo-design .buddy{grid-template-columns:96px 1fr}
@@ -4528,6 +4532,13 @@
     const LEVEL1_END = 35;
     const a1Complete = () => activeCourse().records.slice(0, LEVEL1_END).every(r => r.credits === 40 || Boolean(r.completed));
     let doneBefore = null;
+    const tester = () => Boolean(window.pomaloTester);
+    function jumpToExercise(t) {
+      if (!tester() || mistakeReview || a1Test) return;
+      progress.task = t; progress.index = 0; progress.feedback = ''; progress.choice = null; progress.credits = t * 5;
+      delete progress.reviewGrammar; grammarIndex = null; answerInput().value = '';
+      clearTimeout(breakTimer); save(); render(); focusExercise();
+    }
     function renderMap() {
       const course = activeCourse();
       const learningSerbian = state.course === 'sr';
@@ -4559,7 +4570,7 @@
         const li = document.createElement('li');
         const dot = document.createElement('button');
         dot.type = 'button';
-        const done = doneNow[index], current = index === course.selected && !mistakeReview && !a1Test, locked = index > course.unlocked || (index >= LEVEL1_END && !a1Done);
+        const done = doneNow[index], current = index === course.selected && !mistakeReview && !a1Test, locked = !tester() && (index > course.unlocked || (index >= LEVEL1_END && !a1Done));
         li.className = done ? 'done' : '';
         dot.className = 'dot' + (done ? ' done' : '') + (current ? ' current' : '') + (locked ? ' locked' : '');
         if (done && doneBefore && !doneBefore[index]) dot.classList.add('just');
@@ -4592,13 +4603,17 @@
       tasks.hidden = false;
       const label = document.createElement('b');
       label.textContent = (learningSerbian ? tr('Lesson ') : local('Lekcija ')) + (course.selected + 1) + ':';
+      if (tester()) { const tag = document.createElement('i'); tag.className = 'tester-tag'; tag.textContent = '🛠 Tester'; tasks.append(tag); }
       tasks.append(label);
+      tasks.toggleAttribute('aria-hidden', !tester());
       const lessonDone = isDone(progress);
       const finishedTask = progress.feedback === 'correct' && progress.index === 4;
       for (let t = 0; t < 8; t++) {
         const d = document.createElement('span');
         if (lessonDone || t < progress.task || (t === progress.task && finishedTask)) d.className = 'done';
         else if (t === progress.task) d.className = 'current';
+        if (tester()) { d.classList.add('jump'); d.title = (learningSerbian ? tr('Exercise ') : local('Zadatak ')) + (t + 1); d.setAttribute('role', 'button'); d.tabIndex = 0;
+          d.addEventListener('click', () => jumpToExercise(t)); d.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); jumpToExercise(t); } }); }
         tasks.append(d);
       }
     }
@@ -4832,8 +4847,8 @@
     });
     function openLesson(index) {
       const course = activeCourse();
-      if(index > course.unlocked || !course.records[index]) return;
-      if(index >= LEVEL1_END && !a1Passed()) return;
+      if(!course.records[index]) return;
+      if(!tester() && (index > course.unlocked || (index >= LEVEL1_END && !a1Passed()))) return;
       progress.answer = answerInput().value;
       course.selected = index;
       progress = course.records[index];
