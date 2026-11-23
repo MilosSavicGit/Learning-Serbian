@@ -5133,15 +5133,14 @@
       } catch { return false; }
     }
     let lastDetail = null;
+    // One speaker on each side: the foreign language (English, Italian…) and Serbian.
+    // The answer side's speaker appears only once the answer is correct, so it can't give the answer away.
     const hearBtn = root.querySelector('[data-hear]');
-    if (!synth) hearBtn.hidden = true;
-    hearBtn.addEventListener('click', () => {
-      if (!lastDetail) return;
-      stopVoice();
-      // read the prompt; once answered, also read the Serbian sentence
-      if (lastDetail.course === 'sr') { speakText(lastDetail.englishSay, lastDetail.lang || 'en'); if (lastDetail.feedback === 'correct') speakText(lastDetail.serbian, 'sr'); }
-      else { speakText(lastDetail.serbian, 'sr'); if (lastDetail.feedback === 'correct') speakText(lastDetail.englishSay, lastDetail.lang || 'en'); }
-    });
+    const hearSr = hearBtn.cloneNode(true); hearSr.removeAttribute('data-hear'); hearSr.setAttribute('data-hear-sr', '');
+    root.querySelector('[data-side="en"]').append(hearBtn);
+    root.querySelector('[data-side="sr"]').append(hearSr);
+    hearBtn.addEventListener('click', () => { if (!lastDetail) return; stopVoice(); speakText(lastDetail.englishSay, lastDetail.lang || 'en'); });
+    hearSr.addEventListener('click', () => { if (!lastDetail) return; stopVoice(); speakText(lastDetail.serbian, 'sr'); });
     let last = null, greeted = false;
     function text(group, d) {
       const pk = d.course === 'sr' && window.pomaloPack ? window.pomaloPack() : null;
@@ -5157,10 +5156,11 @@
       if (!d.review) totalEl.textContent = '★ ' + d.total;
       showPictures(d.pic || d.englishFull || d.english, d.lessonFinished);
       if (!d.review) lastDetail = d;
-      const promptSide = root.querySelector('[data-side="' + (d.course === 'sr' ? tr('en') : 'sr') + '"]');
-      if (promptSide && hearBtn.parentElement !== promptSide) promptSide.append(hearBtn);
-      hearBtn.setAttribute('aria-label', d.course === 'sr' ? tr('Listen to the sentence') : (window.pomaloDisplay ? window.pomaloDisplay('Slušaj rečenicu') : 'Listen'));
-      hearBtn.hidden = d.review;
+      const listen = d.course === 'sr' ? tr('Listen to the sentence') : (window.pomaloDisplay ? window.pomaloDisplay('Slušaj rečenicu') : 'Listen');
+      hearBtn.setAttribute('aria-label', listen); hearSr.setAttribute('aria-label', listen);
+      const answered = d.feedback === 'correct';
+      hearBtn.hidden = d.review || !(d.course === 'sr' || answered);   // foreign side: the prompt, or the answer once correct
+      hearSr.hidden = d.review || !(d.course === 'en' || answered);    // Serbian side: the prompt, or the answer once correct
       const state = [d.key, d.feedback, d.lessonFinished].join('|');
       if (state === last) return;
       if (last && last.split('|').slice(0, -2).join('|') !== String(d.key)) stopVoice(); // a new sentence silences the old one
