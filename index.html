@@ -169,6 +169,7 @@
         <legend>What do you want to learn? · Šta želiš da učiš?</legend>
         <label for="reg-sr"><input type="radio" id="reg-sr" name="course" value="sr"> <span><strong>Serbian</strong> <span class="muted">I speak English (English → Serbian)</span></span></label>
         <label for="reg-en"><input type="radio" id="reg-en" name="course" value="en"> <span><strong>Engleski</strong> <span class="muted">Govorim srpski (srpski → engleski)</span></span></label>
+        <span data-more-langs></span>
       </fieldset>
       <label for="reg-name" class="name-field">What’s your name? · Kako se zoveš?<input id="reg-name" name="name" autocomplete="given-name" maxlength="40" required></label>
       <fieldset class="variant">
@@ -211,7 +212,21 @@
   const now = () => new Date().toISOString();
   const fmt = iso => iso ? new Date(iso).toLocaleString(undefined, {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'}) : '—';
   const LOG_MAX = 100;
-  const describe = l => [l.course === 'en' ? 'Serbian → English' : 'English → Serbian', l.dialect === 'ij' ? 'Ijekavski' : 'Ekavski', l.script === 'cy' ? 'Ćirilica' : 'Latinica'].join(' · ');
+  // Languages paired with Serbian besides English. Each needs lang/<code>.json. Add Danish etc. here.
+  const MORE_LANGS = [
+    {code: 'it', name: 'Italian', serbianIn: 'Serbo', speak: 'Parlo italiano (italiano → serbo)', srName: 'Italijanski', srSpeak: 'Govorim srpski (srpski → italijanski)'}
+  ];
+  (() => {
+    const box = document.querySelector('#pomalo-gate [data-more-langs]'); if (!box) return;
+    const opt = (value, title, note) => { const l = document.createElement('label'); l.htmlFor = 'reg-' + value;
+      l.innerHTML = '<input type="radio" name="course"> <span><strong></strong> <span class="muted"></span></span>';
+      const i = l.querySelector('input'); i.id = 'reg-' + value; i.value = value;
+      l.querySelector('strong').textContent = title; l.querySelector('.muted').textContent = note; return l; };
+    for (const g of MORE_LANGS) box.before(opt('sr-' + g.code, g.serbianIn, g.speak), opt('en-' + g.code, g.srName, g.srSpeak));
+    box.remove();
+  })();
+  const langName = l => (MORE_LANGS.find(g => g.code === l.lang) || {name: 'English'}).name;
+  const describe = l => [l.course === 'en' ? 'Serbian → ' + langName(l) : langName(l) + ' → Serbian', l.dialect === 'ij' ? 'Ijekavski' : 'Ekavski', l.script === 'cy' ? 'Ćirilica' : 'Latinica'].join(' · ');
   let db, user, uid, me = null, writing = Promise.resolve();
 
   const openCourse = () => {
@@ -373,7 +388,7 @@
       const sum = Object.fromEntries((ps || []).map(p => [p.learner_id, p.summary || {}]));
       const logs = {};
       for (const a of acts || []) (logs[a.learner_id] = logs[a.learner_id] || []).unshift({t: a.at, e: a.event});
-      rows = (ls || []).map(l => ({id: l.id, name: l.name, course: l.course, dialect: l.dialect, script: l.script, registeredAt: l.created_at, lastSeen: l.last_seen, visits: l.visits, paused: l.paused,
+      rows = (ls || []).map(l => ({id: l.id, name: l.name, course: l.course, lang: l.lang || 'en', dialect: l.dialect, script: l.script, registeredAt: l.created_at, lastSeen: l.last_seen, visits: l.visits, paused: l.paused,
         progress: sum[l.id]?.progress || {}, mistakeSummary: sum[l.id]?.mistakeSummary, log: logs[l.id] || []}));
       const snap = list => ({docs: list.map(r => ({id: r.id, data: () => r}))});
       listeners.learners.forEach(f => f(snap(rows)));
@@ -502,7 +517,7 @@
     if (lastActive !== l.id && window.pomaloResetState) window.pomaloResetState();
     try { localStorage.setItem(LOCAL_ACTIVE, l.id); } catch {}
     uid = l.id;
-    me = {name: l.name, course: l.course, dialect: l.dialect, script: l.script, visits: l.visits, registeredAt: l.created_at, lastSeen: l.last_seen,
+    me = {name: l.name, course: l.course, lang: l.lang || 'en', dialect: l.dialect, script: l.script, visits: l.visits, registeredAt: l.created_at, lastSeen: l.last_seen,
       courses: d.courses, mistakes: d.mistakes, savedAt: d.savedAt, courseVersion: d.courseVersion,
       progress: prog?.summary?.progress || {}, mistakeSummary: prog?.summary?.mistakeSummary,
       log: (acts || []).reverse().map(a => ({t: a.at, e: a.event}))};
@@ -561,28 +576,28 @@
       you.append(' ', sw, ' ', so);
     }, 0);
     else if (window.pomaloStandalone) setTimeout(() => newLearnerButton(you), 0);
-    const settings = {course: me.course === 'en' ? 'en' : 'sr', dialect: me.dialect === 'ij' ? 'ij' : 'ek', script: me.script === 'cy' ? 'cy' : 'la'};
+    const settings = {course: me.course === 'en' ? 'en' : 'sr', lang: me.lang === 'it' ? 'it' : 'en', dialect: me.dialect === 'ij' ? 'ij' : 'ek', script: me.script === 'cy' ? 'cy' : 'la'};
     you.textContent += ' · ' + describe(me);
-    const apply = () => { document.getElementById('pomalo-design').classList.add('fixed-variant'); window.pomaloMergeProgress(me.courses, me.savedAt, me.courseVersion); window.pomaloSetDialect(settings); window.pomaloMergeMistakes(me.mistakes, me.courseVersion); };
-    window.pomaloSetDialect ? apply() : window.addEventListener('pomalo:ready', apply, {once:true});
-    openCourse();
+    const apply = async () => { document.getElementById('pomalo-design').classList.add('fixed-variant'); window.pomaloMergeProgress(me.courses, me.savedAt, me.courseVersion); await window.pomaloSetDialect(settings); window.pomaloMergeMistakes(me.mistakes, me.courseVersion); };
+    (window.pomaloSetDialect ? apply() : new Promise(res => window.addEventListener('pomalo:ready', () => res(apply()), {once:true}))).then(openCourse, openCourse);
     onProgress();
   }
 
   $('[data-register]').addEventListener('submit', async e => {
     e.preventDefault();
     const form = e.currentTarget, btn = form.querySelector('button'), err = $('[data-reg-error]');
-    const name = form.name.value.trim(), why = form.why.value.trim(), dialect = form.dialect.value, script = form.script.value, course = form.course.value;
+    const name = form.name.value.trim(), why = form.why.value.trim(), dialect = form.dialect.value, script = form.script.value;
+    const [course, lang = 'en'] = (form.course.value || '').split('-');
     if (!course) { err.textContent = 'Choose what you want to learn. · Izaberi šta želiš da učiš.'; err.hidden = false; form.querySelector('#reg-sr').focus(); return; }
     if (!name) { err.textContent = 'Enter your name. · Upiši ime.'; err.hidden = false; form.name.focus(); return; }
     if (!dialect) { err.textContent = 'Choose Ekavski or Ijekavski. · Izaberi ekavski ili ijekavski.'; err.hidden = false; form.querySelector('#reg-ek').focus(); return; }
     if (!script) { err.textContent = 'Choose Latinica or Ćirilica. · Izaberi latinicu ili ćirilicu.'; err.hidden = false; form.querySelector('#reg-la').focus(); return; }
     btn.disabled = true; err.hidden = true;
     const t = now();
-    const doc = {name, why, course, dialect, script, registeredAt: t, lastSeen: t, visits: 1, progress: {}, log: [{t, e: 'Registered'}]};
+    const doc = {name, why, course, lang, dialect, script, registeredAt: t, lastSeen: t, visits: 1, progress: {}, log: [{t, e: 'Registered'}]};
     if (window.pomaloSupabase) {
-      const {data: row, error} = await sb.from('learners').insert({name, course, dialect, script, parent_id: account.id}).select().single();
-      if (error) { err.textContent = 'Could not add the learner: ' + error.message; err.hidden = false; btn.disabled = false; return; }
+      const {data: row, error} = await sb.from('learners').insert({name, course, dialect, script, parent_id: account.id, ...(lang !== 'en' ? {lang} : {})}).select().single();
+      if (error) { err.textContent = (/lang/.test(error.message) ? 'Italian is not switched on in the database yet. · Italijanski još nije uključen u bazi. ' : 'Could not add the learner: ') + error.message; err.hidden = false; btn.disabled = false; return; }
       await sb.from('activity').insert({learner_id: row.id, parent_id: account.id, event: 'Registered'});
       learnersCache.push(row);
       window.pomaloAdminRefresh && window.pomaloAdminRefresh();
@@ -899,7 +914,7 @@
         <div class="level-row"><span class="level" data-level="1">A1</span><ol class="lesson-dots" data-lesson-dots></ol></div>
         <div class="level-row"><span class="level l2" data-level="2">A2</span><ol class="lesson-dots" data-lesson-dots-2></ol></div>
         <div class="task-dots" data-task-dots aria-hidden="true"></div>
-        <div class="map-key" aria-hidden="true"><span><i style="background:#f2b233"></i>★★★</span><span><i style="background:#2f9e5b"></i>★★</span><span><i style="background:#8fd6a5"></i>★</span><span><i style="border:2px solid #c8102e"></i>now</span><span><i style="background:#dfe4f2"></i>locked</span></div>
+        <div class="map-key" aria-hidden="true"><span><i style="background:#f2b233"></i>★★★</span><span><i style="background:#2f9e5b"></i>★★</span><span><i style="background:#8fd6a5"></i>★</span><span><i style="border:2px solid #c8102e"></i><b data-key-now>now</b></span><span><i style="background:#dfe4f2"></i><b data-key-locked>locked</b></span></div>
       </nav>
       <div class="course-layout">
       <ol class="completed-lessons" data-course-path aria-label="Completed lessons" hidden></ol>
@@ -989,6 +1004,11 @@
   (() => {
     const root = document.getElementById('pomalo-design');
     const get = selector => root.querySelector(selector);
+    // Interface for people learning Serbian: English, or Italian when the learner's language is Italian.
+    // (Serbian speakers always see Serbian.)
+    let UI = {}; // interface texts of the learner's language, from lang/<code>.json
+    const tr = s => (typeof state !== 'undefined' && state.lang !== 'en' && UI[s] !== undefined) ? UI[s] : s;
+    window.pomaloTr = tr;
     const exercises = {
   "sr": [
     [
@@ -3652,7 +3672,7 @@
       return letter[0] === letter[0].toUpperCase() ? mapped.toUpperCase() : mapped;
     });
     const display = value => state.script === 'cy' ? cyrillic(value) : value;
-    let state = {course:'sr',dialect:'ek',script:'la'};
+    let state = {course:'sr',dialect:'ek',script:'la',lang:'en'};
     const startProgress = () => ({task:0,index:0,feedback:'',choice:null,credits:0,answer:''});
     const startCourse = () => ({selected:0, unlocked:0, records:lessons.map(startProgress)});
     const courses = {sr:startCourse(),en:startCourse()};
@@ -3685,9 +3705,37 @@
         if (saved.mistakes && typeof saved.mistakes === 'object') mistakes = saved.mistakes;
         if (Number.isFinite(saved.savedAt)) savedAt = saved.savedAt;
         const {course,dialect,script} = saved.state || {};
-        if(['sr','en'].includes(course) && ['ek','ij'].includes(dialect) && ['la','cy'].includes(script)) state={course,dialect,script};
+        if(['sr','en'].includes(course) && ['ek','ij'].includes(dialect) && ['la','cy'].includes(script)) state={course,dialect,script,lang:['en','it'].includes(saved.state.lang) ? saved.state.lang : 'en'};
       }
     } catch {}
+    // Language packs: the course content with Italian (or another language) in place of English.
+    // Each extra language is one file: lang/<code>.json with meta, ui, words, lines, lyrics, lessons, grammar.
+    const packs = {};
+    let packMeta = {code: 'en', name: 'English', native: 'English', sr: 'Engleski', srLocative: 'engleskom', tagline: 'little by little'};
+    async function loadPack(lang) {
+      if (!lang || lang === 'en' || packs[lang]) return packs[lang];
+      try { const r = await fetch('lang/' + lang + '.json'); if (r.ok) packs[lang] = await r.json(); } catch {}
+      return packs[lang];
+    }
+    window.pomaloPack = () => (state.lang !== 'en' ? packs[state.lang] : null);
+    const baseContent = lessons.map(l => ({title: l.title, names: l.names, tasks: l.tasks}));
+    const baseGrammar = grammarPages.slice();
+    // the English prompt of an item, used to find pictures whatever the learner's language
+    const pictureText = (l, t, i) => baseContent[l]?.tasks.sr[t]?.[i]?.prompt || '';
+    let contentLang = 'en';
+    state.lang = 'en'; // the content starts in English; the learner's language is applied when they open the course
+    function applyLang(lang) {
+      const pack = packs[lang];
+      const use = pack ? lang : 'en';
+      if (use === contentLang) { state.lang = use; return; }
+      lessons.forEach((l, i) => { const src = pack ? pack.lessons[i] : baseContent[i]; l.title = src.title; l.names = src.names; l.tasks = src.tasks; });
+      grammarPages.splice(0, grammarPages.length, ...(pack ? pack.grammar : baseGrammar));
+      try { adapted.clear(); courseNames = null; } catch {}
+      UI = pack ? pack.ui || {} : {};
+      words.local = pack ? pack.words : null;
+      packMeta = pack ? pack.meta : {code: 'en', name: 'English', native: 'English', sr: 'Engleski', srLocative: 'engleskom', tagline: 'little by little'};
+      state.lang = use; contentLang = use;
+    }
     const activeCourse = () => courses[state.course];
     const activeLesson = () => lessons[activeCourse().selected];
     let progress = activeCourse().records[activeCourse().selected];
@@ -3726,6 +3774,20 @@
       v = v.replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
       return v ? v.split(' ').map(w => EN_SPELL[w] || w).map(w => /^(a|an|the)$/.test(w) ? 'the' : w) : [];
     };
+    // Italian: apostrophes split words (l'acqua = l acqua), accents may be left out (then compared without accents),
+    // and a subject pronoun at the start (io, tu, lui…) may be added or left out.
+    const canonIt = value => {
+      const v = value.normalize('NFC').toLowerCase().replace(/[’‘`´]/g, "'").replace(/\(.*?\)/g, ' ')
+        .replace(/'/g, ' ').replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+      return v ? v.split(' ') : [];
+    };
+    const IT_SUBJ_LIST = new Set(['io', 'tu', 'lui', 'lei', 'noi', 'voi', 'loro', 'egli', 'ella']);
+    const PRONOUNS_FOR_IT = {io:['ja'], me:['ja'], mi:['ja'], mio:['ja'], mia:['ja'], miei:['ja'], mie:['ja'], tu:['ti'], te:['ti'], ti:['ti'], tuo:['ti'], tua:['ti'],
+      lui:['on'], lo:['on'], gli:['on'], lei:['ona','vi'], la:['ona'], le:['ona'], suo:['on','ona'], sua:['on','ona'], noi:['mi'], ci:['mi'], nostro:['mi'], nostra:['mi'],
+      voi:['vi'], vi:['vi'], vostro:['vi'], vostra:['vi'], loro:['oni','one','ona']};
+    // Rules per foreign language (English uses canonEn directly). Add Danish etc. here.
+    const FOREIGN = {it: {canon: canonIt, subj: IT_SUBJ_LIST, accents: /[àáèéìíòóùú]/, pron: PRONOUNS_FOR_IT,
+      pronEn: {tu:'you', te:'you', voi:'you', vi:'you', lei:'you', io:'i', noi:'we', mi:'me', ci:'us'}}};
     const JES = {jesam:'sam', jesi:'si', je:'je', jesmo:'smo', jeste:'ste', jesu:'su'};
     // words that can always replace each other
     const SR_SAME = {jako: 'veoma', vrlo: 'veoma', ponovo: 'opet', sada: 'sad', kada: 'kad', takodje: 'takođe', isto: 'takođe'};
@@ -3786,30 +3848,37 @@
     // The usual answer, shown after an accepted answer that differs from it (other word, order, missing č/ć…, a name)
     const sameAsModel = (response, model, course = state.course) => {
       if (!model) return true;
-      if (course === 'en') return canonEn(response).join(' ') === canonEn(model).join(' ');
+      if (course === 'en') return FOREIGN[state.lang] ? FOREIGN[state.lang].canon(response).join(' ') === FOREIGN[state.lang].canon(model).join(' ') : canonEn(response).join(' ') === canonEn(model).join(' ');
       return latinOf(response).normalize('NFC').toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim()
         === model.normalize('NFC').toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
     };
-    const modelNote = model => state.course === 'sr' ? ' Most natural: ' + display(model) : ' ' + nativeUi('Najprirodnije: ') + model;
+    const modelNote = model => state.course === 'sr' ? tr(' Most natural: ') + display(model) : ' ' + nativeUi('Najprirodnije: ') + model;
     const PRONOUNS_FOR = {i:['ja'], me:['ja'], my:['ja'], you:['ti','vi'], your:['ti','vi'], he:['on'], him:['on'], his:['on'], she:['ona'], her:['ona'], it:['ono','on','ona'], its:['ono','on','ona'], we:['mi'], us:['mi'], our:['mi'], they:['oni','one','ona'], them:['oni','one','ona'], their:['oni','one','ona']};
     function checkAnswer(response, item, course = state.course) {
       const answers = item.answers || [];
       if (course === 'en') {
-        const r = canonEn(response);
-        if (!r.length) return {ok: false};
-        for (const a of answers) if (canonEn(a).join(' ') === r.join(' ')) return {ok: true};
-        if (mixes(r, answers.map(canonEn))) return {ok: true};
+        const F = FOREIGN[state.lang];
+        const plain = F && !F.accents.test(response.toLowerCase());
+        const C = v => F ? F.canon(v).map(w => plain ? plainLetters(w) : w) : canonEn(v);
+        const drop = w => F && F.subj.has(w[0]) ? [w, w.slice(1)] : [w];
+        const rs = drop(C(response));
+        if (!rs[0].length) return {ok: false};
+        const forms = answers.flatMap(a => drop(C(a)));
+        for (const r of rs) for (const w of forms) if (w.join(' ') === r.join(' ')) return {ok: true};
+        for (const r of rs) if (mixes(r, forms)) return {ok: true};
         for (const a of answers) {
-          const w = canonEn(a), names = nameWords(a);
-          if (names.size && r.length === w.length && w.every((x, i) => x === r[i] || isName(x, names))) return {ok: true};
+          const names = nameWords(a);
+          if (names.size) for (const w of drop(C(a))) for (const r of rs) if (r.length === w.length && w.every((x, i) => x === r[i] || isName(x, names))) return {ok: true};
         }
-        for (const a of answers) if (oneTypo(r, canonEn(a))) return {ok: false, typo: true};
+        for (const r of rs) for (const w of forms) if (oneTypo(r, w)) return {ok: false, typo: true};
         return {ok: false};
       }
       const plain = !/[čćšžđ]/.test(latinOf(response).toLowerCase());
       const r = canonSr(response, plain);
       if (!r.length) return {ok: false};
-      const allowed = new Set(canonEn(item.prompt || '').flatMap(w => PRONOUNS_FOR[w] || []));
+      const allowed = new Set(FOREIGN[state.lang]
+        ? FOREIGN[state.lang].canon(item.prompt || '').map(plainLetters).flatMap(w => FOREIGN[state.lang].pron[w] || [])
+        : canonEn(item.prompt || '').flatMap(w => PRONOUNS_FOR[w] || []));
       const rs = subjectAt(r), rHasSubject = SUBJECTS.has(r[rs]);
       const forms = a => {
         const w = canonSr(a, plain), out = [w], at = subjectAt(w);
@@ -3950,7 +4019,7 @@
     function renderReview() {
       const learningSerbian = state.course === 'sr';
       const local = learningSerbian ? value => value : nativeUi;
-      const labels = words[state.course];
+      const labels = state.course === 'sr' && words.local ? words.local : words[state.course];
       const r = mistakeReview;
       const {lesson, item} = reviewItem();
       const solved = r.feedback === 'correct';
@@ -3967,16 +4036,16 @@
       instructionEl.hidden = false;
       for (const k of ['serbian','check','next']) get('[data-label="'+k+'"]').textContent = local(labels[k]);
       get('[data-label="lesson"]').textContent = learningSerbian
-        ? 'Mistake review · ' + (r.pos + 1) + ' of ' + r.queue.length
+        ? tr('Mistake review · ') + (r.pos + 1) + tr(' of ') + r.queue.length
         : local('Ponavljanje grešaka · ' + (r.pos + 1) + ' od ' + r.queue.length);
-      get('[data-label="heading"]').textContent = learningSerbian ? 'Fix your mistakes first' : local('Prvo ispravi greške');
-      get('[data-credit="exercise"]').textContent = learningSerbian ? r.cleared + ' of ' + r.total + ' fixed' : local(r.cleared + ' od ' + r.total + ' ispravljeno');
-      get('[data-credit="total"]').textContent = learningSerbian ? 'Then you continue your lesson' : local(selectDialect('Zatim nastavljaš lekciju~Zatim nastavljaš lekciju'));
+      get('[data-label="heading"]').textContent = learningSerbian ? tr('Fix your mistakes first') : local('Prvo ispravi greške');
+      get('[data-credit="exercise"]').textContent = learningSerbian ? r.cleared + tr(' of ') + r.total + tr(' fixed') : local(r.cleared + ' od ' + r.total + ' ispravljeno');
+      get('[data-credit="total"]').textContent = learningSerbian ? tr('Then you continue your lesson') : local(selectDialect('Zatim nastavljaš lekciju~Zatim nastavljaš lekciju'));
       get('[data-credit="unlock"]').textContent = learningSerbian
-        ? 'These are sentences you got wrong before. Answer right on the first try to clear one; if not, it comes back later.'
+        ? tr('These are sentences you got wrong before. Answer right on the first try to clear one; if not, it comes back later.')
         : local(selectDialect('Ovo su rečenice u kojima si ranije pogrešio. Tačan odgovor iz prvog pokušaja briše grešku; inače se rečenica vraća kasnije.~Ovo su rečenice u kojima si ranije pogriješio. Tačan odgovor iz prvog pokušaja briše grešku; inače se rečenica vraća kasnije.'));
       const [modeEn, modeSr] = modeText[item.mode];
-      instructionEl.textContent = (learningSerbian ? 'From Lesson ' + (lesson + 1) : local('Iz lekcije ' + (lesson + 1))) + ' · ' + (learningSerbian ? modeEn : local(selectDialect(modeSr)));
+      instructionEl.textContent = (learningSerbian ? tr('From Lesson ') + (lesson + 1) : local('Iz lekcije ' + (lesson + 1))) + ' · ' + (learningSerbian ? tr(modeEn) : local(selectDialect(modeSr)));
       for (const language of ['sr','en']) {
         const target = language === state.course;
         const present = language === 'sr' ? display : value => value;
@@ -4006,17 +4075,17 @@
       check.disabled = Boolean(item.options) && r.choice === null;
       const next = get('[data-label="next"]');
       next.hidden = !solved;
-      if (last) next.textContent = learningSerbian ? 'Continue to my lesson' : local('Nastavi lekciju');
+      if (last) next.textContent = learningSerbian ? tr('Continue to my lesson') : local('Nastavi lekciju');
       get('.feedback').textContent = r.feedback === 'correct'
-        ? (r.firstTry ? local(labels.correct) : (learningSerbian ? 'Correct. This one will come back once more.' : local('Tačno. Ova rečenica će se vratiti još jednom.')))
+        ? (r.firstTry ? local(labels.correct) : (learningSerbian ? tr('Correct. This one will come back once more.') : local('Tačno. Ova rečenica će se vratiti još jednom.')))
         : local(labels[r.feedback] || '');
       if (r.feedback === 'correct' && r.model) get('.feedback').textContent += modelNote(r.model);
       const help = get('[data-answer-help]');
       help.hidden = r.feedback !== 'retry';
       if (help.hidden) help.open = false;
-      get('[data-help-label]').textContent = learningSerbian ? 'Show the right answer' : local('Prikaži tačan odgovor');
+      get('[data-help-label]').textContent = learningSerbian ? tr('Show the right answer') : local('Prikaži tačan odgovor');
       get('[data-help-note]').textContent = '';
-      get('[data-help-example-label]').textContent = learningSerbian ? 'Answer:' : local('Odgovor:');
+      get('[data-help-example-label]').textContent = learningSerbian ? tr('Answer:') : local('Odgovor:');
       const example = get('[data-help-example]');
       const answer = item.options?.find(o => item.answers.some(a => normalize(a) === normalize(o))) || item.answers[0];
       example.textContent = learningSerbian ? display(answer) : answer;
@@ -4025,7 +4094,8 @@
       window.dispatchEvent(new CustomEvent('pomalo:render', {detail: {feedback: r.feedback, lessonFinished: false, solved, review: true, taskFinished: false,
         english: state.course === 'sr' ? item.prompt : item.answers[0], englishFull: state.course === 'sr' ? item.prompt : sourceItem(reviewItem().key).answers[0],
         model: r.feedback === 'correct' && r.model ? (state.course === 'sr' ? display(r.model) : r.model) : '',
-        stars: r.cleared, total: r.total, course: state.course, dialect: state.dialect, key: 'review|' + r.pos}}));
+        stars: r.cleared, total: r.total, course: state.course, dialect: state.dialect, key: 'review|' + r.pos,
+        pic: (([, l, t, i]) => pictureText(+l, +t, +i))(reviewItem().key.split('|')), lang: state.lang}}));
     }
     function submitReview() {
       const r = mistakeReview;
@@ -4085,7 +4155,7 @@
     function ambiguity(item) {
       let n = 0;
       if (state.course === 'sr') {
-        const p = ' ' + canonEn(item.prompt || '').join(' ') + ' ';
+        const p = ' ' + (FOREIGN[state.lang] ? FOREIGN[state.lang].canon(item.prompt || '').map(plainLetters).map(w => FOREIGN[state.lang].pronEn[w] || w) : canonEn(item.prompt || '')).join(' ') + ' ';
         const variants = new Set((item.answers || []).map(a => canonSr(a, true).join(' '))).size;
         if (/ (you|your|yours|yourself) /.test(p)) n += 2;
         if (/ (i|we|me|us|my|our) /.test(p)) n += 1;
@@ -4170,7 +4240,7 @@
       const learningSerbian = state.course === 'sr';
       const local = learningSerbian ? value => value : nativeUi;
       const T = (en, sr) => learningSerbian ? en : local(selectDialect(sr));
-      const labels = words[state.course];
+      const labels = state.course === 'sr' && words.local ? words.local : words[state.course];
       const t = a1Test;
       get('[data-practice]').hidden = false;
       get('[data-grammar-page]').hidden = true;
@@ -4181,48 +4251,49 @@
       get('[data-complete]').hidden = true;
       const panel = get('[data-test-panel]'), go = get('[data-test-go]'), other = get('[data-test-other]');
       const instructionEl = get('[data-label="instruction"]');
-      get('[data-label="heading"]').textContent = T('A1 test', 'A1 test');
+      get('[data-label="heading"]').textContent = T(tr('A1 test'), 'A1 test');
       const best = activeCourse().a1Test;
       const steps = n => root.querySelectorAll('.steps span').forEach((step, i) => step.style.background =
         i < Math.round(n * 5) ? 'light-dark(#f2b233,#f2b233)' : 'light-dark(#d6ddf2,#2c3870)');
       const event = extra => window.dispatchEvent(new CustomEvent('pomalo:render', {detail: {review: true, test: true, lessonFinished: false, taskFinished: false,
-        course: state.course, dialect: state.dialect, stars: t.right || 0, total: A1_QUESTIONS, english: '', englishFull: '', ...extra}}));
+        course: state.course, dialect: state.dialect, stars: t.right || 0, total: A1_QUESTIONS, english: '', englishFull: '', lang: state.lang,
+        pic: t.stage === 'ask' ? (q => pictureText(q.l, q.t, q.i))(t.items[t.pos]) : '', ...extra}}));
       if (t.stage !== 'result') panel.querySelector('[data-test-review]')?.remove();
       if (t.stage !== 'ask') {
         get('form').hidden = true;
         instructionEl.hidden = true;
         panel.hidden = false;
         other.hidden = false;
-        get('[data-label="lesson"]').textContent = T('Level 1 · Final test', 'Nivo 1 · Završni test');
+        get('[data-label="lesson"]').textContent = T(tr('Level 1 · Final test'), 'Nivo 1 · Završni test');
         if (t.stage === 'intro') {
-          get('[data-credit="exercise"]').textContent = T(A1_QUESTIONS + ' questions', A1_QUESTIONS + ' pitanja');
-          get('[data-credit="total"]').textContent = T('Needed to pass: ' + A1_PASS + ' of ' + A1_QUESTIONS, 'Za prolaz treba: ' + A1_PASS + ' od ' + A1_QUESTIONS);
-          get('[data-credit="unlock"]').textContent = best ? T('Your best so far: ' + best.best + ' of ' + (best.of || A1_QUESTIONS) + (best.passed ? ' · passed ✓' : ''), 'Tvoj najbolji rezultat: ' + best.best + ' od ' + (best.of || A1_QUESTIONS) + (best.passed ? ' · položeno ✓' : '')) : '';
+          get('[data-credit="exercise"]').textContent = T(A1_QUESTIONS + tr(' questions'), A1_QUESTIONS + ' pitanja');
+          get('[data-credit="total"]').textContent = T(tr('Needed to pass: ') + A1_PASS + tr(' of ') + A1_QUESTIONS, 'Za prolaz treba: ' + A1_PASS + ' od ' + A1_QUESTIONS);
+          get('[data-credit="unlock"]').textContent = best ? T(tr('Your best so far: ') + best.best + tr(' of ') + (best.of || A1_QUESTIONS) + (best.passed ? tr(' · passed ✓') : ''), 'Tvoj najbolji rezultat: ' + best.best + ' od ' + (best.of || A1_QUESTIONS) + (best.passed ? ' · položeno ✓' : '')) : '';
           get('[data-test-text]').textContent = T(
-            A1_QUESTIONS + ' questions from Lessons 1–35. Answer at least ' + A1_PASS + ' correctly to open Level 2 (A2). Each question has one try and no hints. Good luck!',
+            A1_QUESTIONS + tr(' questions from Lessons 1–35. Answer at least ') + A1_PASS + tr(' correctly to open Level 2 (A2). Each question has one try and no hints. Good luck!'),
             A1_QUESTIONS + ' pitanja iz lekcija 1–35. Tačno odgovori na najmanje ' + A1_PASS + ' da otvoriš Nivo 2 (A2). Svako pitanje ima jedan pokušaj, bez pomoći. Srećno!');
-          go.textContent = T('Start the test', 'Započni test');
-          other.textContent = T('Not now', 'Ne sada');
+          go.textContent = T(tr('Start the test'), 'Započni test');
+          other.textContent = T(tr('Not now'), 'Ne sada');
           steps(0);
           event({feedback: '', key: 'a1test|intro'});
         } else {
           const passed = t.passed;
-          get('[data-credit="exercise"]').textContent = T('Your score: ' + t.right + ' of ' + A1_QUESTIONS, 'Tvoj rezultat: ' + t.right + ' od ' + A1_QUESTIONS);
-          get('[data-credit="total"]').textContent = T('Needed to pass: ' + A1_PASS, 'Za prolaz treba: ' + A1_PASS);
+          get('[data-credit="exercise"]').textContent = T(tr('Your score: ') + t.right + tr(' of ') + A1_QUESTIONS, 'Tvoj rezultat: ' + t.right + ' od ' + A1_QUESTIONS);
+          get('[data-credit="total"]').textContent = T(tr('Needed to pass: ') + A1_PASS, 'Za prolaz treba: ' + A1_PASS);
           get('[data-credit="unlock"]').textContent = '';
           get('[data-test-text]').textContent = passed
-            ? T('🏆 You passed the A1 test! Level 2 (A2) is open.', '🏆 Položio si A1 test! Nivo 2 (A2) je otvoren.')
-            : T('Not yet. You need ' + A1_PASS + ' correct answers. Practise the sentences you missed, then try again.', 'Još ne. Potrebno je ' + A1_PASS + ' tačnih odgovora. Vežbaj rečenice u kojima si pogrešio, pa probaj ponovo.~Još ne. Potrebno je ' + A1_PASS + ' tačnih odgovora. Vježbaj rečenice u kojima si pogriješio, pa probaj ponovo.');
-          go.textContent = passed ? T('Start Level 2', 'Započni Nivo 2') : T('Practise my mistakes', 'Vežbaj greške~Vježbaj greške');
-          other.textContent = passed ? T('Back to my lesson', 'Nazad na lekciju') : T('Try the test again', 'Probaj test ponovo');
+            ? T(tr('🏆 You passed the A1 test! Level 2 (A2) is open.'), '🏆 Položio si A1 test! Nivo 2 (A2) je otvoren.')
+            : T(tr('Not yet. You need ') + A1_PASS + tr(' correct answers. Practise the sentences you missed, then try again.'), 'Još ne. Potrebno je ' + A1_PASS + ' tačnih odgovora. Vežbaj rečenice u kojima si pogrešio, pa probaj ponovo.~Još ne. Potrebno je ' + A1_PASS + ' tačnih odgovora. Vježbaj rečenice u kojima si pogriješio, pa probaj ponovo.');
+          go.textContent = passed ? T(tr('Start Level 2'), 'Započni Nivo 2') : T(tr('Practise my mistakes'), 'Vežbaj greške~Vježbaj greške');
+          other.textContent = passed ? T(tr('Back to my lesson'), 'Nazad na lekciju') : T(tr('Try the test again'), 'Probaj test ponovo');
           steps(t.right / A1_QUESTIONS);
           const list = document.createElement('ol'); list.className = 'test-review'; list.setAttribute('data-test-review', '');
           (t.log || []).forEach(x => {
             const li = document.createElement('li'); li.className = x.ok ? 'ok' : 'no';
             const q = document.createElement('div'); q.className = 'q'; q.textContent = (x.ok ? '✓ ' : '✗ ') + x.prompt;
-            const a = document.createElement('div'); a.textContent = T('Your answer: ', 'Tvoj odgovor: ') + x.response;
+            const a = document.createElement('div'); a.textContent = T(tr('Your answer: '), 'Tvoj odgovor: ') + x.response;
             li.append(q, a);
-            if (!x.ok) { const e = document.createElement('div'); e.className = 'exp'; e.textContent = T('Expected: ', 'Očekivano: ') + x.expected; li.append(e); }
+            if (!x.ok) { const e = document.createElement('div'); e.className = 'exp'; e.textContent = T(tr('Expected: '), 'Očekivano: ') + x.expected; li.append(e); }
             list.append(li);
           });
           panel.querySelector('[data-test-review]')?.remove();
@@ -4237,12 +4308,12 @@
       const {q, item} = testItem();
       const answered = Boolean(t.feedback);
       for (const k of ['serbian','check','next']) get('[data-label="'+k+'"]').textContent = local(labels[k]);
-      get('[data-label="lesson"]').textContent = T('A1 test · Question ' + (t.pos + 1) + ' of ' + A1_QUESTIONS, 'A1 test · Pitanje ' + (t.pos + 1) + ' od ' + A1_QUESTIONS);
-      get('[data-credit="exercise"]').textContent = T('Your score so far: ' + t.right, 'Tvoj rezultat: ' + t.right);
-      get('[data-credit="total"]').textContent = T('Needed to pass: ' + A1_PASS + ' of ' + A1_QUESTIONS, 'Za prolaz treba: ' + A1_PASS + ' od ' + A1_QUESTIONS);
-      get('[data-credit="unlock"]').textContent = T('One try per question.', 'Jedan pokušaj po pitanju.');
+      get('[data-label="lesson"]').textContent = T(tr('A1 test · Question ') + (t.pos + 1) + tr(' of ') + A1_QUESTIONS, 'A1 test · Pitanje ' + (t.pos + 1) + ' od ' + A1_QUESTIONS);
+      get('[data-credit="exercise"]').textContent = T(tr('Your score so far: ') + t.right, 'Tvoj rezultat: ' + t.right);
+      get('[data-credit="total"]').textContent = T(tr('Needed to pass: ') + A1_PASS + tr(' of ') + A1_QUESTIONS, 'Za prolaz treba: ' + A1_PASS + ' od ' + A1_QUESTIONS);
+      get('[data-credit="unlock"]').textContent = T(tr('One try per question.'), 'Jedan pokušaj po pitanju.');
       const [modeEn, modeSr] = modeText[item.mode];
-      instructionEl.textContent = T('From Lesson ' + (q.l + 1), 'Iz lekcije ' + (q.l + 1)) + ' · ' + (learningSerbian ? modeEn : local(selectDialect(modeSr)));
+      instructionEl.textContent = T(tr('From Lesson ') + (q.l + 1), 'Iz lekcije ' + (q.l + 1)) + ' · ' + (learningSerbian ? tr(modeEn) : local(selectDialect(modeSr)));
       for (const language of ['sr','en']) {
         const target = language === state.course;
         const present = language === 'sr' ? display : value => value;
@@ -4271,11 +4342,11 @@
       check.disabled = Boolean(item.options) && t.choice === null;
       const next = get('[data-label="next"]');
       next.hidden = !answered;
-      next.textContent = t.pos === A1_QUESTIONS - 1 ? T('See my result', 'Pogledaj rezultat') : local(labels.next);
+      next.textContent = t.pos === A1_QUESTIONS - 1 ? T(tr('See my result'), 'Pogledaj rezultat') : local(labels.next);
       const answer = item.options?.find(o => item.answers.some(a => normalize(a) === normalize(o))) || item.answers[0];
       const shown = learningSerbian ? display(answer) : answer;
       get('.feedback').textContent = t.note === 'typo' && !t.feedback ? local(labels.typo) : t.feedback === 'correct' ? local(labels.correct) + (t.model ? modelNote(t.model) : '')
-        : t.feedback === 'wrong' ? T('Not quite. The right answer: ', 'Nije tačno. Tačan odgovor: ') + shown : '';
+        : t.feedback === 'wrong' ? T(tr('Not quite. The right answer: '), 'Nije tačno. Tačan odgovor: ') + shown : '';
       get('[data-answer-help]').hidden = true;
       steps(t.pos / A1_QUESTIONS);
       event({model: t.feedback === 'correct' && t.model ? (state.course === 'sr' ? display(t.model) : t.model) : '', feedback: t.feedback === 'wrong' ? 'retry' : (t.note === 'typo' && !t.feedback ? 'typo' : t.feedback), key: 'a1test|' + t.pos + (t.note ? '|typo' : '')});
@@ -4357,9 +4428,9 @@
       get('[data-open-grammar]').hidden = reviewing;
       const startLesson = get('[data-start-lesson]');
       startLesson.hidden = !reviewing || grammarIndex !== activeCourse().selected;
-      startLesson.textContent = label('Start exercises', 'Započni zadatke');
+      startLesson.textContent = label(tr('Start exercises'), 'Započni zadatke');
       get('[data-open-grammar]').textContent = isOpen
-        ? label('Back to exercises', 'Nazad na zadatke') : label('Grammar', 'Gramatika');
+        ? label(tr('Back to exercises'), 'Nazad na zadatke') : label(tr('Grammar'), 'Gramatika');
       if(!isOpen) return;
       clearTimeout(breakTimer);
 
@@ -4368,7 +4439,7 @@
       grammarPages.forEach((_, index) => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.textContent = label('Lesson ' + (index+1), 'Lekcija ' + (index+1));
+        button.textContent = label(tr('Lesson ') + (index+1), 'Lekcija ' + (index+1));
         button.setAttribute('aria-pressed', String(index === grammarIndex));
         button.addEventListener('click', () => {
           grammarIndex = index;
@@ -4378,7 +4449,7 @@
         nav.append(button);
       });
       const title = get('#grammar-title');
-      title.textContent = label('Grammar', 'Gramatika') + ' · ' + label(lessons[grammarIndex].title.sr, selectDialect(lessons[grammarIndex].title.en));
+      title.textContent = label(tr('Grammar'), 'Gramatika') + ' · ' + label(lessons[grammarIndex].title.sr, selectDialect(lessons[grammarIndex].title.en));
       const content = get('[data-grammar-content]');
       content.replaceChildren();
       const direction = learningSerbian ? 0 : 1;
@@ -4437,13 +4508,18 @@
       const course = activeCourse();
       const learningSerbian = state.course === 'sr';
       const local = learningSerbian ? value => value : nativeUi;
+      get('[data-key-now]').textContent = learningSerbian ? tr('now') : local('sada');
+      get('[data-key-locked]').textContent = learningSerbian ? tr('locked') : local('zaključano');
+      const tag = get('.wordmark span'); if (tag) { tag.textContent = packMeta.tagline; tag.lang = state.lang; }
+      const side = get('[data-side="en"] strong');
+      if (side) side.textContent = learningSerbian ? packMeta.native : local(packMeta.sr);
       const isDone = record => record.credits === 40 || Boolean(record.completed);
       const lists = [get('[data-lesson-dots]'), get('[data-lesson-dots-2]')];
       const doneNow = course.records.map(isDone);
       lists.forEach(l => l.replaceChildren());
       const a1Done = a1Passed();
-      get('[data-level="1"]').title = learningSerbian ? 'A1 · Basics' : local('A1 · Osnove');
-      get('[data-level="2"]').title = a1Done ? (learningSerbian ? 'A2 · Advanced' : local('A2 · Napredni')) : (learningSerbian ? 'A2 · Advanced (pass the A1 test first)' : local('A2 · Napredni (prvo položi A1 test)'));
+      get('[data-level="1"]').title = learningSerbian ? tr('A1 · Basics') : local('A1 · Osnove');
+      get('[data-level="2"]').title = a1Done ? (learningSerbian ? tr('A2 · Advanced') : local('A2 · Napredni')) : (learningSerbian ? tr('A2 · Advanced (pass the A1 test first)') : local('A2 · Napredni (prvo položi A1 test)'));
       get('[data-level="2"]').classList.toggle('locked', !a1Done);
       lessons.forEach((lesson, index) => {
         const list = lists[index >= LEVEL1_END ? 1 : 0];
@@ -4456,9 +4532,9 @@
         if (done && doneBefore && !doneBefore[index]) dot.classList.add('just');
         if (done) { const n = lessonStars(index); li.dataset.stars = n; dot.classList.add('s' + n); }
         const title = local(selectDialect(lesson.title[state.course]));
-        const status = done ? (learningSerbian ? 'finished' : local('završena')) : locked ? (learningSerbian ? 'locked' : local('zaključana')) : current ? (learningSerbian ? 'you are here' : local('ovde si~ovdje si'.split('~')[state.dialect === 'ij' ? 1 : 0])) : (learningSerbian ? 'open' : local('otvorena'));
-        const starText = done ? ', ' + lessonStars(index) + (learningSerbian ? ' of 3 stars' : local(' od 3 zvezdice~ od 3 zvjezdice'.split('~')[state.dialect === 'ij' ? 1 : 0])) : '';
-        dot.setAttribute('aria-label', (learningSerbian ? 'Lesson ' : local('Lekcija ')) + (index + 1) + ': ' + title + ' (' + status + starText + ')');
+        const status = done ? (learningSerbian ? tr('finished') : local('završena')) : locked ? (learningSerbian ? tr('locked') : local('zaključana')) : current ? (learningSerbian ? tr('you are here') : local('ovde si~ovdje si'.split('~')[state.dialect === 'ij' ? 1 : 0])) : (learningSerbian ? tr('open') : local('otvorena'));
+        const starText = done ? ', ' + lessonStars(index) + (learningSerbian ? tr(' of 3 stars') : local(' od 3 zvezdice~ od 3 zvjezdice'.split('~')[state.dialect === 'ij' ? 1 : 0])) : '';
+        dot.setAttribute('aria-label', (learningSerbian ? tr('Lesson ') : local('Lekcija ')) + (index + 1) + ': ' + title + ' (' + status + starText + ')');
         dot.title = (index + 1) + '. ' + title;
         if (current) dot.setAttribute('aria-current', 'step');
         dot.disabled = locked || Boolean(mistakeReview) || Boolean(a1Test);
@@ -4469,8 +4545,8 @@
           const tli = document.createElement('li'); tli.className = 'test-li';
           const pill = document.createElement('button'); pill.type = 'button';
           pill.className = 'test-pill' + (a1Done ? ' passed' : '') + (a1Test ? ' now' : '');
-          pill.textContent = a1Done ? '🏆 A1 ✓' : (learningSerbian ? '🏆 A1 test' : local('🏆 A1 test'));
-          pill.setAttribute('aria-label', learningSerbian ? (a1Done ? 'A1 test, passed' : 'A1 test: pass it to open Level 2') : local(a1Done ? 'A1 test, položen' : 'A1 test: položi ga da otvoriš Nivo 2'));
+          pill.textContent = a1Done ? '🏆 A1 ✓' : (learningSerbian ? tr('🏆 A1 test') : local('🏆 A1 test'));
+          pill.setAttribute('aria-label', learningSerbian ? (a1Done ? tr('A1 test, passed') : tr('A1 test: pass it to open Level 2')) : local(a1Done ? 'A1 test, položen' : 'A1 test: položi ga da otvoriš Nivo 2'));
           pill.disabled = Boolean(mistakeReview) || Boolean(a1Test);
           pill.addEventListener('click', openA1Test);
           tli.append(pill); list.append(tli);
@@ -4482,7 +4558,7 @@
       if (mistakeReview || a1Test) { tasks.hidden = true; return; }
       tasks.hidden = false;
       const label = document.createElement('b');
-      label.textContent = (learningSerbian ? 'Lesson ' : local('Lekcija ')) + (course.selected + 1) + ':';
+      label.textContent = (learningSerbian ? tr('Lesson ') : local('Lekcija ')) + (course.selected + 1) + ':';
       tasks.append(label);
       const lessonDone = isDone(progress);
       const finishedTask = progress.feedback === 'correct' && progress.index === 4;
@@ -4499,7 +4575,7 @@
       get('[data-test-panel]').hidden = true;
       if (mistakeReview) { renderReview(); return; }
       renderGrammar();
-      const labels = words[state.course];
+      const labels = state.course === 'sr' && words.local ? words.local : words[state.course];
       const learningSerbian = state.course === 'sr';
       const local = learningSerbian ? value => value : nativeUi;
       const item = current();
@@ -4507,7 +4583,7 @@
       const lesson = activeLesson();
       const lessonNumber = course.selected + 1;
       const path = get('[data-course-path]');
-      path.setAttribute('aria-label', learningSerbian ? 'Completed lessons' : local('Završene lekcije'));
+      path.setAttribute('aria-label', learningSerbian ? tr('Completed lessons') : local('Završene lekcije'));
       path.replaceChildren();
       const activeCard = get('[data-active-lesson]');
       activeCard.toggleAttribute('data-completed', progress.credits === 40);
@@ -4519,7 +4595,7 @@
         const title = document.createElement('strong');
         title.textContent = (index+1) + '. ' + local(selectDialect(lessons[index].title[state.course]));
         const status = document.createElement('small');
-        status.textContent = learningSerbian ? 'Completed' : local('Završeno');
+        status.textContent = learningSerbian ? tr('Completed') : local('Završeno');
         row.append(title);
         row.append(status);
         path.append(row);
@@ -4533,23 +4609,23 @@
       const taskNumber = progress.task+1;
       const finalTask = taskNumber === lesson.tasks[state.course].length;
       const correctCount = progress.index + Number(solved);
-      get('[data-label="lesson"]').textContent = learningSerbian ? 'Lesson ' + lessonNumber + ' · Exercise ' + taskNumber + ' of 8' : local('Lekcija ' + lessonNumber + ' · Zadatak ' + taskNumber + ' od 8');
-      get('[data-credit="exercise"]').textContent = learningSerbian ? correctCount+' of 5 correct' : local(correctCount+' od 5 tačno');
+      get('[data-label="lesson"]').textContent = learningSerbian ? tr('Lesson ') + lessonNumber + tr(' · Exercise ') + taskNumber + tr(' of 8') : local('Lekcija ' + lessonNumber + ' · Zadatak ' + taskNumber + ' od 8');
+      get('[data-credit="exercise"]').textContent = learningSerbian ? correctCount+tr(' of 5 correct') : local(correctCount+' od 5 tačno');
       const totalCredits = course.records.reduce((sum, record) => sum + (record.credits || 0), 0);
-      get('[data-credit="total"]').textContent = learningSerbian ? progress.credits + ' this lesson · ' + totalCredits + ' points total' : local('Bodovi: ' + progress.credits + ' u lekciji · ' + totalCredits + ' ukupno');
+      get('[data-credit="total"]').textContent = learningSerbian ? progress.credits + tr(' this lesson · ') + totalCredits + tr(' points total') : local('Bodovi: ' + progress.credits + ' u lekciji · ' + totalCredits + ' ukupno');
       get('[data-credit="unlock"]').textContent = solved && last
-        ? (learningSerbian ? (finalTask ? 'Lesson complete · 40 of 40 credits' : 'Exercise ' + (taskNumber+1) + ' unlocked') : local(finalTask ? 'Lekcija je završena · 40 od 40 bodova' : 'Zadatak ' + (taskNumber+1) + ' je otključan'))
+        ? (learningSerbian ? (finalTask ? tr('Lesson complete · 40 of 40 credits') : tr('Exercise ') + (taskNumber+1) + tr(' unlocked')) : local(finalTask ? 'Lekcija je završena · 40 od 40 bodova' : 'Zadatak ' + (taskNumber+1) + ' je otključan'))
         : finalTask
-          ? (learningSerbian ? 'Answer all five correctly to pass the lesson test and unlock the next lesson. You can retry.'
+          ? (learningSerbian ? tr('Answer all five correctly to pass the lesson test and unlock the next lesson. You can retry.')
             : local(selectDialect('Tačno odgovori na svih pet pitanja da položiš test i otključaš sledeću lekciju. Možeš da pokušaš ponovo.~Tačno odgovori na svih pet pitanja da položiš test i otključaš sljedeću lekciju. Možeš da pokušaš ponovo.')))
-          : (learningSerbian ? 'Earn 5 correct answers to finish this exercise.' : local('Odgovori tačno na svih pet pitanja.'));
+          : (learningSerbian ? tr('Earn 5 correct answers to finish this exercise.') : local('Odgovori tačno na svih pet pitanja.'));
       const name = lesson.names[state.course][progress.task];
       const [ekavianName, ijekavianTitle] = name.split('~');
       const ijekavianName = ijekavianTitle || ekavianName.replace('Dopuni reč','Dopuni riječ').replace('celom','cijelom');
       const [modeEn, modeSr] = modeText[item.mode];
       const instruction = (finalTask
-        ? (learningSerbian ? 'Lesson test' : local('Test lekcije'))
-        : local(state.dialect === 'ij' ? ijekavianName : ekavianName)) + ' · ' + (learningSerbian ? modeEn : local(selectDialect(modeSr)));
+        ? (learningSerbian ? tr('Lesson test') : local('Test lekcije'))
+        : local(state.dialect === 'ij' ? ijekavianName : ekavianName)) + ' · ' + (learningSerbian ? tr(modeEn) : local(selectDialect(modeSr)));
       get('[data-label="instruction"]').textContent = instruction + ' · ' + (progress.index+1) + '/5';
       for(const language of ['sr','en']) {
         const target = language === state.course;
@@ -4598,9 +4674,9 @@
       get('form').hidden = lessonFinished;
       get('[data-label="instruction"]').hidden = lessonFinished;
       get('[data-complete]').hidden = !lessonFinished || hasNextLesson;
-      get('[data-replay]').textContent = learningSerbian ? 'Practise this lesson again' : local('Ponovi ovu lekciju');
+      get('[data-replay]').textContent = learningSerbian ? tr('Practise this lesson again') : local('Ponovi ovu lekciju');
       get('[data-break]').hidden = !showBreak;
-      get('[data-ad="label"]').textContent = learningSerbian ? 'Little break · between lessons' : local('Mala pauza · između lekcija');
+      get('[data-ad="label"]').textContent = learningSerbian ? tr('Little break · between lessons') : local('Mala pauza · između lekcija');
       // A short, child-friendly break between lessons (no advertising).
       const breaks = [
         ['Stretch like a sparrow! 🐦', 'Arms up, wings out, and take a deep breath.',
@@ -4615,22 +4691,22 @@
           'Odmori oči 👀', 'Zatvori oči i polako izbroj do pet.']
       ];
       const [title, message, titleSr, messageSr] = breaks[course.selected % breaks.length];
-      get('[data-ad="name"]').textContent = learningSerbian ? title : local(selectDialect(titleSr));
-      get('[data-ad="copy"]').textContent = learningSerbian ? message : local(selectDialect(messageSr));
+      get('[data-ad="name"]').textContent = learningSerbian ? tr(title) : local(selectDialect(titleSr));
+      get('[data-ad="copy"]').textContent = learningSerbian ? tr(message) : local(selectDialect(messageSr).replace('na engleskom', 'na ' + packMeta.srLocative));
       const skip = get('[data-break-skip]');
       skip.hidden = !showBreak;
       skip.textContent = lessonFinished && lessonNumber === LEVEL1_END && !a1Passed()
-        ? (learningSerbian ? 'Start the A1 test now' : local('Započni A1 test sada'))
-        : (learningSerbian ? 'Next lesson now' : local(selectDialect('Sledeća lekcija sada~Sljedeća lekcija sada')));
+        ? (learningSerbian ? tr('Start the A1 test now') : local('Započni A1 test sada'))
+        : (learningSerbian ? tr('Next lesson now') : local(selectDialect('Sledeća lekcija sada~Sljedeća lekcija sada')));
       clearTimeout(breakTimer);
       const autoMessage = get('[data-ad="auto"]');
       autoMessage.hidden = !showBreak;
       autoMessage.textContent = lessonFinished && lessonNumber === LEVEL1_END && !a1Passed()
-        ? (learningSerbian ? 'Level 1 complete! The A1 test opens after this 10-second break.' : local('Nivo 1 je završen! A1 test se otvara posle pauze od 10 sekundi.~Nivo 1 je završen! A1 test se otvara poslije pauze od 10 sekundi.'.split('~')[state.dialect === 'ij' ? 1 : 0]))
+        ? (learningSerbian ? tr('Level 1 complete! The A1 test opens after this 10-second break.') : local('Nivo 1 je završen! A1 test se otvara posle pauze od 10 sekundi.~Nivo 1 je završen! A1 test se otvara poslije pauze od 10 sekundi.'.split('~')[state.dialect === 'ij' ? 1 : 0]))
         : lessonFinished
-        ? (learningSerbian ? 'Lesson complete. The next lesson opens after this 10-second break.'
+        ? (learningSerbian ? tr('Lesson complete. The next lesson opens after this 10-second break.')
           : local(selectDialect('Gramatika sledeće lekcije otvara se posle pauze od 10 sekundi.~Gramatika sljedeće lekcije otvara se poslije pauze od 10 sekundi.')))
-        : (learningSerbian ? 'Practice resumes automatically after this 10-second break.'
+        : (learningSerbian ? tr('Practice resumes automatically after this 10-second break.')
           : local(selectDialect('Vežba se automatski nastavlja posle pauze od 10 sekundi.~Vježba se automatski nastavlja poslije pauze od 10 sekundi.')));
       if(showBreak && grammarIndex === null) {
         breakTimer = setTimeout(() => {
@@ -4641,17 +4717,17 @@
       }
       const next = get('[data-label="next"]');
       next.hidden = !solved || (last && finalTask);
-      if (last) next.textContent = learningSerbian ? 'Next exercise' : local(selectDialect('Sledeći zadatak~Sljedeći zadatak'));
+      if (last) next.textContent = learningSerbian ? tr('Next exercise') : local(selectDialect('Sledeći zadatak~Sljedeći zadatak'));
       get('.feedback').textContent = (solved && last ? local(labels.done) : local(labels[progress.feedback] || '')) + (solved && progress.model ? modelNote(progress.model) : '');
       const answerHelp = get('[data-answer-help]');
       answerHelp.hidden = progress.feedback !== 'retry';
       if(answerHelp.hidden) answerHelp.open = false;
       get('[data-help-label]').textContent = learningSerbian
-        ? 'Why was my answer rejected?' : local('Zašto odgovor nije prihvaćen?');
+        ? tr('Why was my answer rejected?') : local('Zašto odgovor nije prihvaćen?');
       get('[data-help-note]').textContent = learningSerbian
-        ? 'Your answer did not match the accepted versions for this question. A valid synonym or a different word order may still be missing.'
+        ? tr('Your answer did not match the accepted versions for this question. A valid synonym or a different word order may still be missing.')
         : local('Tvoj odgovor se ne podudara sa prihvaćenim verzijama za ovo pitanje. Možda nedostaje ispravan sinonim ili drugačiji red reči.');
-      get('[data-help-example-label]').textContent = learningSerbian ? 'One accepted answer' : local('Jedan prihvaćen odgovor');
+      get('[data-help-example-label]').textContent = learningSerbian ? tr('One accepted answer') : local('Jedan prihvaćen odgovor');
       const example = get('[data-help-example]');
       const accepted = activeOptions(item)?.find(choice => item.answers.includes(choice)) || item.answers[0];
       example.textContent = learningSerbian ? display(accepted) : accepted;
@@ -4663,6 +4739,7 @@
       });
       window.dispatchEvent(new CustomEvent('pomalo:render', {detail: {feedback: progress.feedback, lessonFinished, solved, review: false, taskFinished,
         lessonStars: lessonFinished ? lessonStars(course.selected) : 0, lessonIndex: course.selected, a1Passed: a1Passed(),
+        pic: pictureText(course.selected, progress.task, progress.index), lang: state.lang,
         serbian: (() => { const src = currentTask()[progress.index]; return state.course === 'sr' ? canonical(src) : (state.dialect === 'ij' && src.ijekavianPrompt ? src.ijekavianPrompt : src.prompt); })(),
         englishSay: (() => { const src = currentTask()[progress.index]; return (state.course === 'sr' ? src.prompt : canonical(src)).replace(/\s*\(.*?\)/g, ''); })(),
         english: state.course === 'sr' ? item.prompt : (item.canonical ? item.canonical[0] : item.answers[0]), englishFull: state.course === 'sr' ? item.prompt : (currentTask()[progress.index].answers[0]),
@@ -4770,6 +4847,7 @@
     render();
     window.pomaloSnapshot = () => JSON.parse(JSON.stringify({state,courses}));
     // Bring in progress saved to the learner's account (from another device).
+    window.pomaloLang = () => state.lang;
     window.pomaloResetState = () => {
       courses.sr = startCourse(); courses.en = startCourse(); mistakes = {}; savedAt = 0;
       progress = activeCourse().records[activeCourse().selected];
@@ -4811,7 +4889,8 @@
       }
       save();
     };
-    window.pomaloSetDialect = fixed => {
+    window.pomaloSetDialect = async fixed => {
+      await loadPack(fixed.lang);
       if (fixed.course !== state.course) {
         progress.answer = answerInput().value;
         state.course = fixed.course;
@@ -4820,6 +4899,7 @@
         answerInput().value = progress.answer || '';
       }
       state.dialect = fixed.dialect; state.script = fixed.script;
+      applyLang(fixed.lang || 'en');
       save(); render();
     };
     window.pomaloShow = () => { get('.shell').hidden = false; get('#pomalo-loading').hidden = true; startReview(); };
@@ -4838,6 +4918,7 @@
     const say = root.querySelector('[data-buddy-say]');
     const soundBtn = root.querySelector('[data-sound]');
     const pick = list => list[Math.floor(Math.random() * list.length)];
+    const tr = s => window.pomaloTr ? window.pomaloTr(s) : s;
     const lines = {
       sr: {
         hello: ['Hi! I’m Vrapko. Let’s learn together!', 'Zdravo! Ready to fly?', 'Hello, friend! Let’s go!'],
@@ -4877,7 +4958,7 @@
     const chirp = () => tone([1568, 2093, 2637], 'triangle', 0.07);
     const fanfare = () => tone([523, 659, 784, 1047], 'triangle', 0.13);
     const soft = () => tone([392, 330], 'sine', 0.14);
-    function paintSound() { soundBtn.textContent = soundOn ? 'Sound on' : 'Sound off'; soundBtn.setAttribute('aria-pressed', String(soundOn)); }
+    function paintSound() { soundBtn.textContent = tr(soundOn ? 'Sound on' : 'Sound off'); soundBtn.setAttribute('aria-pressed', String(soundOn)); }
     soundBtn.addEventListener('click', () => { soundOn = !soundOn; try { localStorage.setItem('pomalo-sound', soundOn ? 'on' : 'off'); } catch {} paintSound(); if (soundOn) chirp(); });
     paintSound();
     function confetti() {
@@ -4961,7 +5042,8 @@
     const loadVoices = () => { try { voices = synth ? synth.getVoices() : []; } catch { voices = []; } };
     loadVoices(); if (synth) synth.onvoiceschanged = loadVoices;
     const voiceFor = lang => {
-      const prefs = lang === 'sr' ? ['sr-RS', 'sr', 'sr-Latn', 'hr-HR', 'hr', 'bs-BA', 'bs'] : ['en-GB', 'en-US', 'en'];
+      const pk = window.pomaloPack ? window.pomaloPack() : null;
+      const prefs = lang === 'sr' ? ['sr-RS', 'sr', 'sr-Latn', 'hr-HR', 'hr', 'bs-BA', 'bs'] : lang === 'en' ? ['en-GB', 'en-US', 'en'] : (pk && pk.meta.speech) || [lang];
       for (const p of prefs) { const v = voices.find(v => v.lang && v.lang.toLowerCase().replace('_', '-').startsWith(p.toLowerCase())); if (v) return v; }
       return null;
     };
@@ -5000,7 +5082,7 @@
         // never read Serbian with a non-Serbian voice: it sounds wrong
         if (lang === 'sr' && !v) return false;
         if (v) u.voice = v;
-        u.lang = v ? v.lang : (lang === 'sr' ? 'sr-RS' : 'en-GB');
+        u.lang = v ? v.lang : (lang === 'sr' ? 'sr-RS' : lang === 'en' ? 'en-GB' : lang);
         u.rate = lang === 'sr' ? 0.85 : 0.95;
         if (done) { u.onend = done; u.onerror = done; }
         synth.speak(u);
@@ -5016,43 +5098,44 @@
       try { clip && clip.pause(); } catch {}
       queue = Promise.resolve();
       // read the prompt; once answered, also read the Serbian sentence
-      if (lastDetail.course === 'sr') { speakText(lastDetail.englishSay, 'en'); if (lastDetail.feedback === 'correct') speakText(lastDetail.serbian, 'sr'); }
-      else { speakText(lastDetail.serbian, 'sr'); if (lastDetail.feedback === 'correct') speakText(lastDetail.englishSay, 'en'); }
+      if (lastDetail.course === 'sr') { speakText(lastDetail.englishSay, lastDetail.lang || 'en'); if (lastDetail.feedback === 'correct') speakText(lastDetail.serbian, 'sr'); }
+      else { speakText(lastDetail.serbian, 'sr'); if (lastDetail.feedback === 'correct') speakText(lastDetail.englishSay, lastDetail.lang || 'en'); }
     });
     let last = null, greeted = false;
     function text(group, d) {
-      const raw = pick(lines[d.course][group]);
+      const pk = d.course === 'sr' && window.pomaloPack ? window.pomaloPack() : null;
+      const raw = pick((pk && pk.lines ? pk.lines : lines[d.course])[group]);
       const [ek, ij] = raw.split('~');
       const value = d.dialect === 'ij' && ij ? ij : ek;
       return d.course === 'en' && window.pomaloDisplay ? window.pomaloDisplay(value) : value;
     }
     window.addEventListener('pomalo:render', ({detail: d}) => {
-      soundBtn.textContent = d.course === 'en' ? (window.pomaloDisplay ? window.pomaloDisplay(soundOn ? 'Zvuk uključen' : 'Zvuk isključen') : '') : (soundOn ? 'Sound on' : 'Sound off');
+      soundBtn.textContent = d.course === 'en' ? (window.pomaloDisplay ? window.pomaloDisplay(soundOn ? 'Zvuk uključen' : 'Zvuk isključen') : '') : tr(soundOn ? 'Sound on' : 'Sound off');
       const star = '★ ' + d.stars + (d.review ? ' / ' + d.total : '') ;
       const totalEl = root.querySelector('[data-credit="total"]');
       if (!d.review) totalEl.textContent = '★ ' + d.total;
-      showPictures(d.englishFull || d.english, d.lessonFinished);
+      showPictures(d.pic || d.englishFull || d.english, d.lessonFinished);
       if (!d.review) lastDetail = d;
-      const promptSide = root.querySelector('[data-side="' + (d.course === 'sr' ? 'en' : 'sr') + '"]');
+      const promptSide = root.querySelector('[data-side="' + (d.course === 'sr' ? tr('en') : 'sr') + '"]');
       if (promptSide && hearBtn.parentElement !== promptSide) promptSide.append(hearBtn);
-      hearBtn.setAttribute('aria-label', d.course === 'sr' ? 'Listen to the sentence' : (window.pomaloDisplay ? window.pomaloDisplay('Slušaj rečenicu') : 'Listen'));
+      hearBtn.setAttribute('aria-label', d.course === 'sr' ? tr('Listen to the sentence') : (window.pomaloDisplay ? window.pomaloDisplay('Slušaj rečenicu') : 'Listen'));
       hearBtn.hidden = d.review;
       const state = [d.key, d.feedback, d.lessonFinished].join('|');
       if (state === last) return;
       const prev = last; last = state;
       let mood = 'idle', msg = null;
-      const lyric = () => { const l = pick(LYRICS[d.course]); return d.course === 'en' && window.pomaloDisplay ? window.pomaloDisplay(l) : l; };
-      const starLine = n => n ? ' ' + '★'.repeat(n) + '☆'.repeat(3 - n) + (d.course === 'sr' ? (n === 3 ? ' Perfect!' : n === 2 ? ' Great!' : ' Good! Try again for 3 stars.') : (window.pomaloDisplay ? window.pomaloDisplay(n === 3 ? ' Savršeno!' : n === 2 ? ' Odlično!' : (d.dialect === 'ij' ? ' Dobro! Probaj ponovo za 3 zvjezdice.' : ' Dobro! Probaj ponovo za 3 zvezdice.')) : '')) : '';
+      const lyric = () => { const pk = d.course === 'sr' && window.pomaloPack ? window.pomaloPack() : null; const l = pick(pk && pk.lyrics ? pk.lyrics : LYRICS[d.course]); return d.course === 'en' && window.pomaloDisplay ? window.pomaloDisplay(l) : l; };
+      const starLine = n => n ? ' ' + '★'.repeat(n) + '☆'.repeat(3 - n) + (d.course === 'sr' ? (n === 3 ? tr(' Perfect!') : n === 2 ? tr(' Great!') : tr(' Good! Try again for 3 stars.')) : (window.pomaloDisplay ? window.pomaloDisplay(n === 3 ? ' Savršeno!' : n === 2 ? ' Odlično!' : (d.dialect === 'ij' ? ' Dobro! Probaj ponovo za 3 zvjezdice.' : ' Dobro! Probaj ponovo za 3 zvezdice.')) : '')) : '';
       const levelDone = d.lessonFinished && d.lessonIndex === 34;
-      const testLine = d.a1Passed ? (d.course === 'sr' ? '🏆 Level 1 complete! ' : (window.pomaloDisplay ? window.pomaloDisplay('🏆 Nivo 1 je završen! ') : '')) : (d.course === 'sr' ? '🏆 Level 1 complete! Now pass the A1 test to open Level 2. ' : (window.pomaloDisplay ? window.pomaloDisplay('🏆 Nivo 1 je završen! Sada položi A1 test da otvoriš Nivo 2. ') : ''));
-      if (d.testResult === 'pass') { mood = 'party'; msg = (d.course === 'sr' ? '🏆 You passed! Level 2 is open. ' : (window.pomaloDisplay ? window.pomaloDisplay('🏆 Položio si! Nivo 2 je otvoren. ') : '')) + lyric(); song(); confetti(); setTimeout(confetti, 1200); setTimeout(() => { if (buddy.dataset.mood === 'party') buddy.dataset.mood = 'idle'; }, 7000); }
-      else if (d.testResult === 'fail') { mood = 'oops'; msg = d.course === 'sr' ? 'So close! Practise a little and try again.' : (window.pomaloDisplay ? window.pomaloDisplay(d.dialect === 'ij' ? 'Skoro! Vježbaj malo pa probaj ponovo.' : 'Skoro! Vežbaj malo pa probaj ponovo.') : ''); soft(); }
+      const testLine = d.a1Passed ? (d.course === 'sr' ? tr('🏆 Level 1 complete! ') : (window.pomaloDisplay ? window.pomaloDisplay('🏆 Nivo 1 je završen! ') : '')) : (d.course === 'sr' ? tr('🏆 Level 1 complete! Now pass the A1 test to open Level 2. ') : (window.pomaloDisplay ? window.pomaloDisplay('🏆 Nivo 1 je završen! Sada položi A1 test da otvoriš Nivo 2. ') : ''));
+      if (d.testResult === 'pass') { mood = 'party'; msg = (d.course === 'sr' ? tr('🏆 You passed! Level 2 is open. ') : (window.pomaloDisplay ? window.pomaloDisplay('🏆 Položio si! Nivo 2 je otvoren. ') : '')) + lyric(); song(); confetti(); setTimeout(confetti, 1200); setTimeout(() => { if (buddy.dataset.mood === 'party') buddy.dataset.mood = 'idle'; }, 7000); }
+      else if (d.testResult === 'fail') { mood = 'oops'; msg = d.course === 'sr' ? tr('So close! Practise a little and try again.') : (window.pomaloDisplay ? window.pomaloDisplay(d.dialect === 'ij' ? 'Skoro! Vježbaj malo pa probaj ponovo.' : 'Skoro! Vežbaj malo pa probaj ponovo.') : ''); soft(); }
       else if (levelDone) { mood = 'party'; msg = testLine + lyric(); song(); confetti(); setTimeout(confetti, 1200); setTimeout(() => { if (buddy.dataset.mood === 'party') buddy.dataset.mood = 'idle'; }, 8000); }
       else if (d.lessonFinished) { mood = 'party'; msg = text('done', d) + starLine(d.lessonStars) + ' ' + lyric(); song(); confetti(); setTimeout(() => { if (buddy.dataset.mood === 'party') buddy.dataset.mood = 'idle'; }, 6000); }
       else if (d.taskFinished) { mood = 'sing'; msg = lyric(); song(); setTimeout(() => { if (buddy.dataset.mood === 'sing') buddy.dataset.mood = 'idle'; }, 3200); }
-      else if (d.feedback === 'correct') { mood = 'cheer'; msg = d.model ? (d.course === 'sr' ? 'Yes! Most people say: ' + d.model : (window.pomaloDisplay ? window.pomaloDisplay('Da! Najčešće se kaže: ') : '') + d.model) : text('correct', d); chirp(); if (soundOn && !d.review && d.serbian) setTimeout(() => { try { synth && synth.cancel(); } catch {} try { clip && clip.pause(); } catch {} queue = Promise.resolve(); speakText(d.serbian, 'sr'); }, 450); }
-      else if (d.feedback === 'typo') { mood = 'idle'; msg = d.course === 'sr' ? 'So close! Look at the spelling.' : (window.pomaloDisplay ? window.pomaloDisplay(d.dialect === 'ij' ? 'Skoro! Pogledaj kako si napisao.' : 'Skoro! Pogledaj kako si napisao.') : ''); }
-      else if (d.feedback === 'retry' && d.test) { mood = 'oops'; msg = d.course === 'sr' ? 'Not this one. On to the next!' : (window.pomaloDisplay ? window.pomaloDisplay('Ovo nije. Idemo dalje!') : ''); soft(); }
+      else if (d.feedback === 'correct') { mood = 'cheer'; msg = d.model ? (d.course === 'sr' ? tr('Yes! Most people say: ') + d.model : (window.pomaloDisplay ? window.pomaloDisplay('Da! Najčešće se kaže: ') : '') + d.model) : text('correct', d); chirp(); if (soundOn && !d.review && d.serbian) setTimeout(() => { try { synth && synth.cancel(); } catch {} try { clip && clip.pause(); } catch {} queue = Promise.resolve(); speakText(d.serbian, 'sr'); }, 450); }
+      else if (d.feedback === 'typo') { mood = 'idle'; msg = d.course === 'sr' ? tr('So close! Look at the spelling.') : (window.pomaloDisplay ? window.pomaloDisplay(d.dialect === 'ij' ? 'Skoro! Pogledaj kako si napisao.' : 'Skoro! Pogledaj kako si napisao.') : ''); }
+      else if (d.feedback === 'retry' && d.test) { mood = 'oops'; msg = d.course === 'sr' ? tr('Not this one. On to the next!') : (window.pomaloDisplay ? window.pomaloDisplay('Ovo nije. Idemo dalje!') : ''); soft(); }
       else if (d.feedback === 'retry') { mood = 'oops'; msg = text('wrong', d); soft(); }
       else if (d.test && d.key === 'a1test|intro') msg = text('test', d);
       else if (!greeted) { msg = text(d.test ? 'test' : d.review ? 'review' : 'hello', d); greeted = true; }
