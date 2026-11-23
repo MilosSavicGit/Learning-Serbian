@@ -29,3 +29,14 @@ The answer checker in `index.html` already accepts these without listing them: w
 Pomalo always pairs Serbian with one other language. **English is the base:** a new language (Italian, Danish, German…) is made by translating the **English** sentences, exercise names, titles and interface texts into that language. **Serbian is never changed** for another language: the Serbian sentences, their accepted answers, Nikola's recordings and the Serbian grammar examples stay exactly as they are and are shared by all languages.
 
 Each language lives in one file, `lang/<code>.json` (e.g. `lang/it.json`), with its sentences (with all alternative answers), grammar pages, interface texts and Vrapko's lines. To add a language: create that file from English, add one entry to the language list in `index.html`, add its answer-checking rules, and allow its code in Supabase (`docs/supabase-languages.sql`).
+
+## Checklist: adding a language (e.g. Danish, code `da`)
+
+1. **Content:** create `lang/da.json` by translating from English (Serbian untouched): sentences with all alternative answers, exercise names, titles, grammar pages, interface texts (`ui`), button labels (`words`), Vrapko's lines and songs, and `meta` (name, native name, Serbian name and locative, tagline, speech codes).
+2. **Registration:** add one entry to `MORE_LANGS` in `index.html`.
+3. **Answer checking:** add a `FOREIGN.da` entry (normalising, accents/special letters such as æ/ae, ø/oe, å/aa, subject pronouns).
+4. **Flag:** add a drawing to `pomaloFlag` if missing (Denmark is already there) and the code to `pomaloFlagOf`.
+5. **Voice:** generate recordings into `audio/da/<voice>/<id>.mp3` (Azure, as for Nikola and Giuseppe) and add `da: '<voice>'` to `VOICES`. Until then the device voice reads it.
+6. **Database:** the language code must be allowed in Supabase (`docs/supabase-languages.sql`; `da` is already included).
+
+Everything else (two speakers, flags in the top bar, interface switching, A1 test, mistake review, admin panel) works for every language without changes.
