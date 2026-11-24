@@ -231,7 +231,8 @@
   const flagPair = (from, to) => '<span class="flags">' + window.pomaloFlag(from) + '<span aria-hidden="true">→</span>' + window.pomaloFlag(to) + '</span> ';
   // Languages paired with Serbian besides English. Each needs lang/<code>.json. Add Danish etc. here.
   const MORE_LANGS = [
-    {code: 'it', name: 'Italian', serbianIn: 'Serbo', speak: 'Parlo italiano (italiano → serbo)', srName: 'Italijanski', srSpeak: 'Govorim srpski (srpski → italijanski)'}
+    {code: 'it', name: 'Italian', serbianIn: 'Serbo', speak: 'Parlo italiano (italiano → serbo)', srName: 'Italijanski', srSpeak: 'Govorim srpski (srpski → italijanski)'},
+    {code: 'da', name: 'Danish', serbianIn: 'Serbisk', speak: 'Jeg taler dansk (dansk → serbisk)', srName: 'Danski', srSpeak: 'Govorim srpski (srpski → danski)'}
   ];
   (() => {
     const box = document.querySelector('#pomalo-gate [data-more-langs]'); if (!box) return;
@@ -608,7 +609,7 @@
       you.append(' ', sw, ' ', so);
     }, 0);
     else if (window.pomaloStandalone) setTimeout(() => newLearnerButton(you), 0);
-    const settings = {course: me.course === 'en' ? 'en' : 'sr', lang: me.lang === 'it' ? 'it' : 'en', dialect: me.dialect === 'ij' ? 'ij' : 'ek', script: me.script === 'cy' ? 'cy' : 'la'};
+    const settings = {course: me.course === 'en' ? 'en' : 'sr', lang: MORE_LANGS.some(g => g.code === me.lang) ? me.lang : 'en', dialect: me.dialect === 'ij' ? 'ij' : 'ek', script: me.script === 'cy' ? 'cy' : 'la'};
     you.textContent += ' · ' + describe(me);
     const apply = async () => { document.getElementById('pomalo-design').classList.add('fixed-variant'); window.pomaloMergeProgress(me.courses, me.savedAt, me.courseVersion); await window.pomaloSetDialect(settings); window.pomaloMergeMistakes(me.mistakes, me.courseVersion); };
     (window.pomaloSetDialect ? apply() : new Promise(res => window.addEventListener('pomalo:ready', () => res(apply()), {once:true}))).then(openCourse, openCourse);
@@ -3742,7 +3743,7 @@
         if (saved.mistakes && typeof saved.mistakes === 'object') mistakes = saved.mistakes;
         if (Number.isFinite(saved.savedAt)) savedAt = saved.savedAt;
         const {course,dialect,script} = saved.state || {};
-        if(['sr','en'].includes(course) && ['ek','ij'].includes(dialect) && ['la','cy'].includes(script)) state={course,dialect,script,lang:['en','it'].includes(saved.state.lang) ? saved.state.lang : 'en'};
+        if(['sr','en'].includes(course) && ['ek','ij'].includes(dialect) && ['la','cy'].includes(script)) state={course,dialect,script,lang:/^[a-z]{2}$/.test(saved.state.lang || '') ? saved.state.lang : 'en'};
       }
     } catch {}
     // Language packs: the course content with Italian (or another language) in place of English.
@@ -3822,9 +3823,20 @@
     const PRONOUNS_FOR_IT = {io:['ja'], me:['ja'], mi:['ja'], mio:['ja'], mia:['ja'], miei:['ja'], mie:['ja'], tu:['ti'], te:['ti'], ti:['ti'], tuo:['ti'], tua:['ti'],
       lui:['on'], lo:['on'], gli:['on'], lei:['ona','vi'], la:['ona'], le:['ona'], suo:['on','ona'], sua:['on','ona'], noi:['mi'], ci:['mi'], nostro:['mi'], nostra:['mi'],
       voi:['vi'], vi:['vi'], vostro:['vi'], vostra:['vi'], loro:['oni','one','ona']};
-    // Rules per foreign language (English uses canonEn directly). Add Danish etc. here.
+    // Danish: æ/ø/å may be typed as ae/oe/aa, é may be left out; subject pronouns are never dropped.
+    const canonDa = value => {
+      const v = value.normalize('NFC').toLowerCase().replace(/[’‘`´']/g, ' ').replace(/\(.*?\)/g, ' ')
+        .replace(/æ/g, 'ae').replace(/ø/g, 'oe').replace(/å/g, 'aa').replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+      return v ? v.split(' ') : [];
+    };
+    const PRONOUNS_FOR_DA = {jeg:['ja'], mig:['ja'], min:['ja'], mit:['ja'], mine:['ja'], du:['ti'], dig:['ti'], din:['ti'], dit:['ti'], dine:['ti'],
+      han:['on'], ham:['on'], hans:['on'], hun:['ona'], hende:['ona'], hendes:['ona'], vi:['mi'], os:['mi'], vores:['mi'],
+      i:['vi'], jer:['vi'], jeres:['vi'], de:['oni','one','ona'], dem:['oni','one','ona'], deres:['oni','one','ona'], den:['ono','on','ona'], det:['ono','on','ona']};
+    // Rules per foreign language (English uses canonEn directly). Add more languages here.
     const FOREIGN = {it: {canon: canonIt, subj: IT_SUBJ_LIST, accents: /[àáèéìíòóùú]/, pron: PRONOUNS_FOR_IT,
-      pronEn: {tu:'you', te:'you', voi:'you', vi:'you', lei:'you', io:'i', noi:'we', mi:'me', ci:'us'}}};
+      pronEn: {tu:'you', te:'you', voi:'you', vi:'you', lei:'you', io:'i', noi:'we', mi:'me', ci:'us'}},
+      da: {canon: canonDa, subj: new Set(), accents: /[éáó]/, pron: PRONOUNS_FOR_DA,
+      pronEn: {jeg:'i', mig:'me', min:'my', mit:'my', mine:'my', du:'you', dig:'you', din:'your', dit:'your', dine:'your', vi:'we', os:'us', vores:'our', i:'in', jer:'you', jeres:'your'}}};
     const JES = {jesam:'sam', jesi:'si', je:'je', jesmo:'smo', jeste:'ste', jesu:'su'};
     // words that can always replace each other
     const SR_SAME = {jako: 'veoma', vrlo: 'veoma', ponovo: 'opet', sada: 'sad', kada: 'kad', takodje: 'takođe', isto: 'takođe'};
@@ -5107,7 +5119,7 @@
     // Serbian clips live in audio/sr/<voice>/<id>.mp3, where id is a hash of the sentence.
     // Serbian voice folder: audio/sr/<voice>/<id>.mp3. More voices can be added as more folders.
     // Recorded voices per language: audio/<language>/<voice>/<id>.mp3. Languages without one use the device voice.
-    const VOICES = {sr: 'nikola', it: 'giuseppe'};
+    const VOICES = {sr: 'nikola', it: 'giuseppe', da: 'jeppe'};
     const clipId = t => { let h = 0x811c9dc5; for (const ch of t.normalize('NFC')) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
     const missing = new Set();
     let clip = null, queue = Promise.resolve();
