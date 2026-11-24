@@ -84,7 +84,7 @@
   </style>
 
   <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><g id="vrapko-shape"><ellipse cx="60" cy="76" rx="34" ry="29" fill="#b98656"/><ellipse cx="60" cy="84" rx="22" ry="18" fill="#f1e6d3"/><circle cx="60" cy="42" r="25" fill="#b98656"/><path d="M36 38 C38 18 82 18 84 38 C74 30 46 30 36 38 Z" fill="#8a5a33"/><ellipse cx="45" cy="50" rx="9" ry="7" fill="#ece5d8"/><ellipse cx="75" cy="50" rx="9" ry="7" fill="#ece5d8"/><circle cx="51" cy="41" r="4.6" fill="#1d1712"/><circle cx="69" cy="41" r="4.6" fill="#1d1712"/><path d="M54 49 L66 49 L60 58 Z" fill="#f2b233"/></g></defs></svg>
-  <section class="card" data-gate="status" aria-live="polite"><p data-status>Checking your access…</p></section>
+  <section class="card" data-gate="status" aria-live="polite"><p data-status>Checking your access…</p><button type="button" data-status-retry hidden onclick="location.reload()">Try again · Pokušaj ponovo</button></section>
 
   <section class="card welcome" data-gate="signin" hidden>
     <div class="welcome-head">
@@ -211,7 +211,7 @@
   const gate = document.getElementById('pomalo-gate');
   const $ = s => gate.querySelector(s);
   const show = name => { for (const el of gate.querySelectorAll('[data-gate]')) if (el.dataset.gate !== 'admin' && el.dataset.gate !== 'you') el.hidden = el.dataset.gate !== name; };
-  const status = msg => { show('status'); $('[data-status]').textContent = msg; };
+  const status = msg => { show('status'); $('[data-status]').textContent = msg; $('[data-status-retry]').hidden = !/reload/i.test(msg); };
   const now = () => new Date().toISOString();
   const fmt = iso => iso ? new Date(iso).toLocaleString(undefined, {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'}) : '—';
   const LOG_MAX = 100;
@@ -428,7 +428,16 @@
     if (!ok) { [db, user] = localStore(); return false; }
     window.pomaloSupabase = true;
     sb = window.supabase.createClient(SUPA_URL, SUPA_KEY, {auth: {persistSession: true, detectSessionInUrl: true, flowType: 'implicit'}});
-    const {data: {session}} = await sb.auth.getSession();
+    // Stay signed in: if the stored sign-in can't be renewed because the connection is slow
+    // (phone just woke up, weak Wi-Fi), wait and try again instead of asking for a new code.
+    let session = null, error = null;
+    for (let i = 0; i < 5; i++) {
+      ({data: {session}, error} = await sb.auth.getSession());
+      if (session || !error) break;
+      await new Promise(r => setTimeout(r, 1500 * (i + 1)));
+    }
+    let stored = false; try { stored = Object.keys(localStorage).some(k => /^sb-.*-auth-token$/.test(k)); } catch {}
+    if (!session && error && stored) { status('Pomalo can’t reach its server right now. Check your connection, then reload the page. · Nema veze sa serverom. Proveri internet pa ponovo učitaj stranicu.'); return true; }
     if (!session) { showSignIn(); return true; }
     account = session.user;
     await afterSignIn();
@@ -5207,5 +5216,5 @@
   })();
   </script>
 </div>
-</body>
-</html>
+
+</body></html>
