@@ -223,17 +223,19 @@
     const f = {
       rs: '<svg viewBox="0 0 30 20"><rect width="30" height="20" fill="#fff"/><rect width="30" height="6.67" fill="#c6363c"/><rect y="6.67" width="30" height="6.67" fill="#0c4076"/><g transform="translate(7.6 4.4) scale(.085)"><path d="M22,6L15,-16 31,-7 41,-24 50,-12 59,-24 69,-7 85,-16 78,6z" fill="#edb92e"/><path d="M10,8H90V60Q90,88 50,98Q10,88 10,60z" fill="#c6363c" stroke="#edb92e" stroke-width="5"/><path d="M50,38L44,30 38,20 28,18 34,24 38,27 42,35 30,31 17,22 14,34 20,40 14,46 22,50 16,58 26,58 34,56 40,62 36,76 44,71 50,82 56,71 64,76 60,62 66,56 74,58 84,58 78,50 86,46 80,40 86,34 83,22 70,31 58,35 62,27 66,24 72,18 62,20 56,30z" fill="#fff"/><path d="M43,40H57V53Q57,58 50,60Q43,58 43,53z" fill="#c6363c"/><path d="M48.5,41h3v18h-3zM43.5,47.5h13v3h-13z" fill="#fff"/></g></svg>',
       it: '<svg viewBox="0 0 30 20"><rect width="10" height="20" fill="#009246"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce2b37"/></svg>',
+      fr: '<svg viewBox="0 0 30 20"><rect width="10" height="20" fill="#0055a4"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ef4135"/></svg>',
       dk: '<svg viewBox="0 0 37 28"><rect width="37" height="28" fill="#c8102e"/><rect x="12" width="4" height="28" fill="#fff"/><rect y="12" width="37" height="4" fill="#fff"/></svg>',
       gb: '<svg viewBox="0 0 60 30"><clipPath id="' + k + '"><path d="M30,15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0L60,30M60,0L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0L60,30M60,0L0,30" clip-path="url(#' + k + ')" stroke="#c8102e" stroke-width="4"/><path d="M30,0v30M0,15h60" stroke="#fff" stroke-width="10"/><path d="M30,0v30M0,15h60" stroke="#c8102e" stroke-width="6"/></svg>'
     }[code];
     return f ? '<span class="flag" role="img">' + f + '</span>' : '';
   };
-  window.pomaloFlagOf = lang => ({en: 'gb', it: 'it', da: 'dk'})[lang] || 'gb';
+  window.pomaloFlagOf = lang => ({en: 'gb', it: 'it', da: 'dk', fr: 'fr'})[lang] || 'gb';
   const flagPair = (from, to) => '<span class="flags">' + window.pomaloFlag(from) + '<span aria-hidden="true">→</span>' + window.pomaloFlag(to) + '</span> ';
   // Languages paired with Serbian besides English. Each needs lang/<code>.json. Add Danish etc. here.
   const MORE_LANGS = [
     {code: 'it', name: 'Italian', serbianIn: 'Serbo', speak: 'Parlo italiano (italiano → serbo)', srName: 'Italijanski', srSpeak: 'Govorim srpski (srpski → italijanski)'},
-    {code: 'da', name: 'Danish', serbianIn: 'Serbisk', speak: 'Jeg taler dansk (dansk → serbisk)', srName: 'Danski', srSpeak: 'Govorim srpski (srpski → danski)'}
+    {code: 'da', name: 'Danish', serbianIn: 'Serbisk', speak: 'Jeg taler dansk (dansk → serbisk)', srName: 'Danski', srSpeak: 'Govorim srpski (srpski → danski)'},
+    {code: 'fr', name: 'French', serbianIn: 'Serbe', speak: 'Je parle français (français → serbe)', srName: 'Francuski', srSpeak: 'Govorim srpski (srpski → francuski)'}
   ];
   (() => {
     const box = document.querySelector('#pomalo-gate [data-more-langs]'); if (!box) return;
@@ -3875,11 +3877,22 @@
     const PRONOUNS_FOR_DA = {jeg:['ja'], mig:['ja'], min:['ja'], mit:['ja'], mine:['ja'], du:['ti'], dig:['ti'], din:['ti'], dit:['ti'], dine:['ti'],
       han:['on'], ham:['on'], hans:['on'], hun:['ona'], hende:['ona'], hendes:['ona'], vi:['mi'], os:['mi'], vores:['mi'],
       i:['vi'], jer:['vi'], jeres:['vi'], de:['oni','one','ona'], dem:['oni','one','ona'], deres:['oni','one','ona'], den:['ono','on','ona'], det:['ono','on','ona']};
+    // French: apostrophes split words (l'eau = l eau), œ = oe, accents may be left out; subject pronouns are never dropped.
+    const canonFr = value => {
+      const v = value.normalize('NFC').toLowerCase().replace(/[’‘`´']/g, ' ').replace(/\(.*?\)/g, ' ')
+        .replace(/œ/g, 'oe').replace(/æ/g, 'ae').replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+      return v ? v.split(' ') : [];
+    };
+    const PRONOUNS_FOR_FR = {je:['ja'], j:['ja'], me:['ja'], moi:['ja'], mon:['ja'], ma:['ja'], mes:['ja'], tu:['ti'], te:['ti'], toi:['ti'], ton:['ti'], ta:['ti'], tes:['ti'],
+      il:['on'], lui:['on','ona'], son:['on','ona'], sa:['on','ona'], ses:['on','ona'], elle:['ona'], nous:['mi'], notre:['mi'], nos:['mi'], on:['mi'],
+      vous:['vi','ti'], votre:['vi','ti'], vos:['vi','ti'], ils:['oni'], eux:['oni'], elles:['one'], leur:['oni','one','ona'], leurs:['oni','one','ona']};
     // Rules per foreign language (English uses canonEn directly). Add more languages here.
     const FOREIGN = {it: {canon: canonIt, subj: IT_SUBJ_LIST, accents: /[àáèéìíòóùú]/, pron: PRONOUNS_FOR_IT,
       pronEn: {tu:'you', te:'you', voi:'you', vi:'you', lei:'you', io:'i', noi:'we', mi:'me', ci:'us'}},
       da: {canon: canonDa, subj: new Set(), accents: /[éáó]/, pron: PRONOUNS_FOR_DA,
-      pronEn: {jeg:'i', mig:'me', min:'my', mit:'my', mine:'my', du:'you', dig:'you', din:'your', dit:'your', dine:'your', vi:'we', os:'us', vores:'our', i:'in', jer:'you', jeres:'your'}}};
+      pronEn: {jeg:'i', mig:'me', min:'my', mit:'my', mine:'my', du:'you', dig:'you', din:'your', dit:'your', dine:'your', vi:'we', os:'us', vores:'our', i:'in', jer:'you', jeres:'your'}},
+      fr: {canon: canonFr, subj: new Set(), accents: /[àâäéèêëîïôöùûüÿç]/, pron: PRONOUNS_FOR_FR,
+      pronEn: {je:'i', j:'i', moi:'me', me:'me', tu:'you', te:'you', toi:'you', vous:'you', nous:'we', ton:'your', ta:'your', tes:'your', votre:'your', vos:'your', mon:'my', ma:'my', mes:'my', notre:'our', nos:'our'}}};
     const JES = {jesam:'sam', jesi:'si', je:'je', jesmo:'smo', jeste:'ste', jesu:'su'};
     // words that can always replace each other
     const SR_SAME = {s: 'sa', jako: 'veoma', vrlo: 'veoma', ponovo: 'opet', sada: 'sad', kada: 'kad', takodje: 'takođe', isto: 'takođe'};
@@ -5227,7 +5240,7 @@
     // Serbian clips live in audio/sr/<voice>/<id>.mp3, where id is a hash of the sentence.
     // Serbian voice folder: audio/sr/<voice>/<id>.mp3. More voices can be added as more folders.
     // Recorded voices per language: audio/<language>/<voice>/<id>.mp3. Languages without one use the device voice.
-    const VOICES = {sr: 'nikola', it: 'giuseppe', da: 'jeppe'};
+    const VOICES = {sr: 'nikola', it: 'giuseppe', da: 'jeppe', fr: 'henri'};
     const clipId = t => { let h = 0x811c9dc5; for (const ch of t.normalize('NFC')) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
     const missing = new Set();
     let clip = null, queue = Promise.resolve();
