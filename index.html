@@ -372,6 +372,17 @@
   }
   const LOCAL_ACTIVE = 'pomalo-active-learner';
   // A stand-in for the shared store, so the rest of Pomalo keeps working unchanged.
+  // A sign-in that expired in the background (phone asleep, laptop closed) is renewed once and the
+  // request repeated, so saving and suggestions keep working without asking for a new email.
+  const authProblem = e => e && (e.status === 401 || e.code === 'PGRST301' || e.code === '42501' || /jwt|token|expired|not authenticated/i.test(e.message || ''));
+  async function withAuth(run) {
+    let res = await run();
+    if (res && authProblem(res.error)) {
+      const {data, error} = await sb.auth.refreshSession();
+      if (!error && data && data.session) res = await run();
+    }
+    return res;
+  }
   function supaStore(learner) {
     let sentLog = (learner.log || []).length;
     return {
@@ -381,10 +392,10 @@
         update: async data => {
           const jobs = [];
           if ('courses' in data || 'mistakes' in data || 'progress' in data) {
-            jobs.push(sb.from('progress').upsert({learner_id: learner.id, parent_id: account.id,
+            jobs.push(withAuth(() => sb.from('progress').upsert({learner_id: learner.id, parent_id: account.id,
               data: {courses: data.courses ?? me.courses, mistakes: data.mistakes ?? me.mistakes, savedAt: data.savedAt ?? me.savedAt, courseVersion: data.courseVersion ?? me.courseVersion},
               summary: {progress: data.progress ?? me.progress, mistakeSummary: data.mistakeSummary ?? me.mistakeSummary},
-              updated_at: new Date().toISOString()}));
+              updated_at: new Date().toISOString()})));
           }
           if ('lastSeen' in data || 'visits' in data) {
             const row = {last_seen: data.lastSeen || new Date().toISOString()};
@@ -595,8 +606,8 @@
       log: (acts || []).reverse().map(a => ({t: a.at, e: a.event}))};
     db = supaStore({id: l.id, log: me.log});
     window.pomaloSuggest = async row => {
-      const {error} = await sb.from('suggestions').insert({...row, learner_id: l.id, parent_id: account.id, learner_name: String(l.name || '').slice(0, 60)});
-      if (error) throw error;
+      const {error} = await withAuth(() => sb.from('suggestions').insert({...row, learner_id: l.id, parent_id: account.id, learner_name: String(l.name || '').slice(0, 60)}));
+      if (error) { if (authProblem(error)) error.signedOut = true; throw error; }
     };
     await recordVisit();
     begin();
@@ -4197,7 +4208,9 @@
           + (goOn ? ' ' + T('You can go on to the next sentence.', 'Možeš na sledeću rečenicu.~Možeš na sljedeću rečenicu.') : '');
       } catch (e) {
         console.warn('Pomalo: suggestion not sent', e);
-        status.textContent = T('Could not send. Try again later.', 'Slanje nije uspelo. Pokušaj kasnije.~Slanje nije uspjelo. Pokušaj kasnije.');
+        status.textContent = e && e.signedOut
+          ? T('You were signed out. Reload the page, sign in again and send it once more.', 'Odjavljen si. Ponovo učitaj stranicu, prijavi se i pošalji još jednom.')
+          : T('Could not send. Try again later.', 'Slanje nije uspelo. Pokušaj kasnije.~Slanje nije uspjelo. Pokušaj kasnije.');
       }
       send.disabled = false;
     });
