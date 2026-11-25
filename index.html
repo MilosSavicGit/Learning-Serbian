@@ -4192,7 +4192,9 @@
         await window.pomaloSuggest({item_key: state.lang + '|' + mistakeKey(), lang: state.lang, course: state.course, dialect: state.dialect, lesson: activeCourse().selected + 1,
           old_prompt: now.prompt, old_answer: now.answer, new_prompt: newPrompt, new_answer: newAnswer, note});
         get('[data-suggest-form]').hidden = true;
-        status.textContent = T('Thank you! Your suggestion was sent.', 'Hvala! Predlog je poslat.~Hvala! Prijedlog je poslan.');
+        const goOn = window.pomaloSuggestAccepted && window.pomaloSuggestAccepted(state.lang + '|' + mistakeKey());
+        status.textContent = T('Thank you! Your suggestion was sent.', 'Hvala! Predlog je poslat.~Hvala! Prijedlog je poslan.')
+          + (goOn ? ' ' + T('You can go on to the next sentence.', 'Možeš na sledeću rečenicu.~Možeš na sljedeću rečenicu.') : '');
       } catch (e) {
         console.warn('Pomalo: suggestion not sent', e);
         status.textContent = T('Could not send. Try again later.', 'Slanje nije uspelo. Pokušaj kasnije.~Slanje nije uspjelo. Pokušaj kasnije.');
@@ -4984,19 +4986,29 @@
       progress.model = correct && !item.options && !sameAsModel(response, item.model) ? item.model : '';
       progress.feedback = correct ? 'correct' : 'retry';
       if (!correct) { recordMistake(mistakeKey(), response); progress.wrong = (progress.wrong || 0) + 1; }
-      if(progress.feedback === 'correct') {
-        progress.credits++;
-        if (progress.credits === 40) progress.stars = Math.max(progress.stars || 0, starsFor(progress.wrong || 0));
-        if(progress.credits === 40 && activeCourse().selected + 1 < lessons.length) {
-          activeCourse().unlocked = Math.max(activeCourse().unlocked, activeCourse().selected + 1);
-        }
-      }
+      if(progress.feedback === 'correct') creditSolved();
       save();
       render();
       if(!get('[data-break]').hidden) get('[data-ad="auto"]').focus();
       else if(!get('[data-complete]').hidden) get('[data-replay]').focus();
       else if(progress.feedback === 'correct' && !get('[data-label="next"]').hidden) get('[data-label="next"]').focus();
     });
+    function creditSolved() {
+      progress.credits++;
+      if (progress.credits === 40) progress.stars = Math.max(progress.stars || 0, starsFor(progress.wrong || 0));
+      if(progress.credits === 40 && activeCourse().selected + 1 < lessons.length) {
+        activeCourse().unlocked = Math.max(activeCourse().unlocked, activeCourse().selected + 1);
+      }
+    }
+    // A learner who sends a better version of the sentence they are stuck on may go on:
+    // their version is checked later by the owner, so the lesson should not block them now.
+    window.pomaloSuggestAccepted = key => {
+      if (a1Test || mistakeReview || progress.feedback === 'correct' || key !== state.lang + '|' + mistakeKey()) return false;
+      progress.feedback = 'correct'; progress.model = '';
+      creditSolved(); save(); render();
+      if(!get('[data-label="next"]').hidden) get('[data-label="next"]').focus();
+      return true;
+    };
     function advance() {
       if(progress.feedback !== 'correct') return;
       if(progress.index === 4) {
