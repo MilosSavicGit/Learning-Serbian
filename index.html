@@ -676,15 +676,17 @@
       $('[data-stats]').replaceChildren(...stats.map(([n, l]) => { const s = document.createElement('span'); s.textContent = n + ' ' + l; return s; }));
       note.textContent = learners.length ? 'Newest activity first. Select a name to see that person’s recent activity.' : (window.pomaloSupabase ? 'No learners yet. They appear here after someone signs in and adds a learner.' : 'No one has registered yet. Share this page with your learners as Contributors; they register the first time they open it.');
       table.hidden = !learners.length;
+      // what learners actually typed when it was wrong (last few per sentence)
+      const typedNote = w => w && w.length ? ' · typed: ' + w.slice(-6).map(x => '“' + x + '”').join(', ') : '';
       const agg = new Map();
       for (const l of learners) for (const m of l.mistakeSummary?.top || []) {
-        const a = agg.get(m.key) || {prompt: m.prompt, lesson: m.lesson, n: 0, people: 0};
-        a.n += m.n; a.people++; agg.set(m.key, a);
+        const a = agg.get(m.key) || {prompt: m.prompt, lesson: m.lesson, n: 0, people: 0, w: new Set()};
+        a.n += m.n; a.people++; (m.w || []).forEach(x => a.w.add(x)); agg.set(m.key, a);
       }
       const hard = [...agg.values()].sort((a, b) => b.people - a.people || b.n - a.n).slice(0, 8);
       const hardBox = $('[data-hard]');
       hardBox.hidden = !hard.length;
-      $('[data-hard-list]').replaceChildren(...hard.map(a => { const li = document.createElement('li'); li.textContent = 'Lesson ' + a.lesson + ' · “' + a.prompt + '” · ' + a.people + (a.people === 1 ? ' learner' : ' learners') + ', ' + a.n + ' wrong'; return li; }));
+      $('[data-hard-list]').replaceChildren(...hard.map(a => { const li = document.createElement('li'); li.textContent = 'Lesson ' + a.lesson + ' · “' + a.prompt + '” · ' + a.people + (a.people === 1 ? ' learner' : ' learners') + ', ' + a.n + ' wrong' + typedNote([...a.w]); return li; }));
       tbody.replaceChildren();
       for (const l of sorted) {
         const isBlocked = blocked.has(l.id);
@@ -700,7 +702,7 @@
         if (open.has(l.id) && l.mistakeSummary?.top?.length) {
           const h = document.createElement('div'); h.className = 'muted'; h.textContent = 'Most missed:'; nameCell.append(h);
           const ml = document.createElement('ul'); ml.className = 'log';
-          for (const m of l.mistakeSummary.top.slice(0, 8)) { const li = document.createElement('li'); li.textContent = 'L' + m.lesson + ' · “' + m.prompt + '” · wrong ' + m.n + '×' + (m.open ? '' : ' · fixed'); ml.append(li); }
+          for (const m of l.mistakeSummary.top.slice(0, 8)) { const li = document.createElement('li'); li.textContent = 'L' + m.lesson + ' · “' + m.prompt + '” · wrong ' + m.n + '×' + (m.open ? '' : ' · fixed') + typedNote(m.w); ml.append(li); }
           nameCell.append(ml);
         }
         if (open.has(l.id)) {
@@ -4034,9 +4036,11 @@
 
     const mistakeKey = () => [state.course, activeCourse().selected, progress.task, progress.index].join('|');
     const sourceItem = key => { const [c, l, t, i] = key.split('|'); return lessons[+l]?.tasks[c]?.[+t]?.[+i]; };
-    function recordMistake(key) {
+    // Keeps the last few wrong answers per sentence, so the owner can see what goes wrong (and spot correct answers we missed).
+    function recordMistake(key, typed) {
       const old = mistakes[key] || {n: 0};
-      mistakes[key] = {n: old.n + 1, open: true, t: Date.now()};
+      const w = [...(old.w || []), String(typed || '').trim().slice(0, 120)].filter(Boolean).slice(-5);
+      mistakes[key] = {n: old.n + 1, open: true, t: Date.now(), ...(w.length ? {w} : {})};
     }
     const REVIEW_MAX = 10;
     let mistakeReview = null; // {queue, pos, firstTry, feedback, choice, requeued, cleared, total}
@@ -4153,7 +4157,7 @@
         if (r.firstTry) { mistakes[key] = {...mistakes[key], open: false, t: Date.now()}; r.cleared++; }
         else if (!r.requeued.has(key)) { r.requeued.add(key); r.queue.push(key); }
       } else {
-        if (r.firstTry) recordMistake(key);
+        if (r.firstTry) recordMistake(key, response);
         r.firstTry = false;
         r.feedback = 'retry';
       }
@@ -4411,7 +4415,7 @@
       else {
         t.feedback = 'wrong';
         // only lessons the learner has reached go into mistake review
-        if (q.l <= activeCourse().unlocked) recordMistake(key);
+        if (q.l <= activeCourse().unlocked) recordMistake(key, response);
       }
       save();
       render();
@@ -4450,7 +4454,7 @@
     window.pomaloMistakes = () => Object.entries(mistakes).map(([key, m]) => {
       const [c, l] = key.split('|');
       const item = sourceItem(key);
-      return item ? {key, course: c, lesson: +l + 1, prompt: item.prompt, n: m.n, open: m.open} : null;
+      return item ? {key, course: c, lesson: +l + 1, prompt: item.prompt, n: m.n, open: m.open, ...(m.w ? {w: m.w} : {})} : null;
     }).filter(Boolean);
     let grammarIndex = progress.reviewGrammar ? activeCourse().selected : null;
     let breakTimer;
@@ -4820,7 +4824,7 @@
       get('[data-answer-help]').open = false;
       progress.model = correct && !item.options && !sameAsModel(response, item.model) ? item.model : '';
       progress.feedback = correct ? 'correct' : 'retry';
-      if (!correct) { recordMistake(mistakeKey()); progress.wrong = (progress.wrong || 0) + 1; }
+      if (!correct) { recordMistake(mistakeKey(), response); progress.wrong = (progress.wrong || 0) + 1; }
       if(progress.feedback === 'correct') {
         progress.credits++;
         if (progress.credits === 40) progress.stars = Math.max(progress.stars || 0, starsFor(progress.wrong || 0));
@@ -4945,7 +4949,7 @@
       if (!remote || typeof remote !== 'object' || remoteVersion !== COURSE_VERSION) return;
       for (const [key, m] of Object.entries(remote)) {
         if (!m || typeof m.n !== 'number') continue;
-        if (!mistakes[key] || (m.t || 0) > (mistakes[key].t || 0)) mistakes[key] = {n: m.n, open: Boolean(m.open), t: m.t || 0};
+        if (!mistakes[key] || (m.t || 0) > (mistakes[key].t || 0)) mistakes[key] = {n: m.n, open: Boolean(m.open), t: m.t || 0, ...(Array.isArray(m.w) ? {w: m.w.filter(x => typeof x === 'string').slice(-5)} : {})};
       }
       save();
     };
