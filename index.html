@@ -198,6 +198,7 @@
     <div class="stats" data-stats></div>
     <p class="muted" data-admin-note>Loading learners…</p>
     <div data-hard hidden><p class="muted">Hardest sentences across all learners</p><ul class="log" data-hard-list></ul></div>
+    <div data-sugg hidden><p class="muted">Suggested corrections · <span data-sugg-count></span> <button type="button" data-sugg-copy>Copy all</button></p><ul class="log sugg" data-sugg-list></ul></div>
     <div class="tablewrap"><table hidden>
       <thead><tr><th scope="col">Name</th><th scope="col">Registered</th><th scope="col">Last active</th><th scope="col">Visits</th><th scope="col">Lessons done</th><th scope="col">Credits</th><th scope="col">Mistakes</th><th scope="col">Access</th></tr></thead>
       <tbody data-learners></tbody>
@@ -416,8 +417,40 @@
       listeners.learners.forEach(f => f(snap(rows)));
       listeners.blocked.forEach(f => f({docs: rows.filter(r => r.paused).map(r => ({id: r.id, data: () => ({blocked: true})}))}));
     }
-    setInterval(refresh, 30000);
-    setTimeout(refresh, 0);
+    // Suggested corrections from learners (needs docs/supabase-suggestions.sql; hidden until the table exists)
+    let suggRows = [];
+    const langName = code => code === 'en' ? 'English' : (MORE_LANGS.find(g => g.code === code) || {name: code}).name;
+    const suggLine = r => {
+      const dir = r.course === 'sr' ? langName(r.lang) + ' → Serbian' : 'Serbian → ' + langName(r.lang);
+      const lines = [fmt(r.created_at) + ' · ' + (r.learner_name || 'learner') + ' · ' + dir + ' · Lesson ' + r.lesson + (r.dialect === 'ij' ? ' · ijekavski' : '') + ' · ' + r.item_key];
+      lines.push(r.new_prompt !== r.old_prompt ? 'Sentence: “' + r.old_prompt + '” → “' + r.new_prompt + '”' : 'Sentence: “' + r.old_prompt + '”');
+      lines.push(r.new_answer !== r.old_answer ? 'Translation: “' + r.old_answer + '” → “' + r.new_answer + '”' : 'Translation: “' + r.old_answer + '” (unchanged)');
+      if (r.note) lines.push('Comment: ' + r.note);
+      return lines.join('\n');
+    };
+    async function loadSuggestions() {
+      const box = $('[data-sugg]');
+      const {data, error} = await sb.from('suggestions').select('*').eq('status', 'new').order('created_at', {ascending: false}).limit(200);
+      if (error || !data) { box.hidden = true; return; }
+      suggRows = data; box.hidden = false;
+      $('[data-sugg-count]').textContent = data.length ? data.length + ' new' : 'none yet';
+      $('[data-sugg-copy]').hidden = !data.length;
+      $('[data-sugg-list]').replaceChildren(...data.map(r => {
+        const li = document.createElement('li'); li.style.whiteSpace = 'pre-line'; li.textContent = suggLine(r) + '\n';
+        const act = (label, fn) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.onclick = async () => { b.disabled = true; await fn(); loadSuggestions().catch(() => {}); }; li.append(b, ' '); };
+        act('Done', () => sb.from('suggestions').update({status: 'done'}).eq('id', r.id));
+        act('Delete', () => sb.from('suggestions').delete().eq('id', r.id));
+        return li;
+      }));
+    }
+    $('[data-sugg-copy]').onclick = async () => {
+      const text = suggRows.map(suggLine).join('\n\n');
+      try { await navigator.clipboard.writeText(text); $('[data-sugg-copy]').textContent = 'Copied ✓'; } catch { prompt('Copy the suggestions:', text); }
+      setTimeout(() => { $('[data-sugg-copy]').textContent = 'Copy all'; }, 2000);
+    };
+    const refreshAll = () => { refresh().catch(() => {}); loadSuggestions().catch(() => {}); };
+    setInterval(refreshAll, 30000);
+    setTimeout(refreshAll, 0);
     window.pomaloAdminRefresh = () => refresh().catch(() => {});
     return {
       collection: name => ({onSnapshot: (next, err) => { listeners[name] = listeners[name] || []; listeners[name].push(next); return () => {}; }}),
@@ -555,6 +588,10 @@
       progress: prog?.summary?.progress || {}, mistakeSummary: prog?.summary?.mistakeSummary,
       log: (acts || []).reverse().map(a => ({t: a.at, e: a.event}))};
     db = supaStore({id: l.id, log: me.log});
+    window.pomaloSuggest = async row => {
+      const {error} = await sb.from('suggestions').insert({...row, learner_id: l.id, parent_id: account.id, learner_name: String(l.name || '').slice(0, 60)});
+      if (error) throw error;
+    };
     await recordVisit();
     begin();
     setTimeout(() => window.pomaloAdminRefresh && window.pomaloAdminRefresh(), 1500);
@@ -742,6 +779,11 @@
   #pomalo-design .shell{margin-block:24px}
   #pomalo-design button{cursor:pointer}
   #pomalo-design button:disabled{cursor:default;opacity:.65}
+  #pomalo-design .suggest{margin-top:12px}
+  #pomalo-design .suggest .linkish{border:0;padding:4px 0;min-height:0;text-decoration:underline;background:none;color:inherit}
+  #pomalo-design .suggest label{display:block;margin:10px 0 0}
+  #pomalo-design .suggest textarea,#pomalo-design .suggest input{display:block;width:100%;box-sizing:border-box;margin-top:4px;padding:8px;font:inherit;border-radius:8px;border:1px solid light-dark(#8d99c4,#5d6aa3);background:light-dark(#fff,#141c3d);color:inherit}
+  #pomalo-design .suggest .actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
   #pomalo-design .shell{max-width:760px;margin:24px auto;overflow:hidden;border:1px solid light-dark(#c3cbe3,#34417a);border-radius:20px;background:light-dark(#ffffff,#111b3d);color:light-dark(#0b1d51,#eef2ff);font:15px/1.5 "DM Sans",system-ui,sans-serif}
   #pomalo-design header{background:light-dark(#e3e9fb,#1f2c5e);padding:17px 23px;display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between;align-items:center}
   #pomalo-design .wordmark{font:600 28px Georgia,serif;letter-spacing:-.6px}
@@ -1016,6 +1058,16 @@
           <p><span data-help-example-label></span> <strong data-help-example></strong></p>
         </details>
       </form>
+      <div class="suggest" data-suggest hidden>
+        <button type="button" class="linkish" data-suggest-open></button>
+        <div data-suggest-form hidden>
+          <label><span data-suggest-l1></span><textarea rows="2" maxlength="300" data-suggest-prompt></textarea></label>
+          <label><span data-suggest-l2></span><textarea rows="2" maxlength="300" data-suggest-answer></textarea></label>
+          <label><span data-suggest-l3></span><input maxlength="300" autocomplete="off" data-suggest-note></label>
+          <div class="actions"><button type="button" class="main-action" data-suggest-send></button><button type="button" data-suggest-cancel></button></div>
+        </div>
+        <p class="muted" data-suggest-status aria-live="polite"></p>
+      </div>
       <section data-test-panel hidden><p data-test-text></p><button type="button" class="go" data-test-go></button><button type="button" data-test-other hidden></button></section>
       <section data-complete hidden>
         <button type="button" data-replay></button>
@@ -4042,6 +4094,64 @@
       const w = [...(old.w || []), String(typed || '').trim().slice(0, 120)].filter(Boolean).slice(-5);
       mistakes[key] = {n: old.n + 1, open: true, t: Date.now(), ...(w.length ? {w} : {})};
     }
+    // ---- Suggest a better sentence (testers and native speakers) ----
+    // The suggestion goes to the course owner (Learners panel); lessons change only after the owner approves it.
+    let suggestFor = '';
+    const suggestText = (learningSerbian, local) => (en, sr) => learningSerbian ? tr(en) : local(selectDialect(sr));
+    function renderSuggest(learningSerbian, local) {
+      const box = get('[data-suggest]');
+      box.hidden = !window.pomaloSuggest;
+      if (box.hidden) return;
+      const T = suggestText(learningSerbian, local);
+      const key = state.lang + '|' + mistakeKey();
+      if (suggestFor && suggestFor !== key) { get('[data-suggest-form]').hidden = true; get('[data-suggest-status]').textContent = ''; suggestFor = ''; }
+      get('[data-suggest-open]').textContent = '✏️ ' + T('Suggest a better sentence', 'Predloži bolju rečenicu');
+      get('[data-suggest-l1]').textContent = T('Sentence', 'Rečenica');
+      get('[data-suggest-l2]').textContent = T('Translation', 'Prevod~Prijevod');
+      get('[data-suggest-l3]').textContent = T('Comment (optional)', 'Komentar (nije obavezno)');
+      get('[data-suggest-send]').textContent = T('Send', 'Pošalji');
+      get('[data-suggest-cancel]').textContent = T('Cancel', 'Otkaži');
+    }
+    const suggestNow = () => {
+      const src = currentTask()[progress.index], item = current();
+      const prompt = state.course === 'en' && state.dialect === 'ij' && item.ijekavianPrompt ? item.ijekavianPrompt : item.prompt;
+      const answer = item.blank ? (item.full ? item.full[0] : item.answers[0]) : (canonical(src) || item.answers[0]);
+      return {prompt: (item.blank ? (state.dialect === 'ij' && item.ijekavianBlank ? item.ijekavianBlank : item.blank) + ' · ' : '') + prompt, answer};
+    };
+    get('[data-suggest-open]').addEventListener('click', () => {
+      const form = get('[data-suggest-form]');
+      if (!form.hidden) { form.hidden = true; return; }
+      const now = suggestNow();
+      suggestFor = state.lang + '|' + mistakeKey();
+      get('[data-suggest-prompt]').value = now.prompt;
+      get('[data-suggest-answer]').value = now.answer;
+      get('[data-suggest-note]').value = '';
+      get('[data-suggest-status]').textContent = '';
+      form.hidden = false;
+      get('[data-suggest-answer]').focus();
+    });
+    get('[data-suggest-cancel]').addEventListener('click', () => { get('[data-suggest-form]').hidden = true; get('[data-suggest-status]').textContent = ''; });
+    get('[data-suggest-send]').addEventListener('click', async () => {
+      const learningSerbian = state.course === 'sr';
+      const T = suggestText(learningSerbian, learningSerbian ? value => value : nativeUi);
+      const status = get('[data-suggest-status]'), send = get('[data-suggest-send]');
+      const now = suggestNow();
+      const newPrompt = get('[data-suggest-prompt]').value.trim(), newAnswer = get('[data-suggest-answer]').value.trim(), note = get('[data-suggest-note]').value.trim();
+      if (newPrompt === now.prompt && newAnswer === now.answer && !note) {
+        status.textContent = T('Change the sentence or add a comment first.', 'Prvo promeni rečenicu ili dodaj komentar.~Prvo promijeni rečenicu ili dodaj komentar.'); return;
+      }
+      send.disabled = true;
+      try {
+        await window.pomaloSuggest({item_key: state.lang + '|' + mistakeKey(), lang: state.lang, course: state.course, dialect: state.dialect, lesson: activeCourse().selected + 1,
+          old_prompt: now.prompt, old_answer: now.answer, new_prompt: newPrompt, new_answer: newAnswer, note});
+        get('[data-suggest-form]').hidden = true;
+        status.textContent = T('Thank you! Your suggestion was sent.', 'Hvala! Predlog je poslat.~Hvala! Prijedlog je poslan.');
+      } catch (e) {
+        console.warn('Pomalo: suggestion not sent', e);
+        status.textContent = T('Could not send. Try again later.', 'Slanje nije uspelo. Pokušaj kasnije.~Slanje nije uspjelo. Pokušaj kasnije.');
+      }
+      send.disabled = false;
+    });
     const REVIEW_MAX = 10;
     let mistakeReview = null; // {queue, pos, firstTry, feedback, choice, requeued, cleared, total}
     function startReview() {
@@ -4635,6 +4745,7 @@
     }
     function render() {
       renderMap();
+      get('[data-suggest]').hidden = true;
       if (a1Test) { renderTest(); return; }
       get('[data-test-panel]').hidden = true;
       if (mistakeReview) { renderReview(); return; }
@@ -4796,6 +4907,7 @@
       const accepted = activeOptions(item)?.find(choice => item.answers.includes(choice)) || item.answers[0];
       example.textContent = learningSerbian ? display(accepted) : accepted;
       example.lang = learningSerbian ? srLanguage : 'en';
+      renderSuggest(learningSerbian, local);
       root.querySelectorAll('.steps span').forEach((step,i) => step.style.background = i < correctCount ? 'light-dark(#0c40a8,#7da2ff)' : 'light-dark(#d6ddf2,#2c3870)');
       root.querySelectorAll('[data-course],[data-dialect],[data-script]').forEach(button => {
         const [key,value] = Object.entries(button.dataset)[0];
