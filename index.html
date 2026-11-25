@@ -5273,7 +5273,7 @@
     // Serbian clips live in audio/sr/<voice>/<id>.mp3, where id is a hash of the sentence.
     // Serbian voice folder: audio/sr/<voice>/<id>.mp3. More voices can be added as more folders.
     // Recorded voices per language: audio/<language>/<voice>/<id>.mp3. Languages without one use the device voice.
-    const VOICES = {sr: 'nikola', it: 'giuseppe', da: 'jeppe', fr: 'henri', es: 'dario', de: 'conrad'};
+    const VOICES = {sr: 'nikola', it: 'giuseppe', da: 'jeppe', fr: 'henri', es: 'dario', de: 'killian'};
     const clipId = t => { let h = 0x811c9dc5; for (const ch of t.normalize('NFC')) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
     const missing = new Set();
     let clip = null, queue = Promise.resolve();
