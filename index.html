@@ -717,8 +717,9 @@
       const typedNote = w => w && w.length ? ' · typed: ' + w.slice(-6).map(x => '“' + x + '”').join(', ') : '';
       const agg = new Map();
       for (const l of learners) for (const m of l.mistakeSummary?.top || []) {
-        const a = agg.get(m.key) || {prompt: m.prompt, lesson: m.lesson, n: 0, people: 0, w: new Set()};
-        a.n += m.n; a.people++; (m.w || []).forEach(x => a.w.add(x)); agg.set(m.key, a);
+        const k = (l.lang || 'en') + '|' + m.key; // same position in another language is another sentence
+        const a = agg.get(k) || {prompt: m.prompt, lesson: m.lesson, n: 0, people: 0, w: new Set()};
+        a.n += m.n; a.people++; (m.w || []).forEach(x => a.w.add(x)); agg.set(k, a);
       }
       const hard = [...agg.values()].sort((a, b) => b.people - a.people || b.n - a.n).slice(0, 8);
       const hardBox = $('[data-hard]');
