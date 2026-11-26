@@ -833,7 +833,7 @@
   #pomalo-design .lesson-card{padding:16px;border:1px solid light-dark(#c3cbe3,#34417a);border-radius:12px}
   #pomalo-design .lesson-card[data-completed]{background:light-dark(#e1e9ff,#1b2c66);border-inline-start:4px solid light-dark(#0c40a8,#7da2ff)}
   #pomalo-design .completed-lessons strong,#pomalo-design .completed-lessons small{display:block}
-  #pomalo-design [data-start-lesson]{margin-top:16px}
+  #pomalo-design [data-start-lesson],#pomalo-design [data-grammar-back]{margin-top:16px}
   #pomalo-design .lesson-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
   #pomalo-design .pair{margin:5px 0}
   #pomalo-design .pair button{flex:1;padding-inline:4px;font-size:13px}
@@ -1118,6 +1118,7 @@
         <h2 id="grammar-title" tabindex="-1"></h2>
         <div data-grammar-content></div>
         <button class="main-action" type="button" data-start-lesson hidden></button>
+        <button class="main-action" type="button" data-grammar-back hidden></button>
       </section>
       </div>
       </div>
@@ -4682,6 +4683,10 @@
       const startLesson = get('[data-start-lesson]');
       startLesson.hidden = !reviewing || grammarIndex !== activeCourse().selected;
       startLesson.textContent = label(tr('Start exercises'), 'Započni zadatke');
+      // a way back at the bottom too, so no one is stuck after scrolling through the grammar
+      const back = get('[data-grammar-back]');
+      back.hidden = !isOpen || !startLesson.hidden;
+      back.textContent = label(tr('Back to exercises'), 'Nazad na zadatke');
       get('[data-open-grammar]').textContent = isOpen
         ? label(tr('Back to exercises'), 'Nazad na zadatke') : label(tr('Grammar'), 'Gramatika');
       if(!isOpen) return;
@@ -4735,6 +4740,10 @@
       render();
       if(grammarIndex !== null) get('#grammar-title').focus();
       else focusExercise();
+    });
+    get('[data-grammar-back]').addEventListener('click', () => {
+      if (grammarIndex === null) return;
+      grammarIndex = null; render(); focusExercise();
     });
     get('[data-start-lesson]').addEventListener('click', () => {
       if(!progress.reviewGrammar || grammarIndex !== activeCourse().selected) return;
