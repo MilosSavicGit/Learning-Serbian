@@ -7,4 +7,4 @@ alter table public.learners
 
 alter table public.learners drop constraint if exists learners_lang_check;
 alter table public.learners
-  add constraint learners_lang_check check (lang in ('en', 'it', 'da', 'fr', 'es', 'de', 'nl'));
+  add constraint learners_lang_check check (lang in ('en', 'it', 'da', 'fr', 'es', 'de', 'nl', 'sv'));
