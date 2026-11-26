@@ -997,6 +997,7 @@
   #pomalo-design .hear:active{transform:scale(.92)}
   #pomalo-design .hear.playing{animation:pulse 1s ease-in-out infinite}
   #pomalo-design .hear.mic{right:62px}
+  #pomalo-design .say-echo{margin:0;padding:8px 12px;border-radius:14px;background:light-dark(#fff,#1f2c5e);border:2px solid light-dark(#c3cbe3,#34417a);font-weight:800;font-size:16px;flex:1 1 110px;min-width:0}
   #pomalo-design .say-box{margin:14px 0 4px;padding:16px;border-radius:18px;border:3px solid light-dark(#0c40a8,#7da2ff);background:light-dark(#eef3ff,#16204a);text-align:center}
   #pomalo-design .say-box h3{margin:0 0 4px;font-size:1.25rem;color:light-dark(#0c40a8,#9db8ff)}
   #pomalo-design .say-box p{margin:0 0 8px}
@@ -5421,8 +5422,14 @@
     const sayScore = (target, heard) => { const t = sayWords(target), h = sayWords(heard); if (!t.length) return 0; let hit = 0; const used = new Set();
       for (const w of t) { const k = h.findIndex((x, i) => !used.has(i) && near(w, x)); if (k >= 0) { used.add(k); hit++; } } return hit / Math.max(t.length, h.length * 0.8); };
     let recog = null, sayFails = 0, sayKey = null;
+    // A copy of Vrapko's words right of the Next button, so the verdict is seen without scrolling up.
+    const echo = document.createElement('p'); echo.className = 'say-echo'; echo.setAttribute('aria-hidden', 'true'); echo.setAttribute('data-say-echo', ''); echo.hidden = true;
+    let echoD = null;
+    const syncEcho = () => { const t = say.hidden ? '' : say.textContent.trim(); echo.textContent = t ? '🐦 ' + t : ''; echo.hidden = !t || !echoD || !echoD.feedback || !!echoD.lessonFinished; };
+    new MutationObserver(syncEcho).observe(say, {childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['hidden']});
     // "Skip" for the required sentence: shown when there is no microphone, or after 3 tries
     const sayNext = root.querySelector('[data-label="next"]');
+    sayNext.after(echo);
     const skipBtn = document.createElement('button'); skipBtn.type = 'button'; skipBtn.setAttribute('data-say-skip', ''); skipBtn.hidden = true;
     // The required sentence at the end of a lesson gets a clear box: what to do, the sentence, a big 🎤 and a 🔊.
     const sayBox = document.createElement('div'); sayBox.className = 'say-box'; sayBox.hidden = true; sayBox.setAttribute('data-say-box', ''); sayBox.setAttribute('role', 'region');
@@ -5476,6 +5483,7 @@
       if (micBtn.parentNode !== micSide) micSide.append(micBtn);
       micBtn.hidden = !Recog || d.review || !!d.test || !answered || d.lessonFinished;
       if (d.key !== sayKey) { sayKey = d.key; sayFails = 0; }
+      echoD = d; syncEcho();
       skipBtn.textContent = d.course === 'sr' ? tr('Skip') : (window.pomaloDisplay ? window.pomaloDisplay('Preskoči') : 'Skip');
       if (!d.mustSpeak) skipBtn.hidden = true; else if (!Recog) skipBtn.hidden = false;
       const srUi = (en, sr) => d.course === 'sr' ? tr(en) : (window.pomaloDisplay ? window.pomaloDisplay((d.dialect === 'ij' && sr.split('~')[1]) || sr.split('~')[0]) : en);
