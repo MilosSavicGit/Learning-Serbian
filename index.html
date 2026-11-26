@@ -225,13 +225,14 @@
       it: '<svg viewBox="0 0 30 20"><rect width="10" height="20" fill="#009246"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce2b37"/></svg>',
       es: '<svg viewBox="0 0 30 20"><rect width="30" height="20" fill="#aa151b"/><rect y="5" width="30" height="10" fill="#f1bf00"/><g transform="translate(9.5 10)"><rect x="-3.4" y="-2.2" width=".9" height="4.6" fill="#ad1519" stroke="#c8b100" stroke-width=".25"/><rect x="2.5" y="-2.2" width=".9" height="4.6" fill="#ad1519" stroke="#c8b100" stroke-width=".25"/><path d="M-2 -2.4h4v2.6a2 2 0 0 1 -4 0z" fill="#ad1519" stroke="#c8b100" stroke-width=".3"/><path d="M0 -2.4v4.6a2 2 0 0 0 2 -2v-2.6z" fill="#c8b100"/><path d="M-1.8 -2.7l.4 -1.1l.7 .6l.7 -.9l.7 .9l.7 -.6l.4 1.1z" fill="#c8b100"/></g></svg>',
       de: '<svg viewBox="0 0 30 20"><rect width="30" height="20" fill="#000"/><rect y="6.67" width="30" height="6.67" fill="#dd0000"/><rect y="13.33" width="30" height="6.67" fill="#ffce00"/></svg>',
+      nl: '<svg viewBox="0 0 30 20"><rect width="30" height="20" fill="#ae1c28"/><rect y="6.67" width="30" height="6.67" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#21468b"/></svg>',
       fr: '<svg viewBox="0 0 30 20"><rect width="10" height="20" fill="#0055a4"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ef4135"/></svg>',
       dk: '<svg viewBox="0 0 37 28"><rect width="37" height="28" fill="#c8102e"/><rect x="12" width="4" height="28" fill="#fff"/><rect y="12" width="37" height="4" fill="#fff"/></svg>',
       gb: '<svg viewBox="0 0 60 30"><clipPath id="' + k + '"><path d="M30,15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0L60,30M60,0L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0L60,30M60,0L0,30" clip-path="url(#' + k + ')" stroke="#c8102e" stroke-width="4"/><path d="M30,0v30M0,15h60" stroke="#fff" stroke-width="10"/><path d="M30,0v30M0,15h60" stroke="#c8102e" stroke-width="6"/></svg>'
     }[code];
     return f ? '<span class="flag" role="img">' + f + '</span>' : '';
   };
-  window.pomaloFlagOf = lang => ({en: 'gb', it: 'it', da: 'dk', fr: 'fr', es: 'es', de: 'de'})[lang] || 'gb';
+  window.pomaloFlagOf = lang => ({en: 'gb', it: 'it', da: 'dk', fr: 'fr', es: 'es', de: 'de', nl: 'nl'})[lang] || 'gb';
   const flagPair = (from, to) => '<span class="flags">' + window.pomaloFlag(from) + '<span aria-hidden="true">→</span>' + window.pomaloFlag(to) + '</span> ';
   // Languages paired with Serbian besides English. Each needs lang/<code>.json. Add Danish etc. here.
   const MORE_LANGS = [
@@ -239,7 +240,8 @@
     {code: 'da', name: 'Danish', serbianIn: 'Serbisk', speak: 'Jeg taler dansk (dansk → serbisk)', srName: 'Danski', srSpeak: 'Govorim srpski (srpski → danski)'},
     {code: 'fr', name: 'French', serbianIn: 'Serbe', speak: 'Je parle français (français → serbe)', srName: 'Francuski', srSpeak: 'Govorim srpski (srpski → francuski)'},
     {code: 'es', name: 'Spanish', serbianIn: 'Serbio', speak: 'Hablo español (español → serbio)', srName: 'Španski', srSpeak: 'Govorim srpski (srpski → španski)'},
-    {code: 'de', name: 'German', serbianIn: 'Serbisch', speak: 'Ich spreche Deutsch (Deutsch → Serbisch)', srName: 'Nemački', srSpeak: 'Govorim srpski (srpski → nemački)'}
+    {code: 'de', name: 'German', serbianIn: 'Serbisch', speak: 'Ich spreche Deutsch (Deutsch → Serbisch)', srName: 'Nemački', srSpeak: 'Govorim srpski (srpski → nemački)'},
+    {code: 'nl', name: 'Dutch', serbianIn: 'Servisch', speak: 'Ik spreek Nederlands (Nederlands → Servisch)', srName: 'Holandski', srSpeak: 'Govorim srpski (srpski → holandski)'}
   ];
   (() => {
     const box = document.querySelector('#pomalo-gate [data-more-langs]'); if (!box) return;
@@ -3925,6 +3927,15 @@
       er:['on'], ihn:['on'], ihm:['on','ono'], sein:['on','ono'], seine:['on','ono'], seinen:['on','ono'], seinem:['on','ono'], es:['ono','on','ona'],
       sie:['ona','oni','one','ona','vi'], ihr:['vi','ona','oni'], ihre:['ona','oni','vi'], ihren:['ona','oni','vi'], ihrem:['ona','oni','vi'], ihnen:['oni','one','vi'],
       wir:['mi'], uns:['mi'], unser:['mi'], unsere:['mi'], unseren:['mi'], euch:['vi'], euer:['vi'], eure:['vi'], euren:['vi']};
+    // Dutch: accents may be left out (een for één), apostrophes split words ('s ochtends); subject pronouns are never dropped.
+    const canonNl = value => {
+      const v = value.normalize('NFC').toLowerCase().replace(/[’‘`´']/g, ' ').replace(/\(.*?\)/g, ' ').replace(/ĳ/g, 'ij')
+        .replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+      return v ? v.split(' ') : [];
+    };
+    const PRONOUNS_FOR_NL = {ik:['ja'], me:['ja'], mij:['ja'], mijn:['ja'], m:['ja'], je:['ti'], jij:['ti'], jou:['ti'], jouw:['ti'], u:['vi'], uw:['vi'],
+      hij:['on'], hem:['on'], zijn:['on','oni'], zij:['ona','oni','one'], ze:['ona','oni','one'], haar:['ona'], het:['ono','on','ona'],
+      we:['mi'], wij:['mi'], ons:['mi'], onze:['mi'], jullie:['vi'], hun:['oni','one'], hen:['oni','one']};
     // Rules per foreign language (English uses canonEn directly). Add more languages here.
     const FOREIGN = {it: {canon: canonIt, subj: IT_SUBJ_LIST, accents: /[àáèéìíòóùú]/, pron: PRONOUNS_FOR_IT,
       pronEn: {tu:'you', te:'you', voi:'you', vi:'you', lei:'you', io:'i', noi:'we', mi:'me', ci:'us'}},
@@ -3935,7 +3946,9 @@
       es: {canon: canonEs, subj: ES_SUBJ_LIST, subjTyped: new Set(['tu', 'el']), accents: /[áéíóúüñ]/, pron: PRONOUNS_FOR_ES,
       pronEn: {yo:'i', me:'me', mi:'my', mis:'my', tu:'you', te:'you', ti:'you', tus:'your', usted:'you', ustedes:'you', vosotros:'you', vosotras:'you', os:'you', vuestro:'your', vuestra:'your', nosotros:'we', nosotras:'we', nos:'us', nuestro:'our', nuestra:'our'}},
       de: {canon: canonDe, loose: canonDeLoose, subj: new Set(), accents: /[äöüßéè]/, pron: PRONOUNS_FOR_DE,
-      pronEn: {ich:'i', mich:'me', mir:'me', mein:'my', meine:'my', du:'you', dich:'you', dir:'you', dein:'your', deine:'your', euch:'you', euer:'your', eure:'your', wir:'we', uns:'us', unser:'our', unsere:'our'}}};
+      pronEn: {ich:'i', mich:'me', mir:'me', mein:'my', meine:'my', du:'you', dich:'you', dir:'you', dein:'your', deine:'your', euch:'you', euer:'your', eure:'your', wir:'we', uns:'us', unser:'our', unsere:'our'}},
+      nl: {canon: canonNl, subj: new Set(), accents: /[áéíóúàèëïöü]/, pron: PRONOUNS_FOR_NL,
+      pronEn: {ik:'i', me:'me', mij:'me', mijn:'my', je:'you', jij:'you', jou:'you', jouw:'your', u:'you', uw:'your', jullie:'you', we:'we', wij:'we', ons:'us', onze:'our'}}};
     const JES = {jesam:'sam', jesi:'si', je:'je', jesmo:'smo', jeste:'ste', jesu:'su'};
     // words that can always replace each other
     const SR_SAME = {s: 'sa', jako: 'veoma', vrlo: 'veoma', ponovo: 'opet', sada: 'sad', kada: 'kad', takodje: 'takođe', isto: 'takođe'};
@@ -5298,7 +5311,7 @@
     // Serbian clips live in audio/sr/<voice>/<id>.mp3, where id is a hash of the sentence.
     // Serbian voice folder: audio/sr/<voice>/<id>.mp3. More voices can be added as more folders.
     // Recorded voices per language: audio/<language>/<voice>/<id>.mp3. Languages without one use the device voice.
-    const VOICES = {sr: 'nikola', it: 'giuseppe', da: 'jeppe', fr: 'henri', es: 'dario', de: 'killian'};
+    const VOICES = {sr: 'nikola', it: 'giuseppe', da: 'jeppe', fr: 'henri', es: 'dario', de: 'killian', nl: 'maarten'};
     const clipId = t => { let h = 0x811c9dc5; for (const ch of t.normalize('NFC')) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
     const missing = new Set();
     let clip = null, queue = Promise.resolve();
