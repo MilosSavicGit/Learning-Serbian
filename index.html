@@ -996,6 +996,7 @@
   #pomalo-design .hear{position:absolute;top:8px;right:8px;width:48px;height:48px;min-height:0;padding:0;border-radius:50%;font-size:22px;line-height:1;display:grid;place-items:center;background:light-dark(#e3e9fb,#1f2c5e);border:2px solid light-dark(#0c40a8,#7da2ff);box-shadow:none}
   #pomalo-design .hear:active{transform:scale(.92)}
   #pomalo-design .hear.playing{animation:pulse 1s ease-in-out infinite}
+  #pomalo-design .hear.mic{right:62px}
   @keyframes pulse{50%{box-shadow:0 0 0 8px light-dark(rgba(12,64,168,.15),rgba(125,162,255,.2))}}
   @media(max-width:460px){#pomalo-design header .sound{order:3}}
   @keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}}
@@ -5384,6 +5385,39 @@
     root.querySelector('[data-side="sr"]').append(hearSr);
     hearBtn.addEventListener('click', () => { if (!lastDetail) return; stopVoice(); speakText(lastDetail.englishSay, lastDetail.lang || 'en'); });
     hearSr.addEventListener('click', () => { if (!lastDetail) return; stopVoice(); speakText(lastDetail.serbian, 'sr'); });
+    // ---- "Repeat after me": after a correct answer, the learner says the sentence aloud.
+    // The browser's own speech recognition turns it into text; roughly right is praised, clearly wrong is not.
+    // It never changes stars or progress, so a misheard word can't block anyone.
+    const Recog = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const micBtn = hearBtn.cloneNode(true); micBtn.removeAttribute('data-hear'); micBtn.setAttribute('data-mic', ''); micBtn.classList.add('mic'); micBtn.textContent = '🎤'; micBtn.hidden = true;
+    const CYR = {а:'a',б:'b',в:'v',г:'g',д:'d',ђ:'dj',е:'e',ж:'z',з:'z',и:'i',ј:'j',к:'k',л:'l',љ:'lj',м:'m',н:'n',њ:'nj',о:'o',п:'p',р:'r',с:'s',т:'t',ћ:'c',у:'u',ф:'f',х:'h',ц:'c',ч:'c',џ:'dz',ш:'s'};
+    const sayWords = t => (t || '').replace(/\([^)]*\)/g, ' ').toLowerCase().replace(/[\u0400-\u04ff]/g, ch => CYR[ch] ?? ch)
+      .replace(/đ/g, 'dj').replace(/ß/g, 'ss').replace(/[æ]/g, 'ae').replace(/[œ]/g, 'oe').replace(/[ø]/g, 'o')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+    const editDist = (a, b) => { const r = Array.from({length: b.length + 1}, (_, j) => j); for (let i = 1; i <= a.length; i++) { let prev = r[0]; r[0] = i; for (let j = 1; j <= b.length; j++) { const cur = r[j]; r[j] = Math.min(r[j] + 1, r[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1)); prev = cur; } } return r[b.length]; };
+    const near = (w, h) => /^\d+$/.test(h) || editDist(w, h) <= (w.length <= 3 ? 1 : Math.floor(w.length * 0.34));
+    // share of the sentence's words heard (each heard word counts once)
+    const sayScore = (target, heard) => { const t = sayWords(target), h = sayWords(heard); if (!t.length) return 0; let hit = 0; const used = new Set();
+      for (const w of t) { const k = h.findIndex((x, i) => !used.has(i) && near(w, x)); if (k >= 0) { used.add(k); hit++; } } return hit / Math.max(t.length, h.length * 0.8); };
+    let recog = null;
+    const sayMsg = (en, sr) => { const d = lastDetail; if (!d) return; const v = d.course === 'sr' ? tr(en) : (window.pomaloDisplay ? window.pomaloDisplay(((d.dialect === 'ij' && sr.split('~')[1]) || sr.split('~')[0])) : ''); say.textContent = v; say.hidden = false; };
+    micBtn.addEventListener('click', () => {
+      const d = lastDetail; if (!d || !Recog) return;
+      if (recog) { try { recog.abort(); } catch {} recog = null; micBtn.classList.remove('playing'); return; }
+      stopVoice();
+      const learnSr = d.course === 'sr', target = learnSr ? d.serbian : d.englishSay, lang = learnSr ? 'sr' : (d.lang || 'en');
+      const pk = window.pomaloPack ? window.pomaloPack() : null;
+      const r = new Recog(); recog = r;
+      r.lang = lang === 'sr' ? 'sr-RS' : lang === 'en' ? 'en-GB' : ((pk && pk.meta.speech && pk.meta.speech[0]) || lang);
+      r.interimResults = false; r.maxAlternatives = 5;
+      let got = false;
+      r.onresult = e => { got = true; let best = 0; for (const alt of e.results[0]) best = Math.max(best, sayScore(target, alt.transcript));
+        if (best >= 0.6) { buddy.dataset.mood = 'cheer'; chirp(); sayMsg('Well said! 🎤', 'Lepo izgovoreno! 🎤~Lijepo izgovoreno! 🎤'); }
+        else { buddy.dataset.mood = 'oops'; soft(); sayMsg('Not quite. Listen and try again.', 'Ne baš. Poslušaj i probaj ponovo.'); setTimeout(() => { if (!recog) speakText(target, lang); }, 900); } };
+      r.onerror = e => { got = true; if (e.error === 'aborted') return; sayMsg(e.error === 'no-speech' ? 'Not quite. Listen and try again.' : "I couldn't hear you. Allow the microphone and try again.", e.error === 'no-speech' ? 'Ne baš. Poslušaj i probaj ponovo.' : 'Nisam te čuo. Dozvoli mikrofon i probaj ponovo.'); };
+      r.onend = () => { if (recog === r) recog = null; micBtn.classList.remove('playing'); if (!got) sayMsg('Not quite. Listen and try again.', 'Ne baš. Poslušaj i probaj ponovo.'); };
+      try { r.start(); micBtn.classList.add('playing'); sayMsg('Say the sentence now…', 'Sada izgovori rečenicu…'); } catch { recog = null; }
+    });
     let last = null, greeted = false;
     function text(group, d) {
       const pk = d.course === 'sr' && window.pomaloPack ? window.pomaloPack() : null;
@@ -5404,6 +5438,12 @@
       const answered = d.feedback === 'correct';
       hearBtn.hidden = d.review || !(d.course === 'sr' || answered);   // foreign side: the prompt, or the answer once correct
       hearSr.hidden = d.review || !(d.course === 'en' || answered);    // Serbian side: the prompt, or the answer once correct
+      // the microphone sits next to the speaker of the language being learned, once the answer is correct
+      const micSide = root.querySelector(d.course === 'sr' ? '[data-side="sr"]' : '[data-side="en"]');
+      if (micBtn.parentNode !== micSide) micSide.append(micBtn);
+      micBtn.hidden = !Recog || d.review || !!d.test || !answered || d.lessonFinished;
+      micBtn.setAttribute('aria-label', d.course === 'sr' ? tr('Repeat after me') : (window.pomaloDisplay ? window.pomaloDisplay('Ponovi za mnom') : 'Repeat after me'));
+      if (micBtn.hidden && recog) { try { recog.abort(); } catch {} recog = null; micBtn.classList.remove('playing'); }
       const state = [d.key, d.feedback, d.lessonFinished].join('|');
       if (state === last) return;
       if (last && last.split('|').slice(0, -2).join('|') !== String(d.key)) stopVoice(); // a new sentence silences the old one
