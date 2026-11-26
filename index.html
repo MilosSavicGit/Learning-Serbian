@@ -997,6 +997,13 @@
   #pomalo-design .hear:active{transform:scale(.92)}
   #pomalo-design .hear.playing{animation:pulse 1s ease-in-out infinite}
   #pomalo-design .hear.mic{right:62px}
+  #pomalo-design .say-box{margin:14px 0 4px;padding:16px;border-radius:18px;border:3px solid light-dark(#0c40a8,#7da2ff);background:light-dark(#eef3ff,#16204a);text-align:center}
+  #pomalo-design .say-box h3{margin:0 0 4px;font-size:1.25rem;color:light-dark(#0c40a8,#9db8ff)}
+  #pomalo-design .say-box p{margin:0 0 8px}
+  #pomalo-design .say-box .say-line{font-size:1.5rem;font-weight:800;margin:6px 0 12px}
+  #pomalo-design .say-box .say-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  #pomalo-design .say-box .say-go{font-size:1.15rem;padding:12px 22px}
+  #pomalo-design .say-box .say-go.playing{animation:pulse 1s ease-in-out infinite}
   @keyframes pulse{50%{box-shadow:0 0 0 8px light-dark(rgba(12,64,168,.15),rgba(125,162,255,.2))}}
   @media(max-width:460px){#pomalo-design header .sound{order:3}}
   @keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}}
@@ -4933,7 +4940,9 @@
       const check = get('[data-label="check"]');
       check.hidden = solved;
       check.disabled = Boolean(item.options) && progress.choice === null;
-      const taskFinished = solved && last;
+      // The last sentence of every lesson must be said aloud ("Repeat after me") before the lesson closes.
+      const mustSpeak = mustSpeakNow();
+      const taskFinished = solved && last && !mustSpeak;
       const lessonFinished = taskFinished && finalTask;
       const hasNextLesson = lessonNumber < lessons.length;
       const showBreak = lessonFinished && hasNextLesson;
@@ -4982,7 +4991,7 @@
         }, 10000);
       }
       const next = get('[data-label="next"]');
-      next.hidden = !solved || (last && finalTask);
+      next.hidden = !solved || (last && finalTask) || mustSpeak;
       if (last) next.textContent = learningSerbian ? tr('Next exercise') : local(selectDialect('Sledeći zadatak~Sljedeći zadatak'));
       get('.feedback').textContent = (solved && last ? local(labels.done) : local(labels[progress.feedback] || '')) + (solved && progress.model ? modelNote(progress.model) : '');
       const answerHelp = get('[data-answer-help]');
@@ -5011,7 +5020,7 @@
         englishSay: (() => { const src = currentTask()[progress.index]; return (state.course === 'sr' ? src.prompt : canonical(src)).replace(/\s*\(.*?\)/g, ''); })(),
         english: state.course === 'sr' ? item.prompt : (item.canonical ? item.canonical[0] : item.answers[0]), englishFull: state.course === 'sr' ? item.prompt : (currentTask()[progress.index].answers[0]),
         model: progress.feedback === 'correct' && progress.model ? (state.course === 'sr' ? display(progress.model) : progress.model) : '',
-        stars: progress.credits, total: course.records.reduce((sum, r) => sum + (r.credits || 0), 0), course: state.course, dialect: state.dialect, key: [course.selected, progress.task, progress.index].join('|')}}));
+        mustSpeak, stars: progress.credits, total: course.records.reduce((sum, r) => sum + (r.credits || 0), 0), course: state.course, dialect: state.dialect, key: [course.selected, progress.task, progress.index].join('|')}}));
     }
     get('form').addEventListener('submit', event => {
       event.preventDefault();
@@ -5051,8 +5060,20 @@
       if(!get('[data-label="next"]').hidden) get('[data-label="next"]').focus();
       return true;
     };
+    const spokenLessons = new Set();
+    const spokenKey = () => state.lang + '|' + state.course + '|' + activeCourse().selected;
+    function mustSpeakNow() {
+      return !a1Test && !mistakeReview && progress.feedback === 'correct' && progress.task === activeLesson().tasks[state.course].length - 1 && progress.index === currentTask().length - 1 && !spokenLessons.has(spokenKey());
+    }
+    // called by "Repeat after me" when the sentence was said well enough, or skipped
+    window.pomaloSpoken = () => {
+      if (!mustSpeakNow()) return;
+      spokenLessons.add(spokenKey()); save(); render();
+      if (!get('[data-break]').hidden) get('[data-ad="auto"]').focus();
+      else if (!get('[data-complete]').hidden) get('[data-replay]').focus();
+    };
     function advance() {
-      if(progress.feedback !== 'correct') return;
+      if(progress.feedback !== 'correct' || mustSpeakNow()) return;
       if(progress.index === 4) {
         if(progress.task >= 7 || progress.credits < (progress.task+1)*5) return;
         progress.task++;
@@ -5399,7 +5420,19 @@
     // share of the sentence's words heard (each heard word counts once)
     const sayScore = (target, heard) => { const t = sayWords(target), h = sayWords(heard); if (!t.length) return 0; let hit = 0; const used = new Set();
       for (const w of t) { const k = h.findIndex((x, i) => !used.has(i) && near(w, x)); if (k >= 0) { used.add(k); hit++; } } return hit / Math.max(t.length, h.length * 0.8); };
-    let recog = null;
+    let recog = null, sayFails = 0, sayKey = null;
+    // "Skip" for the required sentence: shown when there is no microphone, or after 3 tries
+    const sayNext = root.querySelector('[data-label="next"]');
+    const skipBtn = document.createElement('button'); skipBtn.type = 'button'; skipBtn.setAttribute('data-say-skip', ''); skipBtn.hidden = true;
+    // The required sentence at the end of a lesson gets a clear box: what to do, the sentence, a big 🎤 and a 🔊.
+    const sayBox = document.createElement('div'); sayBox.className = 'say-box'; sayBox.hidden = true; sayBox.setAttribute('data-say-box', ''); sayBox.setAttribute('role', 'region');
+    sayBox.innerHTML = '<h3 data-say-title></h3><p data-say-help></p><div class="say-line" data-say-line></div><div class="say-btns"><button type="button" class="main-action say-go" data-say-go></button><button type="button" data-say-hear></button></div>';
+    sayNext.parentNode.before(sayBox);
+    sayBox.querySelector('.say-btns').append(skipBtn);
+    sayBox.querySelector('[data-say-go]').addEventListener('click', () => micBtn.click());
+    sayBox.querySelector('[data-say-hear]').addEventListener('click', () => { const d = lastDetail; if (!d) return; stopVoice(); d.course === 'sr' ? speakText(d.serbian, 'sr') : speakText(d.englishSay, d.lang || 'en'); });
+    skipBtn.addEventListener('click', () => { if (window.pomaloSpoken) window.pomaloSpoken(); });
+    const showSkip = () => { if (lastDetail && lastDetail.mustSpeak) skipBtn.hidden = false; };
     const sayMsg = (en, sr) => { const d = lastDetail; if (!d) return; const v = d.course === 'sr' ? tr(en) : (window.pomaloDisplay ? window.pomaloDisplay(((d.dialect === 'ij' && sr.split('~')[1]) || sr.split('~')[0])) : ''); say.textContent = v; say.hidden = false; };
     micBtn.addEventListener('click', () => {
       const d = lastDetail; if (!d || !Recog) return;
@@ -5412,11 +5445,11 @@
       r.interimResults = false; r.maxAlternatives = 5;
       let got = false;
       r.onresult = e => { got = true; let best = 0; for (const alt of e.results[0]) best = Math.max(best, sayScore(target, alt.transcript));
-        if (best >= 0.6) { buddy.dataset.mood = 'cheer'; chirp(); sayMsg('Well said! 🎤', 'Lepo izgovoreno! 🎤~Lijepo izgovoreno! 🎤'); }
-        else { buddy.dataset.mood = 'oops'; soft(); sayMsg('Not quite. Listen and try again.', 'Ne baš. Poslušaj i probaj ponovo.'); setTimeout(() => { if (!recog) speakText(target, lang); }, 900); } };
-      r.onerror = e => { got = true; if (e.error === 'aborted') return; sayMsg(e.error === 'no-speech' ? 'Not quite. Listen and try again.' : "I couldn't hear you. Allow the microphone and try again.", e.error === 'no-speech' ? 'Ne baš. Poslušaj i probaj ponovo.' : 'Nisam te čuo. Dozvoli mikrofon i probaj ponovo.'); };
-      r.onend = () => { if (recog === r) recog = null; micBtn.classList.remove('playing'); if (!got) sayMsg('Not quite. Listen and try again.', 'Ne baš. Poslušaj i probaj ponovo.'); };
-      try { r.start(); micBtn.classList.add('playing'); sayMsg('Say the sentence now…', 'Sada izgovori rečenicu…'); } catch { recog = null; }
+        if (best >= 0.6) { buddy.dataset.mood = 'cheer'; chirp(); sayMsg('Well said! 🎤', 'Lepo izgovoreno! 🎤~Lijepo izgovoreno! 🎤'); if (d.mustSpeak && window.pomaloSpoken) window.pomaloSpoken(); }
+        else { if (++sayFails >= 3) showSkip(); buddy.dataset.mood = 'oops'; soft(); sayMsg('Not quite. Listen and try again.', 'Ne baš. Poslušaj i probaj ponovo.'); setTimeout(() => { if (!recog) speakText(target, lang); }, 900); } };
+      r.onerror = e => { got = true; if (e.error === 'aborted') return; if (e.error !== 'no-speech' || ++sayFails >= 3) showSkip(); sayMsg(e.error === 'no-speech' ? 'Not quite. Listen and try again.' : "I couldn't hear you. Allow the microphone and try again.", e.error === 'no-speech' ? 'Ne baš. Poslušaj i probaj ponovo.' : 'Nisam te čuo. Dozvoli mikrofon i probaj ponovo.'); };
+      r.onend = () => { if (recog === r) recog = null; micBtn.classList.remove('playing'); sayBox.querySelector('[data-say-go]').classList.remove('playing'); if (!got) sayMsg('Not quite. Listen and try again.', 'Ne baš. Poslušaj i probaj ponovo.'); };
+      try { r.start(); micBtn.classList.add('playing'); sayBox.querySelector('[data-say-go]').classList.add('playing'); sayMsg('Say the sentence now…', 'Sada izgovori rečenicu…'); } catch { recog = null; showSkip(); }
     });
     let last = null, greeted = false;
     function text(group, d) {
@@ -5442,6 +5475,23 @@
       const micSide = root.querySelector(d.course === 'sr' ? '[data-side="sr"]' : '[data-side="en"]');
       if (micBtn.parentNode !== micSide) micSide.append(micBtn);
       micBtn.hidden = !Recog || d.review || !!d.test || !answered || d.lessonFinished;
+      if (d.key !== sayKey) { sayKey = d.key; sayFails = 0; }
+      skipBtn.textContent = d.course === 'sr' ? tr('Skip') : (window.pomaloDisplay ? window.pomaloDisplay('Preskoči') : 'Skip');
+      if (!d.mustSpeak) skipBtn.hidden = true; else if (!Recog) skipBtn.hidden = false;
+      const srUi = (en, sr) => d.course === 'sr' ? tr(en) : (window.pomaloDisplay ? window.pomaloDisplay((d.dialect === 'ij' && sr.split('~')[1]) || sr.split('~')[0]) : en);
+      const wasHidden = sayBox.hidden;
+      sayBox.hidden = !d.mustSpeak || !!d.review;
+      if (!sayBox.hidden) {
+        const learnSr = d.course === 'sr';
+        sayBox.querySelector('[data-say-title]').textContent = '🎤 ' + srUi('Repeat after me', 'Ponovi za mnom');
+        sayBox.querySelector('[data-say-help]').textContent = Recog ? srUi('Tap 🎤 and say this sentence aloud:', 'Dodirni 🎤 i izgovori ovu rečenicu naglas:') : srUi('Say this sentence aloud, then tap Skip:', 'Izgovori ovu rečenicu naglas, pa dodirni Preskoči:');
+        const line = sayBox.querySelector('[data-say-line]');
+        line.textContent = learnSr && window.pomaloDisplay ? window.pomaloDisplay(d.serbian) : (learnSr ? d.serbian : d.englishSay);
+        line.lang = learnSr ? 'sr' : (d.lang || 'en');
+        const go = sayBox.querySelector('[data-say-go]'); go.hidden = !Recog; go.textContent = '🎤 ' + srUi('Say it', 'Izgovori');
+        sayBox.querySelector('[data-say-hear]').textContent = '🔊 ' + srUi('Listen to the sentence', 'Slušaj rečenicu');
+        if (wasHidden) setTimeout(() => { if (!sayBox.hidden) (go.hidden ? skipBtn : go).focus(); }, 50);
+      }
       micBtn.setAttribute('aria-label', d.course === 'sr' ? tr('Repeat after me') : (window.pomaloDisplay ? window.pomaloDisplay('Ponovi za mnom') : 'Repeat after me'));
       if (micBtn.hidden && recog) { try { recog.abort(); } catch {} recog = null; micBtn.classList.remove('playing'); }
       const state = [d.key, d.feedback, d.lessonFinished].join('|');
@@ -5465,6 +5515,7 @@
       else if (d.test && d.key === 'a1test|intro') msg = text('test', d);
       else if (!greeted) { msg = text(d.test ? 'test' : d.review ? 'review' : 'hello', d); greeted = true; }
       else if (d.review && !d.test && prev && !prev.startsWith('review')) msg = text('review', d);
+      if (d.mustSpeak && !d.review) msg = (msg ? msg + ' ' : '') + (d.course === 'sr' ? tr('Now say the sentence aloud to go on 🎤') : (window.pomaloDisplay ? window.pomaloDisplay('Sada izgovori rečenicu naglas da nastaviš 🎤') : ''));
       buddy.dataset.mood = '';
       void buddy.offsetWidth;
       buddy.dataset.mood = mood;
