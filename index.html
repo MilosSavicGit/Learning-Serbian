@@ -5454,7 +5454,12 @@
       r.onresult = e => { got = true; let best = 0; for (const alt of e.results[0]) best = Math.max(best, sayScore(target, alt.transcript));
         if (best >= 0.6) { buddy.dataset.mood = 'cheer'; chirp(); sayMsg('Well said! 🎤', 'Lepo izgovoreno! 🎤~Lijepo izgovoreno! 🎤'); if (d.mustSpeak && window.pomaloSpoken) window.pomaloSpoken(); }
         else { if (++sayFails >= 3) showSkip(); buddy.dataset.mood = 'oops'; soft(); sayMsg('Not quite. Listen and try again.', 'Ne baš. Poslušaj i probaj ponovo.'); setTimeout(() => { if (!recog) speakText(target, lang); }, 900); } };
-      r.onerror = e => { got = true; if (e.error === 'aborted') return; if (e.error !== 'no-speech' || ++sayFails >= 3) showSkip(); sayMsg(e.error === 'no-speech' ? 'Not quite. Listen and try again.' : "I couldn't hear you. Allow the microphone and try again.", e.error === 'no-speech' ? 'Ne baš. Poslušaj i probaj ponovo.' : 'Nisam te čuo. Dozvoli mikrofon i probaj ponovo.'); };
+      // say what went wrong, and which browsers work
+      r.onerror = e => { got = true; if (e.error === 'aborted') return; if (e.error !== 'no-speech' || ++sayFails >= 3) showSkip();
+        if (e.error === 'not-allowed') sayMsg('The microphone is blocked. Allow it with the icon left of the address, then try again.', 'Mikrofon je blokiran. Dozvoli ga preko ikonice levo od adrese, pa probaj ponovo.~Mikrofon je blokiran. Dozvoli ga preko ikonice lijevo od adrese, pa probaj ponovo.');
+        else if (e.error === 'audio-capture') sayMsg('No microphone found. Check which microphone the browser uses, or try another browser: Edge, Chrome or Safari.', 'Mikrofon nije pronađen. Proveri koji mikrofon pregledač koristi ili probaj drugi pregledač: Edge, Chrome ili Safari.~Mikrofon nije pronađen. Provjeri koji mikrofon pregledač koristi ili probaj drugi pregledač: Edge, Chrome ili Safari.');
+        else if (e.error === 'no-speech') sayMsg("I didn't hear anything. Check which microphone the browser uses, or try another browser: Edge, Chrome or Safari.", 'Ništa nisam čuo. Proveri koji mikrofon pregledač koristi ili probaj drugi pregledač: Edge, Chrome ili Safari.~Ništa nisam čuo. Provjeri koji mikrofon pregledač koristi ili probaj drugi pregledač: Edge, Chrome ili Safari.');
+        else sayMsg("Speech recognition isn't working in this browser. Try another browser: Edge, Chrome or Safari.", 'Prepoznavanje govora ne radi u ovom pregledaču. Probaj drugi pregledač: Edge, Chrome ili Safari.'); };
       r.onend = () => { if (recog === r) recog = null; micBtn.classList.remove('playing'); sayBox.querySelector('[data-say-go]').classList.remove('playing'); if (!got) sayMsg('Not quite. Listen and try again.', 'Ne baš. Poslušaj i probaj ponovo.'); };
       try { r.start(); micBtn.classList.add('playing'); sayBox.querySelector('[data-say-go]').classList.add('playing'); sayMsg('Say the sentence now…', 'Sada izgovori rečenicu…'); } catch { recog = null; showSkip(); }
     });
@@ -5492,7 +5497,7 @@
       if (!sayBox.hidden) {
         const learnSr = d.course === 'sr';
         sayBox.querySelector('[data-say-title]').textContent = '🎤 ' + srUi('Repeat after me', 'Ponovi za mnom');
-        sayBox.querySelector('[data-say-help]').textContent = Recog ? srUi('Tap 🎤 and say this sentence aloud:', 'Dodirni 🎤 i izgovori ovu rečenicu naglas:') : srUi('Say this sentence aloud, then tap Skip:', 'Izgovori ovu rečenicu naglas, pa dodirni Preskoči:');
+        sayBox.querySelector('[data-say-help]').textContent = Recog ? srUi('Tap 🎤 and say this sentence aloud:', 'Dodirni 🎤 i izgovori ovu rečenicu naglas:') : srUi("This browser can't recognise speech (it works in Edge, Chrome or Safari). Say this sentence aloud, then tap Skip:", 'Ovaj pregledač ne prepoznaje govor (radi u Edge, Chrome ili Safari). Izgovori ovu rečenicu naglas, pa dodirni Preskoči:');
         const line = sayBox.querySelector('[data-say-line]');
         line.textContent = learnSr && window.pomaloDisplay ? window.pomaloDisplay(d.serbian) : (learnSr ? d.serbian : d.englishSay);
         line.lang = learnSr ? 'sr' : (d.lang || 'en');
