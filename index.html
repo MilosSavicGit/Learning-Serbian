@@ -4177,7 +4177,8 @@
         if (words.length && !named.has(words[0]) && !/^(I)$/.test(words[0])) words[0] = words[0].charAt(0).toLowerCase() + words[0].slice(1);
         const have = new Set(words.map(normalize));
         const saved = (TRAPS[state.course] || {})[[lessonIndex, task, index].join('|')];
-        const curated = saved && normalize(saved.a || '') === normalize(answer) ? saved.t : null;
+        // each entry: [{a: sentence, t: traps}, …], one per dialect; used only if the sentence still matches
+        const curated = saved ? ([].concat(saved).find(x => normalize(x.a || '') === normalize(answer)) || {}).t : null;
         let traps = (curated || []).filter(w => !have.has(normalize(w)));
         if (traps.length < 2) {
           // no curated traps yet: words from the lesson's other sentences, preferring look-alikes (same start, other ending)
