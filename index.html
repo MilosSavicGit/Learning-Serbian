@@ -527,8 +527,14 @@
   sb_signout = async () => { try { localStorage.removeItem(LOCAL_ACTIVE); } catch {} await sb.auth.signOut(); location.reload(); };
   async function afterSignIn() {
     if (location.hash.includes('access_token')) history.replaceState(null, '', location.pathname);
-    const {data: isAdmin} = await sb.rpc('is_admin');
-    window.pomaloTester = Boolean(isAdmin); // admins may open any lesson and exercise
+    // a brief database or sign-in hiccup must not silently turn an admin into a normal user: renew and try again
+    let isAdmin = false;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const res = await withAuth(() => sb.rpc('is_admin'));
+      if (!res.error) { isAdmin = Boolean(res.data); break; }
+      await new Promise(r => setTimeout(r, 1500 * (attempt + 1)));
+    }
+    window.pomaloTester = isAdmin; // admins may open any lesson and exercise
     if (isAdmin) { db = supaAdminStore(); startAdmin(); }
     const {data: ls, error} = await sb.from('learners').select('*').eq('parent_id', account.id).order('created_at');
     if (error) { status('Pomalo can’t load your learners right now. Check your connection, then reload the page.'); return; }
