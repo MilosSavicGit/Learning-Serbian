@@ -4117,6 +4117,8 @@
     };
     // Trap words for the tiles, made with care per sentence (lang/traps-<course>.json), keyed "lesson|task|index".
     const TRAPS = {};
+    // learners of Serbian share one file (traps-sr); Serbian speakers have one per language (traps-en-<lang>)
+    const trapSet = () => state.course === 'sr' ? 'sr' : 'en-' + (state.lang || 'en');
     const loadTraps = course => { if (TRAPS[course]) return; TRAPS[course] = {}; fetch('lang/traps-' + course + '.json').then(r => r.ok ? r.json() : {}).then(d => { TRAPS[course] = d || {}; adapted.clear(); if (window.pomaloRender) window.pomaloRender(); }).catch(() => {}); };
     const shuffle = (list, seed) => {
       let h = 7; for (const ch of seed) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
@@ -4158,7 +4160,7 @@
     const adapted = new Map();
     function adapt(item, lessonIndex = activeCourse().selected, task = progress.task, index = progress.index, forceMode = null) {
       const mode = forceMode || modeFor(lessonIndex, task);
-      const key = [lessonIndex, state.course, state.dialect, task, index, mode].join('|');
+      const key = [lessonIndex, state.course, state.lang, state.dialect, task, index, mode].join('|');
       if (adapted.has(key)) return adapted.get(key);
       const answer = canonical(item);
       const pool = [...new Set(lessons[lessonIndex].tasks[state.course].flat().map(canonical))].filter(other => normalize(other) !== normalize(answer));
@@ -4170,13 +4172,13 @@
         out.answers = fullAnswers(item);
       } else if (mode === 'tiles') {
         out.answers = fullAnswers(item);
-        loadTraps(state.course);
+        loadTraps(trapSet());
         const words = tokens(answer).map(bare).filter(Boolean);
         // names keep their capital; other first words are written small, so the first tile isn't given away
         const named = new Set(pool.flatMap(sentence => tokens(sentence).slice(1).map(bare)).filter(w => /^\p{Lu}/u.test(w)));
         if (words.length && !named.has(words[0]) && !/^(I)$/.test(words[0])) words[0] = words[0].charAt(0).toLowerCase() + words[0].slice(1);
         const have = new Set(words.map(normalize));
-        const saved = (TRAPS[state.course] || {})[[lessonIndex, task, index].join('|')];
+        const saved = (TRAPS[trapSet()] || {})[[lessonIndex, task, index].join('|')];
         // each entry: [{a: sentence, t: traps}, …], one per dialect; used only if the sentence still matches
         const curated = saved ? ([].concat(saved).find(x => normalize(x.a || '') === normalize(answer)) || {}).t : null;
         let traps = (curated || []).filter(w => !have.has(normalize(w)));
