@@ -4111,9 +4111,9 @@
 
     // Difficulty grows lesson by lesson. Each entry: [last lesson number, exercise type].
     const STAGES = [[4,'choose'],[7,'pickWord'],[10,'typeWord'],[Infinity,'translate']];
-    // From lesson 11, exercises 1–6 build the sentence from word tiles; exercise 7 and the lesson test are typed (the hardest).
-    const TILE_TASKS = 6;
-    const modeFor = (lessonIndex, task = 0) => { const m = STAGES.find(([upTo]) => lessonIndex + 1 <= upTo)[1]; return m === 'translate' && task < TILE_TASKS ? 'tiles' : m; };
+    // From lesson 11 the exercise types are mixed, easy to hard: exercise 7 and the lesson test are typed (the hardest).
+    const MIXED = ['choose', 'tiles', 'pickWord', 'tiles', 'typeWord', 'tiles', 'translate', 'translate'];
+    const modeFor = (lessonIndex, task = 0) => { const m = STAGES.find(([upTo]) => lessonIndex + 1 <= upTo)[1]; return m === 'translate' ? (MIXED[task] || 'translate') : m; };
     const modeText = {
       choose:['Choose the correct translation','Izaberi tačan prevod'],
       pickWord:['Choose the missing word','Izaberi reč koja nedostaje~Izaberi riječ koja nedostaje'],
