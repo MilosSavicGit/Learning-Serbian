@@ -841,6 +841,11 @@
   #pomalo-design .answer{box-sizing:border-box;width:100%;font:inherit;font-size:16px;min-height:44px;border:1px solid light-dark(#7f8bb8,#5d6aa3);border-radius:8px;background:transparent;color:inherit;padding:8px}
   #pomalo-design .choices{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
   #pomalo-design .choices[hidden]{display:none}
+  #pomalo-design .tiles[hidden]{display:none}
+  #pomalo-design .tile-line{min-height:64px;margin-top:8px;padding:8px;border:2px dashed light-dark(#9aa8d6,#4a5a9a);border-radius:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  #pomalo-design .tile-bank{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  #pomalo-design .tiles button{font-size:19px;min-height:48px;padding:8px 14px}
+  #pomalo-design .tile-bank button.used{visibility:hidden}
   #pomalo-design .actions{display:flex;gap:9px;margin-top:13px;align-items:center;flex-wrap:wrap}
   #pomalo-design .credit-line{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
   #pomalo-design .credit-total{padding:4px 9px;border-radius:8px;background:light-dark(#e3e9fb,#1f2c5e);font-weight:600}
@@ -1074,11 +1079,11 @@
       <div class="pics" data-pics aria-hidden="true"></div>
       <form>
         <div class="panel">
-          <section class="side" data-side="en"><strong>English</strong><button type="button" class="hear" data-hear aria-label="Listen to the sentence">🔊</button><div class="phrase" data-phrase="en" lang="en">I don’t understand.</div><input class="answer" data-answer="en" lang="en" aria-label="Your answer in English" autocomplete="off" hidden><div class="choices" data-options="en" role="group" aria-label="English answer options" hidden></div></section>
+          <section class="side" data-side="en"><strong>English</strong><button type="button" class="hear" data-hear aria-label="Listen to the sentence">🔊</button><div class="phrase" data-phrase="en" lang="en">I don’t understand.</div><input class="answer" data-answer="en" lang="en" aria-label="Your answer in English" autocomplete="off" hidden><div class="tiles" data-tiles="en" hidden><div class="tile-line" data-tile-line="en"></div><div class="tile-bank" data-tile-bank="en" role="group"></div></div><div class="choices" data-options="en" role="group" aria-label="English answer options" hidden></div></section>
           <section class="side" data-side="sr"><strong data-label="serbian">Serbian</strong>
             <div class="pair" role="group" aria-label="Serbian variant"><button type="button" data-dialect="ek" aria-pressed="true">Ekavski</button><button type="button" data-dialect="ij" aria-pressed="false">Ijekavski</button></div>
             <div class="pair" role="group" aria-label="Serbian script"><button type="button" data-script="cy" aria-pressed="false">Ćirilica</button><button type="button" data-script="la" aria-pressed="true">Latinica</button></div>
-            <div class="phrase" data-phrase="sr" lang="sr-Latn" hidden></div><input class="answer" data-answer="sr" lang="sr-Latn" aria-label="Your answer in Serbian" autocomplete="off" placeholder="Type your answer"><div class="choices" data-options="sr" role="group" aria-label="Serbian answer options" hidden></div>
+            <div class="phrase" data-phrase="sr" lang="sr-Latn" hidden></div><input class="answer" data-answer="sr" lang="sr-Latn" aria-label="Your answer in Serbian" autocomplete="off" placeholder="Type your answer"><div class="tiles" data-tiles="sr" hidden><div class="tile-line" data-tile-line="sr"></div><div class="tile-bank" data-tile-bank="sr" role="group"></div></div><div class="choices" data-options="sr" role="group" aria-label="Serbian answer options" hidden></div>
           </section>
         </div>
         <div class="actions"><button class="main-action" type="submit" data-label="check">Check answer</button><button type="button" data-label="next" hidden>Next sentence</button></div>
@@ -4100,13 +4105,19 @@
 
     // Difficulty grows lesson by lesson. Each entry: [last lesson number, exercise type].
     const STAGES = [[4,'choose'],[7,'pickWord'],[10,'typeWord'],[Infinity,'translate']];
-    const modeFor = lessonIndex => STAGES.find(([upTo]) => lessonIndex + 1 <= upTo)[1];
+    // From lesson 11, exercises 1–6 build the sentence from word tiles; exercise 7 and the lesson test are typed (the hardest).
+    const TILE_TASKS = 6;
+    const modeFor = (lessonIndex, task = 0) => { const m = STAGES.find(([upTo]) => lessonIndex + 1 <= upTo)[1]; return m === 'translate' && task < TILE_TASKS ? 'tiles' : m; };
     const modeText = {
       choose:['Choose the correct translation','Izaberi tačan prevod'],
       pickWord:['Choose the missing word','Izaberi reč koja nedostaje~Izaberi riječ koja nedostaje'],
       typeWord:['Type the missing word','Upiši reč koja nedostaje~Upiši riječ koja nedostaje'],
-      translate:['Translate the whole sentence','Prevedi celu rečenicu~Prevedi cijelu rečenicu']
+      translate:['Translate the whole sentence','Prevedi celu rečenicu~Prevedi cijelu rečenicu'],
+      tiles:['Build the sentence from the words','Složi rečenicu od reči~Složi rečenicu od riječi']
     };
+    // Trap words for the tiles, made with care per sentence (lang/traps-<course>.json), keyed "lesson|task|index".
+    const TRAPS = {};
+    const loadTraps = course => { if (TRAPS[course]) return; TRAPS[course] = {}; fetch('lang/traps-' + course + '.json').then(r => r.ok ? r.json() : {}).then(d => { TRAPS[course] = d || {}; adapted.clear(); if (window.pomaloRender) window.pomaloRender(); }).catch(() => {}); };
     const shuffle = (list, seed) => {
       let h = 7; for (const ch of seed) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
       const out = [...list];
@@ -4146,7 +4157,7 @@
     };
     const adapted = new Map();
     function adapt(item, lessonIndex = activeCourse().selected, task = progress.task, index = progress.index, forceMode = null) {
-      const mode = forceMode || modeFor(lessonIndex);
+      const mode = forceMode || modeFor(lessonIndex, task);
       const key = [lessonIndex, state.course, state.dialect, task, index, mode].join('|');
       if (adapted.has(key)) return adapted.get(key);
       const answer = canonical(item);
@@ -4157,6 +4168,25 @@
         out.options = item.options ? activeOptions(item) : shuffle([answer, ...shuffle(pool, key).slice(0, 4)], key + 'o');
       } else if (mode === 'translate') {
         out.answers = fullAnswers(item);
+      } else if (mode === 'tiles') {
+        out.answers = fullAnswers(item);
+        loadTraps(state.course);
+        const words = tokens(answer).map(bare).filter(Boolean);
+        // names keep their capital; other first words are written small, so the first tile isn't given away
+        const named = new Set(pool.flatMap(sentence => tokens(sentence).slice(1).map(bare)).filter(w => /^\p{Lu}/u.test(w)));
+        if (words.length && !named.has(words[0]) && !/^(I)$/.test(words[0])) words[0] = words[0].charAt(0).toLowerCase() + words[0].slice(1);
+        const have = new Set(words.map(normalize));
+        const saved = (TRAPS[state.course] || {})[[lessonIndex, task, index].join('|')];
+        const curated = saved && normalize(saved.a || '') === normalize(answer) ? saved.t : null;
+        let traps = (curated || []).filter(w => !have.has(normalize(w)));
+        if (traps.length < 2) {
+          // no curated traps yet: words from the lesson's other sentences, preferring look-alikes (same start, other ending)
+          const others = [...new Set(pool.flatMap(sentence => tokens(sentence).slice(1).map(bare)).filter(w => w.length >= 2 && !/^\p{Lu}/u.test(w) && !have.has(normalize(w))))];
+          const alike = others.filter(w => words.some(a => a.length >= 3 && normalize(w).slice(0, 3) === normalize(a).slice(0, 3)));
+          traps = [...new Set([...traps, ...shuffle(alike, key + 'a'), ...shuffle(others, key + 'b')])];
+        }
+        traps = traps.slice(0, Math.min(4, Math.max(2, Math.ceil(words.length / 2))));
+        out.tiles = shuffle([...words, ...traps], key + 't');
       } else {
         const focusWord = item.focus && (state.dialect === 'ij' ? item.focus[1] : item.focus[0]);
         const focusIndex = focusWord ? tokens(answer).findIndex(w => bare(w) === focusWord) : -1;
@@ -4268,7 +4298,7 @@
     function reviewItem() {
       const key = mistakeReview.queue[mistakeReview.pos];
       const [, l, t, i] = key.split('|').map(Number);
-      return {key, lesson: l, item: adapt(sourceItem(key), l, t, i)};
+      return {key, lesson: l, item: adapt(sourceItem(key), l, t, i, modeFor(l, t) === 'tiles' ? 'translate' : null)};
     }
     function renderReview() {
       const learningSerbian = state.course === 'sr';
@@ -4310,6 +4340,7 @@
         phrase.textContent = present(target ? item.blank || '' : prompt);
         phrase.hidden = target && !item.blank;
         input.hidden = !target || Boolean(item.options);
+        get('[data-tiles="'+language+'"]').hidden = true;
         input.readOnly = solved;
         options.hidden = !target || !item.options;
         options.replaceChildren();
@@ -4578,6 +4609,7 @@
         phrase.textContent = present(target ? item.blank || '' : prompt);
         phrase.hidden = target && !item.blank;
         input.hidden = !target || Boolean(item.options);
+        get('[data-tiles="'+language+'"]').hidden = true;
         input.readOnly = answered;
         options.hidden = !target || !item.options;
         options.replaceChildren();
@@ -4769,7 +4801,7 @@
     const tester = () => Boolean(window.pomaloTester);
     function jumpToExercise(t) {
       if (!tester() || mistakeReview || a1Test) return;
-      progress.task = t; progress.index = 0; progress.feedback = ''; progress.choice = null; progress.credits = t * 5;
+      progress.task = t; progress.index = 0; progress.feedback = ''; progress.choice = null; delete progress.tiles; progress.credits = t * 5;
       delete progress.reviewGrammar; grammarIndex = null; answerInput().value = '';
       clearTimeout(breakTimer); save(); render(); focusExercise();
     }
@@ -4920,9 +4952,31 @@
         const blank = state.dialect === 'ij' && item.ijekavianBlank ? item.ijekavianBlank : item.blank;
         phrase.textContent = present(target ? blank || '' : prompt);
         phrase.hidden = target && !item.blank;
-        input.hidden = !target || Boolean(item.options);
+        input.hidden = !target || Boolean(item.options) || Boolean(item.tiles);
         input.readOnly = solved;
         options.hidden = !target || !item.options;
+        // word tiles: tap a word to add it to the sentence, tap it in the sentence to take it back
+        const tileBox = get('[data-tiles="'+language+'"]');
+        tileBox.hidden = !target || !item.tiles;
+        if (!tileBox.hidden) {
+          const picked = (progress.tiles || []).filter(n => n < item.tiles.length);
+          const line = get('[data-tile-line="'+language+'"]'), bank = get('[data-tile-bank="'+language+'"]');
+          line.replaceChildren(); bank.replaceChildren();
+          line.lang = bank.lang = language === 'sr' ? (state.script === 'cy' ? 'sr-Cyrl' : 'sr-Latn') : (state.lang || 'en');
+          const tileButton = (n, inLine) => {
+            const b = document.createElement('button'); b.type = 'button'; b.textContent = present(item.tiles[n]); b.disabled = solved;
+            if (!inLine && picked.includes(n)) { b.classList.add('used'); b.tabIndex = -1; b.setAttribute('aria-hidden', 'true'); }
+            b.addEventListener('click', () => {
+              const now = (progress.tiles || []).filter(m => m !== n);
+              progress.tiles = inLine ? now : [...now, n];
+              progress.feedback = ''; save(); render();
+              const again = get('[data-tile-' + (inLine ? 'line' : 'bank') + '="'+language+'"] button:not(.used)'); if (again) again.focus();
+            });
+            return b;
+          };
+          picked.forEach(n => line.append(tileButton(n, true)));
+          item.tiles.forEach((_, n) => bank.append(tileButton(n, false)));
+        }
         options.replaceChildren();
         const choices = activeOptions(item);
         const selected = solved && choices
@@ -4949,7 +5003,7 @@
       answer.placeholder = local(labels.placeholder);
       const check = get('[data-label="check"]');
       check.hidden = solved;
-      check.disabled = Boolean(item.options) && progress.choice === null;
+      check.disabled = (Boolean(item.options) && progress.choice === null) || (Boolean(item.tiles) && !(progress.tiles || []).length);
       // The last sentence of every lesson must be said aloud ("Repeat after me") before the lesson closes.
       const mustSpeak = mustSpeakNow();
       const taskFinished = solved && last && !mustSpeak;
@@ -5038,10 +5092,10 @@
       if (mistakeReview) { submitReview(); return; }
       if(progress.feedback === 'correct') return;
       const item = current();
-      const response = item.options ? activeOptions(item)[progress.choice] : answerInput().value;
+      const response = item.options ? activeOptions(item)[progress.choice] : item.tiles ? (progress.tiles || []).map(n => item.tiles[n]).filter(Boolean).join(' ') : answerInput().value;
       if(!response?.trim()) return;
       const verdict = judge(response, item);
-      if (verdict.typo) { progress.feedback = 'typo'; save(); render(); answerInput().focus(); return; }
+      if (verdict.typo && !item.tiles) { progress.feedback = 'typo'; save(); render(); answerInput().focus(); return; }
       const correct = verdict.ok;
       get('[data-answer-help]').open = false;
       progress.model = correct && !item.options && !sameAsModel(response, item.model) ? item.model : '';
@@ -5093,6 +5147,7 @@
       }
       progress.feedback='';
       progress.choice=null;
+      delete progress.tiles;
       progress.model='';
       answerInput().value='';
       save();
